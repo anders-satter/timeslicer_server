@@ -22,12 +22,12 @@ class TestFileUtilSpec extends Specification {
     }
   }
   "FileUtile.toSource" >> {
-    "should convert?" >> {
-      val str: String = "hsieh\nsolo\nlikewise"
+    "should test the size of the " >> {
+      val str: String = "hsie\nhsololike\nwise"
       val stream: InputStream = new ByteArrayInputStream(str.getBytes)
-      val encoding = "UTF8"
-      //println(FileUtil.toSource(stream, encoding))
-      FileUtil.toSource(stream, encoding) must contain("hsieh") 
+      val encoding = "UTF-8"
+     
+      FileUtil.toSource(stream, encoding).size ==19
     }
   }
 }
