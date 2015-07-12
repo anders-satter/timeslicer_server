@@ -21,9 +21,12 @@ object FileUtil {
   //    toSource(new FileInputStream(filename),Properties.encodingString).getLines.toArray
   //  }
 
+  
+  /**
+   * 
+   */
   def readFromFile(filename: String, encoding: String): Array[String] = {
-    println(Properties.encodingString)
-    toSource(new FileInputStream(filename), encoding).getLines.toArray
+		  toSource(new FileInputStream(filename), encoding).getLines.toArray
   }
 
   /**
