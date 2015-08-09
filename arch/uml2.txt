@@ -1,0 +1,99 @@
+@startuml
+scale 600 height
+skinparam shadowing false
+skinparam package thinline true
+
+'"left to right direction" is that documented? If so I've missed it.
+
+title 
+	General Application Architecture
+	(after Bob C Martin)
+end title
+
+class User << (U,#FF7700)  >>
+package "DeliveryMechanism (MVC, plugin)" <<rect>>{
+	class "Presenter"  as P {
+		receiveInputDataStructureViaOutBoundary
+		sendOutputDataStructureToViewModel
+	}
+	
+	class "ViewModel" as vm {
+		fieldData1
+		fieldData2
+		fieldData3
+		booleans for formatting 
+	}
+	class "View" as v {
+		putDataToPage
+		No processing
+		Really no need to test it!
+	}
+	class "Controller" as c {
+		createRequestModelDataStructure
+	}		
+}
+interface "InBoundary" as ib 
+interface "OutBoundary" as ob
+class "Interactor" as ia {
+	useCaseLogic
+}
+note right of ia
+	Responsible for the application business rules
+	You should be able to test all this without starting 
+	the web server. It does not contain anydependencies 
+	to the framework.
+	One interactor per use case
+end note
+class "Entity1" as e1
+class "Entity2" as e2
+class "Entity3" as e3
+class "Response\nModel" as ResM {
+	responseData1
+	responseData2
+	...
+}
+
+class "Request\nModel" as ReqM {
+	requestData1
+	requestData2
+	...
+} 
+
+interface "EntityGateway" as GW
+package "Storage (plugin)" <<rect>>{
+	class "EntityGatewayImpl" as GWI
+	class "Storage API" as SAPI
+}
+
+'interface InBoundary << (T,#FF7700)  >>
+
+User <-up- v
+P -right-> vm
+vm <-left- v
+P .down.|> ob
+P -down-> ResM
+User -down-> c
+c -[hidden]left v
+c -down-> ReqM
+c -down-> ib
+
+ib -right-> ReqM
+ia -up-> ReqM
+ib <|.down. ia
+ob <-down- ia
+ob -left-> ResM
+ia -up-> ResM
+
+ia --> e1
+ia --> e2
+ia --> e3
+
+GWI -right-> SAPI
+ia -down->GW
+GW <|.down. GWI
+e1 <-up- GWI
+e2 <-up- GWI
+e3 <-up- GWI
+
+@enduml
+

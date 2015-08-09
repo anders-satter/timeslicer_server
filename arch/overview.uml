@@ -1,0 +1,14 @@
+
+@startuml
+	component "UI" as ui
+	component "Use cases" as uc
+	component "Storage" as s
+	component "Framework" as f
+	
+	ui -> uc
+	s -up-> uc
+	f -up-> uc
+	
+	
+	
+@enduml
