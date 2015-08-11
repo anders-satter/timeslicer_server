@@ -7,7 +7,7 @@ import scala.io.Source
 import java.io.FileInputStream
 import scala.collection.mutable.HashMap
 import timeslicer.model.util.DateTime
-import timeslicer.model.util.ItemUtil
+//import timeslicer.model.util.ItemUtil
 /*
  * Reads settings from the settings.properties file
  */
@@ -57,15 +57,15 @@ object Settings {
   /**
    * Checks against the list NO_CALCULATION_ACTIVITIES in settings.properties  
    */
-  def isCalculable(activity: String):Boolean = {
-    val excludeActivities = propertiesMap("NO_CALCULATION_ACTIVITIES").split(",").map(_.trim()).map(ItemUtil.removeCitationMarks(_)).toSet
-    !excludeActivities.contains(activity)
-  }
+//  def isCalculable(activity: String):Boolean = {
+//    val excludeActivities = propertiesMap("NO_CALCULATION_ACTIVITIES").split(",").map(_.trim()).map(ItemUtil.removeCitationMarks(_)).toSet
+//    !excludeActivities.contains(activity)
+//  }
   def main(args: Array[String]): Unit = {
     loadProperties
     println(propertiesMap)
     println(specialWorkdays)
-    println(isCalculable("Lunch"))
+    //println(isCalculable("Lunch"))
     println(logFileName)
     println(projectFileName)
     

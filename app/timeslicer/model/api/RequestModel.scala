@@ -1,5 +1,6 @@
 package timeslicer.model.api
 
-trait RequestModel {
-  def userToken:Option[String]  
-} 
+/**
+ * Implementors hold input objects to a use case
+ */
+trait RequestModel {} 

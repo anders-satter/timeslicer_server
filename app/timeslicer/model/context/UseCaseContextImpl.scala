@@ -3,7 +3,7 @@ package timeslicer.model.context
 import timeslicer.model.user.User
 import timeslicer.model.user.UserImpl
 
-class ContextImpl extends Context {
+class UseCaseContextImpl extends UseCaseContext {
   private var _user: User = null
 
   def user = _user

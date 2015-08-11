@@ -7,44 +7,43 @@ import java.io.InputStream
 import java.io.ByteArrayInputStream
 import timeslicer.model.api.RequestModel
 import timeslicer.model.api.ResponseModel
+import timeslicer.model.context.UseCaseContext
+import timeslicer.model.context.UseCaseContextImpl
+import org.specs2.mock.Mockito
+import org.specs2.mutable.Before
 
 /**
- * These are unit tests
- * that we need to run
+ * Interactor unit tests
  */
 
 @RunWith(classOf[JUnitRunner])
-class InteractorSpec extends Specification {
-  "Interactor test" >> {
-    "should implement interactor trait" >> {
-      var requestValue = ""
-      var responseValue = ""
-      class InteractorImpl extends Interactor {
-        override def execute(req: RequestModel, resp: ResponseModel) = {
-          requestValue = req.userToken.get
-          responseValue = resp.responseValue1.get
-        }
-      }
-
-      val interactorImpl = new InteractorImpl
-      //create a RequestModel implementation
-      val requestModel = new RequestModel {
-        override def userToken: Option[String] = {
-          return Option("token")
-        }
-      }
-      //create a ResponseModel implementation
-      val responseModel = new ResponseModel {
-        override def responseValue1: Option[String] = {
-          return Option("value1")
-        }
-      }
-      
-      interactorImpl.execute(requestModel, responseModel)
-      requestValue == "userToken"
-      requestValue == "userToken"
-      responseValue == "value1"
-      responseValue != "value2"       
+class InteractorSpec extends Specification with Mockito{
+  /*
+   * Definitions
+   */
+  class TestResponseModel extends ResponseModel {
+    def responseValue: Option[String] = {
+      Option("value1")
     }
+  }
+  class TestInteractor extends Interactor {
+    override def execute(reg: RequestModel, context: UseCaseContext): TestResponseModel = {
+      return new TestResponseModel
+    }
+  }      
+  val mockedRequest = mock[RequestModel];
+  val mockedUseCaseContext = mock[UseCaseContext];
+  val mockedInteractor = new TestInteractor;
+
+  /*
+   * Tests
+   */
+  "Interactor" should {
+    "return value1" in {
+      mockedInteractor.execute(mockedRequest, mockedUseCaseContext).asInstanceOf[TestResponseModel].responseValue.get == "value1" must beTrue;
+    }    
+    "not return value2" in {
+    	mockedInteractor.execute(mockedRequest, mockedUseCaseContext).asInstanceOf[TestResponseModel].responseValue.get == "value2" must beFalse;
+    }        
   }
 }

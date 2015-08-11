@@ -14,5 +14,9 @@ import java.io.ByteArrayInputStream
 
 @RunWith(classOf[JUnitRunner])
 class DayResultSpec extends Specification{
-     
+  "Test Day result spec" >> {
+    "dummy test" in {
+      1==1
+    }
+  }     
 }

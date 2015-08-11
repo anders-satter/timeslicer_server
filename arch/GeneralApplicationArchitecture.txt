@@ -60,6 +60,11 @@ class "Request\nModel" as ReqM {
 } 
 
 interface "EntityGateway" as GW
+note left of GW
+	A gateway is an node on a 
+	network that serves as an 
+	entrance to another network
+end note
 package "Storage (plugin)" <<rect>>{
 	class "EntityGatewayImpl" as GWI
 	class "Storage API" as SAPI
