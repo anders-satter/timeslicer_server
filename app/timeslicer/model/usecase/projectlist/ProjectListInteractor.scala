@@ -11,7 +11,7 @@ import timeslicer.model.project.Project
 class ProjectListInteractor extends Interactor {
   override def execute(request:RequestModel, useCaseContext:UseCaseContext):ResponseModel = {
     val storage = request.asInstanceOf[ProjectListRequestModel].storage
-    val projectList = storage.projects(useCaseContext)    
+    val projectList = storage.projects(useCaseContext).get    
     return ProjectListResponseModel(projectList)
   }
 }

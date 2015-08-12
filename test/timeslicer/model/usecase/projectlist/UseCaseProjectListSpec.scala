@@ -17,7 +17,7 @@ class UseCaseProjectListSpec extends Specification with Mockito {
   val storage = mock[Storage]
   val useCaseContext = mock[UseCaseContext]
   /* create a project list of 2 projects*/
-  storage.projects(useCaseContext) returns List(Project("Project1"), Project("Project2"))
+  storage.projects(useCaseContext) returns Option(List(Project("Project1", null), Project("Project2", null)))
   val requestModel = ProjectListRequestModel(storage);
   val interactor = new ProjectListInteractor
   useCaseContext.user returns new User {

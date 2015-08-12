@@ -37,16 +37,18 @@ class FileCommunicationUtilSpec extends Specification {
       fileContent(2) must contain("2013-12-13 11:00")
     }
   }
+  
   "FileCommunicationUtil reading the settings file" >> {
     "should be able to access to setting.properties file" >> {
-      val fileContent = FileCommunicationUtil.readFromFile("settings.properties", "UTF-8")
-      println(fileContent(0))
+      val fileContent = FileCommunicationUtil.readFromFile("settings.properties", "UTF-8")      
       fileContent(2) must contain("#")
     }
     
     "FileCommunicationUtil" should {
       "return lines" in {
-        
+        val fileContent = FileCommunicationUtil.readFromFile("test/data/logOneDay.txt", "UTF-8")
+        fileContent.map(println)        
+        fileContent(2) must contain("2013-12-13 11:00")
         ok
       }
     }

@@ -8,7 +8,7 @@ import timeslicer.model.util.settings.Settings
  */
 object StorageImpl {
   val currentStorageImplementation = new FileStorage(Settings.projectFileName,
-    Settings.logFileName)
+    Settings.logFileName, Settings.usersFileName)
   def apply(): Storage = {
     return currentStorageImplementation
   }

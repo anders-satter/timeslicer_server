@@ -19,24 +19,24 @@ trait Storage {
   /**
    * All projects for the user supplied in UseCaseContext
    */
-  def projects(useCaseContext:UseCaseContext):Seq[Project]
+  def projects(useCaseContext:UseCaseContext):Option[Seq[Project]]
   
   /**
    * All activities for the project belonging to the user
    * supplied in UseCaseContext
    */
-  def activities(project:Project, useCaseContext:UseCaseContext):Seq[Activity]  
+  def activities(project:Project, useCaseContext:UseCaseContext):Option[Seq[Activity]]
   
   /**
    * TimeSlices from start datetime to end datetime for user supplied in
    * UseCaseContext
    */  
-  def timeslices(start:String, end:String, useCaseContext:UseCaseContext):Seq[TimeSlice]
+  def timeslices(start:String, end:String, useCaseContext:UseCaseContext):Option[Seq[TimeSlice]]
   
   /**
    * All users in the application
    */
-  def users():Seq[User]
+  def users():Option[Seq[User]]
   
   /**
    * Add a project for user in UseCaseContext

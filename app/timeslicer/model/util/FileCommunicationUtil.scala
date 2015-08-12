@@ -40,7 +40,7 @@ object FileCommunicationUtil {
       }
     }
   }
-
+  
   def toSource(inputStream: InputStream, decoding: String): scala.io.BufferedSource = {
     import java.nio.charset.Charset
     import java.nio.charset.CodingErrorAction

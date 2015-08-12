@@ -7,11 +7,13 @@ import scala.io.Source
 import java.io.FileInputStream
 import scala.collection.mutable.HashMap
 import timeslicer.model.util.DateTime
+import timeslicer.model.util.Util
 /*
  * Reads settings from the settings.properties file
  */
+
 object Settings {
-  
+
   private var _logFileName: String = ""
   def logFileName = _logFileName
   private def logFileName_=(value: String): Unit = _logFileName = value
@@ -23,17 +25,21 @@ object Settings {
   private var _settingsFileName: String = ""
   def settingsFileName = _settingsFileName
   private def settingsFileName_=(value: String): Unit = _settingsFileName = value
-  
+
   private val _propertiesMap: HashMap[Any, String] = new HashMap()
   def propertiesMap = _propertiesMap
-  
+
   private val _specialWorkdays: HashMap[String, Double] = new HashMap()
   def specialWorkdays = _specialWorkdays
+
+  private var _usersFileName:String = ""
+  def usersFileName = _usersFileName
+  private def usersFileName_=(value: String): Unit = _usersFileName = value
 
   def loadProperties = {
     settingsFileName = "settings.properties"
     var properties: Properties = new Properties
-    properties.load(new FileInputStream(settingsFileName))    
+    properties.load(new FileInputStream(settingsFileName))
     /*
      * NB the propNames list is only traversable ONCE!
      * 
@@ -47,26 +53,26 @@ object Settings {
       _propertiesMap += (item -> properties.getProperty(item.toString()))
       if (DateTime.isDay(item.toString)) {
         _specialWorkdays += (item.toString() -> (properties.getProperty(item.toString)).toDouble)
-      }      
-    }) 
+      }
+    })
     logFileName = propertiesMap("LogFileName")
     projectFileName = propertiesMap("ProjectFileName")
+    usersFileName = propertiesMap("UsersFileName")
   }
-  
-  /**
-   * Checks against the list NO_CALCULATION_ACTIVITIES in settings.properties  
+
+  /*
+   * properties are loaded when this class is 
+   * accessed the first time
+   * It can be reloaded at any time via the loadProperties
+   * method   
    */
-//  def isCalculable(activity: String):Boolean = {
-//    val excludeActivities = propertiesMap("NO_CALCULATION_ACTIVITIES").split(",").map(_.trim()).map(ItemUtil.removeCitationMarks(_)).toSet
-//    !excludeActivities.contains(activity)
-//  }
-  def main(args: Array[String]): Unit = {
-    loadProperties
-    println(propertiesMap)
-    println(specialWorkdays)
-    //println(isCalculable("Lunch"))
-    println(logFileName)
-    println(projectFileName)
-    
+  loadProperties
+
+  /**
+   * Checks against the list NO_CALCULATION_ACTIVITIES in settings.properties
+   */
+  def isCalculable(activity: String): Boolean = {
+    val excludeActivities = propertiesMap("NO_CALCULATION_ACTIVITIES").split(",").map(_.trim()).map(Util.removeCitationMarks(_)).toSet
+    !excludeActivities.contains(activity)
   }
 }
