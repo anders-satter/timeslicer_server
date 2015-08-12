@@ -9,6 +9,7 @@ import timeslicer.model.util.settings.Settings
 /**
  * Holds the the calendar day
  */
+
 object DateTime {
   private val format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm")
   private val formatDay = new java.text.SimpleDateFormat("yyyy-MM-dd")
@@ -16,6 +17,11 @@ object DateTime {
   private val formatTime = new java.text.SimpleDateFormat("HH:mm")
   val oneDayMs: Long = 1000 * 60 * 60 * 24
 
+  type DayStringToValueConverter = String => Int
+  type ElapsedTimeCalculator = (String,String) => Long
+  
+  
+  
   def elapsedMinutes(start: String, end: String) = {
     val d1 = format.parse(start)
     val d2 = format.parse(end)

@@ -4,7 +4,8 @@ package timeslicer.model.user
  * User of the 
  */
 trait User {
-  def name:String
+  def firstName:String
+  def lastName:String
   def id:String
   def isAuthenticated:Boolean
   def isAuthorized:Boolean

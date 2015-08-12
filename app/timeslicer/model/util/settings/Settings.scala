@@ -7,7 +7,6 @@ import scala.io.Source
 import java.io.FileInputStream
 import scala.collection.mutable.HashMap
 import timeslicer.model.util.DateTime
-//import timeslicer.model.util.ItemUtil
 /*
  * Reads settings from the settings.properties file
  */

@@ -1,17 +1,19 @@
 package timeslicer.model.util
-import scala.io.Source
+
 import java.io.FileWriter
 import java.io.InputStream
 import java.io.FileInputStream
-import scala.util.Properties
 import java.io.BufferedWriter
 import java.io.PrintWriter
+import java.nio.charset.Charset
+import java.nio.charset.CodingErrorAction
+import scala.io.Codec.decoder2codec
 
 /**
  * Different file reading routines, to be used
  * by other parts of the program
  */
-object FileUtil {
+object FileCommunicationUtil {
   /**
    * Returning lines from a text file
    */

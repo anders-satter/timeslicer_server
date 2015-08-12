@@ -18,7 +18,7 @@ class UseCaseContextSpec extends Specification with Mockito {
     val context = new UseCaseContextImpl()
     val user = mock[UserImpl]
     
-    user.name returns "Anders"
+    user.firstName returns "Anders"
     
     "Testing context" in {
       context.user == null must beTrue

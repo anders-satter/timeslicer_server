@@ -10,7 +10,8 @@ import timeslicer.model.project.Project
 
 class ProjectListInteractor extends Interactor {
   override def execute(request:RequestModel, useCaseContext:UseCaseContext):ResponseModel = {
-    val projectList:List[Project] = List(Project("Project1"))
+    val storage = request.asInstanceOf[ProjectListRequestModel].storage
+    val projectList = storage.projects(useCaseContext)    
     return ProjectListResponseModel(projectList)
   }
 }

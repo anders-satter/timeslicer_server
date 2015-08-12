@@ -5,27 +5,41 @@ import timeslicer.model.message.ErrorMessageBuilder
 
 class UserImpl extends User {
 
-  private val userNameMaxLength = 30
-  private val userNameMinLength = 6
+  private val userFirstNameMaxLength = 20
+  private val userFirstNameMinLength = 1
+  private val userLastNameMaxLength = 30
+  private val userLastNameMinLength = 1
   private val userIdMaxLength = 12
   private val userIdMinLength = 12
 
-  private var _name: String = ""
+  private var _firstName: String = ""
+  private var _lastName: String = ""
   private var _id: String = ""
   private var _isAuthenticated: Boolean = false
   private var _isAuthorized: Boolean = false
   private var _email: Option[String] = None
 
-  def name = _name
-  def name_=(value: String): Unit = _name = {
-    if (value != null && value.length >= 6 && value.length <= 30) {
+  def firstName = _firstName
+  def firstName_=(value: String): Unit = _firstName = {
+    if (value != null && value.length >= userFirstNameMinLength && value.length <= userFirstNameMaxLength) {
       value
     } else {
       val messageBuilder = new ErrorMessageBuilder();
-      messageBuilder.append("User name must be between " + userNameMinLength + " and " + userNameMaxLength + " in length.")
+      messageBuilder.append("User name must be between " + userFirstNameMinLength + " and " + userFirstNameMaxLength + " in length.")
       messageBuilder.append("Supplied value was: " + value)
       throw new IllegalArgumentException(messageBuilder.toString())
     }
+  }
+  def lastName = _lastName
+  def lastName_=(value: String): Unit = _lastName = {
+		  if (value != null && value.length >= userLastNameMinLength && value.length <= userLastNameMaxLength) {
+			  value
+		  } else {
+			  val messageBuilder = new ErrorMessageBuilder();
+			  messageBuilder.append("User name must be between " + userLastNameMinLength + " and " + userLastNameMaxLength + " in length.")
+			  messageBuilder.append("Supplied value was: " + value)
+			  throw new IllegalArgumentException(messageBuilder.toString())
+		  }
   }
 
   def id = _id

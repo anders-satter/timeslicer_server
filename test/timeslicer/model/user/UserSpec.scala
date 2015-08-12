@@ -20,14 +20,23 @@ class UserSpec extends Specification {
       (0 to length - 1).foreach(i => builder.append("x"))
       builder.toString
     }
-    val user = new UserImpl();
+    val user = new UserImpl()
+    
+    
+    "Test firstName field" in {
+      { user.firstName = argumentGenerator(0) } must throwA[IllegalArgumentException];
+      { user.firstName = argumentGenerator(21) } must throwA[IllegalArgumentException];
+      { user.firstName = argumentGenerator(1) } must not(throwA[IllegalArgumentException]);
+      { user.firstName = argumentGenerator(20) } must not(throwA[IllegalArgumentException]);
+      { user.firstName = null } must throwA[IllegalArgumentException];
+    }
 
-    "Test name field" in {
-      { user.name = argumentGenerator(5) } must throwA[IllegalArgumentException];
-      { user.name = argumentGenerator(31) } must throwA[IllegalArgumentException];
-      { user.name = argumentGenerator(6) } must not(throwA[IllegalArgumentException]);
-      { user.name = argumentGenerator(30) } must not(throwA[IllegalArgumentException]);
-      { user.name = null } must throwA[IllegalArgumentException];
+    "Test lastName field" in {
+    	{ user.lastName = argumentGenerator(0) } must throwA[IllegalArgumentException];
+    	{ user.lastName = argumentGenerator(31) } must throwA[IllegalArgumentException];
+    	{ user.lastName = argumentGenerator(6) } must not(throwA[IllegalArgumentException]);
+    	{ user.lastName = argumentGenerator(30) } must not(throwA[IllegalArgumentException]);
+    	{ user.lastName = null } must throwA[IllegalArgumentException];
     }
 
     "Test id field" in {

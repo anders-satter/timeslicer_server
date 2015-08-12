@@ -16,7 +16,7 @@ class AuthenticationInteractor extends Interactor {
     val useCaseContext = new UseCaseContextImpl();
     val user = new UserImpl
     user.id = "111111111111"
-    user.name = "Anders"
+    user.firstName = "Anders"
     user.isAuthenticated = true
     user.isAuthorized = true
     user.email = "example@email.com"
