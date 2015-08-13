@@ -47,7 +47,7 @@ class FileCommunicationUtilSpec extends Specification {
     "FileCommunicationUtil" should {
       "return lines" in {
         val fileContent = FileCommunicationUtil.readFromFile("test/data/logOneDay.txt", "UTF-8")
-        fileContent.map(println)        
+        //fileContent.map(println)        
         fileContent(2) must contain("2013-12-13 11:00")
         ok
       }

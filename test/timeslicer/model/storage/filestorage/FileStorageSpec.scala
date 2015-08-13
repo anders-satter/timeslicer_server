@@ -49,8 +49,7 @@ class FileStorageSpec extends Specification with Mockito {
     }
 
     """assert that the sum of all the projects 
-     and activities equals all items in in the file
-    """ in {
+     and activities equals all items in in the file""" in {
       val strSeq = FileCommunicationUtil.readFromFile("test/data/prj.txt", Settings.propertiesMap("ProjectFileEncoding")).toSeq
       val itemsInFileCount = strSeq.length
       //get all the projects in prj.txt
@@ -75,8 +74,10 @@ class FileStorageSpec extends Specification with Mockito {
     }
 
     "return all TimeSlice's in an interval" in {
-    	println(fileStorage.timeslices("2014-04-13","2015-01-07", useCaseContext))      
-      fileStorage.timeslices("2014-04-13","2015-01-07", useCaseContext) != None must beTrue      
+      //fileStorage.timeslices("2014-04-13","2015-01-07", useCaseContext).get foreach println
+      fileStorage.timeslices("2014-04-13", "2015-01-07", useCaseContext) != None must beTrue
+      fileStorage.timeslices("2014-04-13", "2015-01-07", useCaseContext).get.length > 0  must beTrue
+
     }
 
   }

@@ -1,0 +1,28 @@
+{
+ "users":[
+		{
+			"userId":"111111111111",
+ 			"firstName":"John",
+ 			"lastName":"Doe", 		
+	 		"isAuthenticated":"false",
+ 			"isAuthorized":"false",
+ 			"email":"example@company.com"
+		},
+		{
+			"userId":"222222222222",
+ 			"firstName":"Anders",
+ 			"lastName":"Sätter", 		
+ 			"isAuthenticated":"false",
+ 			"isAuthorized":"false",
+ 			"email":"anders.satter@telia.com"
+		},
+		{
+			"userId":"333333333333",
+ 			"firstName":"Jenny",
+ 			"lastName":"Doe", 		
+ 			"isAuthenticated":"false",
+ 			"isAuthorized":"false",
+ 			"email":"anders.satter@telia.com"
+		}
+ 	]
+}

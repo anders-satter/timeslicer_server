@@ -10,7 +10,11 @@ import timeslicer.model.util.FileCommunicationUtil._
 import timeslicer.model.util.settings.Settings
 import timeslicer.model.project.Project
 import scala.collection.mutable.ListBuffer
+import timeslicer.model.util.DateTime
 
+/**
+ * Text file based implementation of the Storage trait
+ */
 class FileStorage(projectFileName: String, logFileName: String, usersFileName: String) extends Storage {
 
   override def projects(useCaseContext: UseCaseContext): Option[Seq[Project]] = {
@@ -77,10 +81,8 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
     }
   }
 
-  def activities(project: Project, useCaseContext: UseCaseContext): Option[Seq[Activity]] = {
+  override def activities(project: Project, useCaseContext: UseCaseContext): Option[Seq[Activity]] = {
     val strSeq = readFromFile(projectFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
-    var currentPos = 0
-    var projPos = -1
 
     var pos = strSeq.toStream.takeWhile(item =>
       !item.equals("#" + project.name)).length
@@ -91,7 +93,6 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
       return None
     } else {
       var activitesForProject: ListBuffer[Activity] = new ListBuffer
-
       (pos + 1 to strSeq.length - 1)
         .toStream.map(i => strSeq(i))
         .takeWhile(_.startsWith("+"))
@@ -105,25 +106,69 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
     }
   }
 
-  def timeslices(start: String, end: String, useCaseContext: UseCaseContext): Option[Seq[TimeSlice]] = {
+  private def parseLogline(logLine: String): TimeSlice = {
+    if (logLine.length() > 0) {
+      val parts = logLine.split('\t');
+      //println(logLine)
+      return TimeSlice(parts(0),
+        parts(1),
+        parts(3).replaceAll("\"", ""),
+        parts(4).replaceAll("\"", ""),
+        Option(parts(5).replaceAll("\"", "")))
+    }
+    return null
+  }
+
+  override def timeslices(start: String, end: String, useCaseContext: UseCaseContext): Option[Seq[TimeSlice]] = {
     val strSeq = readFromFile(logFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
     /*
-     * remove all empty lines
+     * remove all empty lines and sort them
      */
-    val realLines = strSeq.filter(item => item != null && item.length() > 0)
-    
+    val filteredAndSorted = strSeq.filter(item => item != null && item.length() > 0).sortBy(_.toString())
+
+    /*
+     * select lines within the interval
+     * Now that the lines are sorted I suppose
+     */
+    val startPos = filteredAndSorted.toStream.takeWhile(item => !item.contains(start)).length
+    if (startPos == filteredAndSorted.length) {
+      /*
+       * didn't find start date
+       */
+      return None
+    } else {
+
+      /*
+       * Find the last item of end
+       * going from back to pos
+       */
+      val endPos = filteredAndSorted.length - (filteredAndSorted.length - 1 to startPos)
+        .toStream.takeWhile(i => !filteredAndSorted(i).contains(end)).length
+
+      var foundItems: ListBuffer[TimeSlice] = new ListBuffer
+      (startPos to endPos - 1)
+        .toStream.map(i => {
+          filteredAndSorted(i)
+        })
+        .foreach(item => {
+          foundItems += parseLogline(item)
+        })
+      return Option(foundItems)
+    }
+
     return None
+
   }
   def users(): Option[Seq[User]] = {
     return null
   }
-  def addProject(project: Project, useCaseContext: UseCaseContext): Unit = {
+  override def addProject(project: Project, useCaseContext: UseCaseContext): Unit = {
 
   }
-  def addActivity(activity: Activity, useCaseContext: UseCaseContext): Unit = {
+  override def addActivity(activity: Activity, useCaseContext: UseCaseContext): Unit = {
 
   }
-  def addTimeSlice(timeslice: TimeSlice, useCaseContext: UseCaseContext): Unit = {
+  override def addTimeSlice(timeslice: TimeSlice, useCaseContext: UseCaseContext): Unit = {
 
   }
 }
