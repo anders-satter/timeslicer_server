@@ -52,4 +52,8 @@ trait Storage {
    * Add a timeslice for user in UseCaseContext
    */
   def addTimeSlice(timeslice:TimeSlice, useCaseContext:UseCaseContext):Unit  
+  /**
+   * Add a timeslice for user in UseCaseContext
+   */
+  def addUser(user:User, useCaseContext:UseCaseContext):Unit  
 }

@@ -11,6 +11,7 @@ import timeslicer.model.util.settings.Settings
 import timeslicer.model.project.Project
 import scala.collection.mutable.ListBuffer
 import timeslicer.model.util.DateTime
+import play.api.libs.json.Json
 
 /**
  * Text file based implementation of the Storage trait
@@ -18,7 +19,7 @@ import timeslicer.model.util.DateTime
 class FileStorage(projectFileName: String, logFileName: String, usersFileName: String) extends Storage {
 
   override def projects(useCaseContext: UseCaseContext): Option[Seq[Project]] = {
-    val strSeq = readFromFile(projectFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
+    val strSeq = readFromFileToStringArray(projectFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
     var currentProjectName = ""
     var currentActivityName = ""
     var currentActivityList: ListBuffer[Activity] = null
@@ -82,7 +83,7 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
   }
 
   override def activities(project: Project, useCaseContext: UseCaseContext): Option[Seq[Activity]] = {
-    val strSeq = readFromFile(projectFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
+    val strSeq = readFromFileToStringArray(projectFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
 
     var pos = strSeq.toStream.takeWhile(item =>
       !item.equals("#" + project.name)).length
@@ -106,21 +107,23 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
     }
   }
 
-  private def parseLogline(logLine: String): TimeSlice = {
+  /**
+   * Parses a log line into a TimeSlice
+   */
+  private def parseLogline(logLine: String): Option[TimeSlice] = {
     if (logLine.length() > 0) {
       val parts = logLine.split('\t');
-      //println(logLine)
-      return TimeSlice(parts(0),
+      return Option(TimeSlice(parts(0),
         parts(1),
         parts(3).replaceAll("\"", ""),
         parts(4).replaceAll("\"", ""),
-        Option(parts(5).replaceAll("\"", "")))
+        Option(parts(5).replaceAll("\"", ""))))
     }
-    return null
+    return None
   }
 
   override def timeslices(start: String, end: String, useCaseContext: UseCaseContext): Option[Seq[TimeSlice]] = {
-    val strSeq = readFromFile(logFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
+    val strSeq = readFromFileToStringArray(logFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
     /*
      * remove all empty lines and sort them
      */
@@ -140,7 +143,8 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
 
       /*
        * Find the last item of end
-       * going from back to pos
+       * going from back to the last position
+       * of the end date Option
        */
       val endPos = filteredAndSorted.length - (filteredAndSorted.length - 1 to startPos)
         .toStream.takeWhile(i => !filteredAndSorted(i).contains(end)).length
@@ -151,7 +155,10 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
           filteredAndSorted(i)
         })
         .foreach(item => {
-          foundItems += parseLogline(item)
+          parseLogline(item) match {
+            case Some(t) => foundItems += t
+            case None    => /*do nothing...*/
+          }
         })
       return Option(foundItems)
     }
@@ -159,8 +166,12 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
     return None
 
   }
+
   def users(): Option[Seq[User]] = {
-    return null
+    val fileContent = readFromFileToString(usersFileName, Settings.propertiesMap("ProjectFileEncoding"))
+    val json = Json.parse(fileContent)
+    //json.
+    return None
   }
   override def addProject(project: Project, useCaseContext: UseCaseContext): Unit = {
 
@@ -169,6 +180,9 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
 
   }
   override def addTimeSlice(timeslice: TimeSlice, useCaseContext: UseCaseContext): Unit = {
+
+  }
+  override def addUser(user: User, useCaseContext: UseCaseContext): Unit = {
 
   }
 }

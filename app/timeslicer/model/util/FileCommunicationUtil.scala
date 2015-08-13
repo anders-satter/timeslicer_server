@@ -17,8 +17,33 @@ object FileCommunicationUtil {
   /**
    * Returning lines from a text file
    */
-  def readFromFile(filename: String, encoding: String): Array[String] = {
-		  toSource(new FileInputStream(filename), encoding).getLines.toArray
+  def readFromFileToStringArray(filename: String, encoding: String): Array[String] = {
+    var source: scala.io.Source = null
+    var array: Array[String] = null
+    try {
+      source = getSource(new FileInputStream(filename), encoding)
+      array = source.getLines.toArray
+    } finally {
+      source.close()
+    }
+    return array
+  }
+
+  def readFromFileToString(filename: String, encoding: String): String = {
+    //toSource(new FileInputStream(filename), encoding).mkString
+    var source: scala.io.Source = null
+    var fileContent: String = null
+    try {
+      source = getSource(new FileInputStream(filename), encoding)
+      fileContent = source.getLines.mkString
+    } finally {
+      source.close()
+    }
+    return fileContent
+  }
+
+  private def getSource(filename: String, encoding: String): scala.io.Source = {
+    scala.io.Source.fromInputStream(new FileInputStream(filename), encoding)
   }
 
   /**
@@ -40,15 +65,12 @@ object FileCommunicationUtil {
       }
     }
   }
-  
-  def toSource(inputStream: InputStream, decoding: String): scala.io.BufferedSource = {
+
+  def getSource(inputStream: InputStream, decoding: String): scala.io.BufferedSource = {
     import java.nio.charset.Charset
     import java.nio.charset.CodingErrorAction
     val decoder = Charset.forName(decoding).newDecoder()
     decoder.onMalformedInput(CodingErrorAction.IGNORE)
     scala.io.Source.fromInputStream(inputStream)(decoder)
   }
-  
-  def test:Int = 1
-  
 }

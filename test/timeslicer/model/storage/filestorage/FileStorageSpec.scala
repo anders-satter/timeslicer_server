@@ -5,7 +5,6 @@ import org.specs2.mock.Mockito
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import timeslicer.model.context.UseCaseContext
-import java.io.File
 import timeslicer.model.project.Project
 import timeslicer.model.util.FileCommunicationUtil
 import timeslicer.model.util.settings.Settings
@@ -16,7 +15,7 @@ class FileStorageSpec extends Specification with Mockito {
    * SETUP
    */
   val useCaseContext = mock[UseCaseContext]
-  val fileStorage = new FileStorage("test/data/prj.txt", "test/data/log.txt", "test/data/users.txt")
+  val fileStorage = new FileStorage("test/data/prj.txt", "test/data/log.txt", "test/data/users.json")
 
   /*
 	 * TEST
@@ -33,7 +32,7 @@ class FileStorageSpec extends Specification with Mockito {
       /*
        * count #<project-name> items in prj.txt
        */
-      val strSeq = FileCommunicationUtil.readFromFile("test/data/prj.txt", Settings.propertiesMap("ProjectFileEncoding")).toSeq
+      val strSeq = FileCommunicationUtil.readFromFileToStringArray("test/data/prj.txt", Settings.propertiesMap("ProjectFileEncoding")).toSeq
       var count = 0
       strSeq.foreach(item => {
         if (item.startsWith("#")) {
@@ -50,7 +49,7 @@ class FileStorageSpec extends Specification with Mockito {
 
     """assert that the sum of all the projects 
      and activities equals all items in in the file""" in {
-      val strSeq = FileCommunicationUtil.readFromFile("test/data/prj.txt", Settings.propertiesMap("ProjectFileEncoding")).toSeq
+      val strSeq = FileCommunicationUtil.readFromFileToStringArray("test/data/prj.txt", Settings.propertiesMap("ProjectFileEncoding")).toSeq
       val itemsInFileCount = strSeq.length
       //get all the projects in prj.txt
       val projects = fileStorage.projects(useCaseContext).get
@@ -73,11 +72,18 @@ class FileStorageSpec extends Specification with Mockito {
       itemsInFileCount == count must beTrue
     }
 
+ 
+     
     "return all TimeSlice's in an interval" in {
       //fileStorage.timeslices("2014-04-13","2015-01-07", useCaseContext).get foreach println
       fileStorage.timeslices("2014-04-13", "2015-01-07", useCaseContext) != None must beTrue
       fileStorage.timeslices("2014-04-13", "2015-01-07", useCaseContext).get.length > 0  must beTrue
-
+    }
+    
+    "read the users.json" in {
+      
+      //fileStorage.users != None must beTrue
+      ok
     }
 
   }
