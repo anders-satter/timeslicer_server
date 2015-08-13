@@ -19,7 +19,7 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
     var currentActivityName = ""
     var currentActivityList: ListBuffer[Activity] = null
     var projectList: ListBuffer[Project] = new ListBuffer
-  
+
     def addToProjectList = {
       projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
     }
@@ -42,7 +42,6 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
           /*
            * sort the activity list before we add it to the project 
            */
-          //projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
           addToProjectList
         }
 
@@ -67,12 +66,11 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
      * take care of the list item in strSeq...
      */
     addToProjectList
-    
+
     /*
      * sort the project list
      */
     if (projectList.length > 0) {
-    	//return Option(projectList.toSeq)
       return Option(projectList.sortBy(_.name).toSeq)
     } else {
       return None
@@ -85,7 +83,7 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
     var projPos = -1
 
     var pos = strSeq.toStream.takeWhile(item =>
-      !item.equals("#"+project.name)).length
+      !item.equals("#" + project.name)).length
     if (pos == strSeq.length) {
       /*
        * we didn't find the project name we asked for
@@ -100,17 +98,21 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
         .foreach(item => activitesForProject += Activity(item.substring(1, item.length)))
 
       if (activitesForProject.length > 0) {
-    	  //return Option(activitesForProject.toSeq)
         return Option(activitesForProject.sortBy(_.toString()).toSeq)
       } else {
         return None
       }
     }
-
-    return null
   }
+
   def timeslices(start: String, end: String, useCaseContext: UseCaseContext): Option[Seq[TimeSlice]] = {
-    return null
+    val strSeq = readFromFile(logFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
+    /*
+     * remove all empty lines
+     */
+    val realLines = strSeq.filter(item => item != null && item.length() > 0)
+    
+    return None
   }
   def users(): Option[Seq[User]] = {
     return null

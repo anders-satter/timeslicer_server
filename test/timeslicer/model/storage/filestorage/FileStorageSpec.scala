@@ -23,24 +23,28 @@ class FileStorageSpec extends Specification with Mockito {
 	 */
   "FileStorage" should {
     "return projects from prj.txt" in {
-
-      //      println("--start the printout--------")
-      //      fileStorage.projects(useCaseContext).get.foreach(p => {
-      //        println(p.name)
-      //        p.activityList.foreach(a => println(" " + a.name))
-      //      })
-      //      println("--end of printout--------")
       fileStorage.projects(useCaseContext) != None must beTrue
       fileStorage.projects(useCaseContext).get.length > 0 must beTrue
     }
 
+    """should assert that number of projects returned from
+      projects service should be the same as all #<project-name> items
+      in the prj.txt""" in {
+      /*
+       * count #<project-name> items in prj.txt
+       */
+      val strSeq = FileCommunicationUtil.readFromFile("test/data/prj.txt", Settings.propertiesMap("ProjectFileEncoding")).toSeq
+      var count = 0
+      strSeq.foreach(item => {
+        if (item.startsWith("#")) {
+          count = count + 1
+        }
+      })
+      count == fileStorage.projects(useCaseContext).get.length must beTrue
+
+    }
+
     "return activities for project from prj.txt" in {
-      //      println("--Team TDE--")
-      //      fileStorage.activities(Project("Team TDE", null), useCaseContext).get.map(_.name) map println
-      //      println("--jsr286--")
-      //      fileStorage.activities(Project("jsr286", null), useCaseContext).get.map(_.name) map println
-      //      println("--Miljö--")
-      //      fileStorage.activities(Project("Miljö", null), useCaseContext).get.map(_.name) map println
       fileStorage.activities(Project("Team TDE", null), useCaseContext) != None must beTrue
     }
 
@@ -68,8 +72,12 @@ class FileStorageSpec extends Specification with Mockito {
         }
       })
       itemsInFileCount == count must beTrue
-
-      ok
     }
+
+    "return all TimeSlice's in an interval" in {
+    	println(fileStorage.timeslices("2014-04-13","2015-01-07", useCaseContext))      
+      fileStorage.timeslices("2014-04-13","2015-01-07", useCaseContext) != None must beTrue      
+    }
+
   }
 }
