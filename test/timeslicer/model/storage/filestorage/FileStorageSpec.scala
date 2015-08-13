@@ -51,25 +51,22 @@ class FileStorageSpec extends Specification with Mockito {
       val itemsInFileCount = strSeq.length
       //get all the projects in prj.txt
       val projects = fileStorage.projects(useCaseContext).get
-
-      //foreach project we are going to call the activities method
-      //to get all the activity items for that project
+      /*
+       * foreach project we are going to call the activities method
+       * to get all the activity items for that project
+       */
       var count = 0
       projects.foreach(p => {
-        println("#" + p.name)
         count = count + 1
         fileStorage.activities(p, useCaseContext) match {
-          case Some(l) => {
-            l.foreach(a => {
-              println("+" + a.name)
-              count = count +1 
+          case Some(list) => {
+            list.foreach(a => {
+              count = count + 1
             })
           }
           case None => {}
         }
       })
-      println(itemsInFileCount)
-      println(count)
       itemsInFileCount == count must beTrue
 
       ok

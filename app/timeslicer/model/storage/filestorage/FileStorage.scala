@@ -19,6 +19,11 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
     var currentActivityName = ""
     var currentActivityList: ListBuffer[Activity] = null
     var projectList: ListBuffer[Project] = new ListBuffer
+  
+    def addToProjectList = {
+      projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
+    }
+
     strSeq.foreach(item => {
       /*
        * odd thing makes us needing to use contains instead of startsWith
@@ -27,11 +32,18 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
        */
       if (item.contains("#")) {
         val bracketsPos = item.indexOf("#")
+        /*
+         * if the currentProjectName has value then we
+         * that was set on a previous round and we need
+         * to store the project, along with its activityList
+         * to the projectList
+         */
         if (currentProjectName != "") {
           /*
            * sort the activity list before we add it to the project 
            */
-          projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
+          //projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
+          addToProjectList
         }
 
         /*
@@ -44,56 +56,52 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
          * this is an activity, just add it to the current activity list
          */
         currentActivityList += new Activity(item.substring(1, item.length()))
+
+        /*
+         * if this is the last item in strSeq then we need to add the current
+         * project and its list to the list of projects
+         */
       }
     })
-
+    /*
+     * take care of the list item in strSeq...
+     */
+    addToProjectList
+    
     /*
      * sort the project list
      */
     if (projectList.length > 0) {
-      //return Option(projectList.sortBy(_.name).toSeq)
-    	return Option(projectList.toSeq)
+    	//return Option(projectList.toSeq)
+      return Option(projectList.sortBy(_.name).toSeq)
     } else {
       return None
     }
-
   }
 
   def activities(project: Project, useCaseContext: UseCaseContext): Option[Seq[Activity]] = {
     val strSeq = readFromFile(projectFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
     var currentPos = 0
     var projPos = -1
-    //    strSeq.foreach(item => {
-    //      if (item.contains("#")) {
-    //        val tmpProjName = item.substring(1, item.length)
-    //        if (tmpProjName.equals(project.name)) {
-    //          /*
-    //           * we have found the project we are looking for
-    //           */
-    //          projPos = currentPos
-    //        }
-    //      }
-    //      currentPos = currentPos + 1
-    //    })
 
     var pos = strSeq.toStream.takeWhile(item =>
-      !item.substring(1, item.length).equals(project.name)).length
+      !item.equals("#"+project.name)).length
     if (pos == strSeq.length) {
       /*
        * we didn't find the project name we asked for
        */
       return None
     } else {
-      var activitesForProject:ListBuffer[Activity] = new ListBuffer
-      
+      var activitesForProject: ListBuffer[Activity] = new ListBuffer
+
       (pos + 1 to strSeq.length - 1)
         .toStream.map(i => strSeq(i))
         .takeWhile(_.startsWith("+"))
         .foreach(item => activitesForProject += Activity(item.substring(1, item.length)))
 
       if (activitesForProject.length > 0) {
-        //return Option(activitesForProject.sortBy(_.toString()).toSeq)
-        return Option(activitesForProject.toSeq)
+    	  //return Option(activitesForProject.toSeq)
+        return Option(activitesForProject.sortBy(_.toString()).toSeq)
       } else {
         return None
       }
