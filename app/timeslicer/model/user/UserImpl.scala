@@ -71,4 +71,20 @@ class UserImpl extends User {
       throw new IllegalArgumentException(email + " is not a valid email adress")
     }
   }
+  
+  override def toString():String = {
+    val buff = new StringBuilder
+    buff.append(_firstName)
+    buff.append('\n')
+    buff.append(_lastName)
+    buff.append('\n')
+    buff.append(_id)
+    buff.append('\n')
+    buff.append(_isAuthenticated)
+    buff.append('\n')
+    buff.append(_isAuthorized)
+    buff.append('\n')
+    buff.append(_email)
+    return buff.toString
+  }
 }

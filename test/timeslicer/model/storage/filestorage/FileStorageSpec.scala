@@ -81,7 +81,8 @@ class FileStorageSpec extends Specification with Mockito {
     }
     
     "read the users.json" in {
-      
+      fileStorage.users != None must beTrue
+      //they are tested in any way that can be done in this position
       //fileStorage.users != None must beTrue
       ok
     }

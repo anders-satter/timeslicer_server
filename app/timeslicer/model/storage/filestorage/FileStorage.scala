@@ -12,6 +12,8 @@ import timeslicer.model.project.Project
 import scala.collection.mutable.ListBuffer
 import timeslicer.model.util.DateTime
 import play.api.libs.json.Json
+import timeslicer.model.user.UserImpl
+import play.api.libs.json.JsString
 
 /**
  * Text file based implementation of the Storage trait
@@ -162,16 +164,38 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
         })
       return Option(foundItems)
     }
-
     return None
-
   }
 
   def users(): Option[Seq[User]] = {
     val fileContent = readFromFileToString(usersFileName, Settings.propertiesMap("ProjectFileEncoding"))
     val json = Json.parse(fileContent)
-    //json.
-    return None
+    val fnames = (json \ "users" \\ "firstName").asInstanceOf[ListBuffer[JsString]]
+    val lnames = (json \ "users" \\ "lastName").asInstanceOf[ListBuffer[JsString]]
+    val userids = (json \ "users" \\ "userId").asInstanceOf[ListBuffer[JsString]]
+    val isauths = (json \ "users" \\ "isAuthenticated").asInstanceOf[ListBuffer[JsString]]
+    val isauthoz = (json \ "users" \\ "isAuthorized").asInstanceOf[ListBuffer[JsString]]
+    val emails = (json \ "users" \\ "email").asInstanceOf[ListBuffer[JsString]]
+
+    val name = fnames(0).asInstanceOf[JsString].value
+    val userImpls = for (i <- List.range(0, fnames.length)) yield {
+      val user = new UserImpl
+      user.firstName = fnames(i).asInstanceOf[JsString].value
+      user.lastName = lnames(i).asInstanceOf[JsString].value
+      user.id = userids(i).asInstanceOf[JsString].value
+      user.isAuthenticated = java.lang.Boolean.valueOf(isauths(i).value)
+      user.isAuthorized = java.lang.Boolean.valueOf(isauthoz(i).value)
+      user.email = emails(i).asInstanceOf[JsString].value
+      user
+    }
+
+//    userImpls.foreach(item => {
+//      println(item.toString)
+//      println("-------------")
+//    })
+    return Option(userImpls)
+    
+    //return None
   }
   override def addProject(project: Project, useCaseContext: UseCaseContext): Unit = {
 
