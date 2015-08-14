@@ -14,6 +14,10 @@ import timeslicer.model.util.Util
 
 object Settings {
 
+  private var _fileStorageBaseFilePath: String = ""
+  def fileStorageBaseFilePath = _fileStorageBaseFilePath
+  private def fileStorageBaseFilePath_=(value: String): Unit = _fileStorageBaseFilePath = value
+  
   private var _logFileName: String = ""
   def logFileName = _logFileName
   private def logFileName_=(value: String): Unit = _logFileName = value
@@ -55,6 +59,7 @@ object Settings {
         _specialWorkdays += (item.toString() -> (properties.getProperty(item.toString)).toDouble)
       }
     })
+    fileStorageBaseFilePath = propertiesMap("FileStorageBaseFilePath")
     logFileName = propertiesMap("LogFileName")
     projectFileName = propertiesMap("ProjectFileName")
     usersFileName = propertiesMap("UsersFileName")

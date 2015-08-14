@@ -20,30 +20,34 @@ object FileCommunicationUtil {
   def readFromFileToStringArray(filename: String, encoding: String): Array[String] = {
     var source: scala.io.Source = null
     var array: Array[String] = null
+    //println("readFromFileToStringArray"+filename)
     try {
       source = getSource(new FileInputStream(filename), encoding)
       array = source.getLines.toArray
     } finally {
-      source.close()
+      try {
+        source.close()
+      } catch {
+        case e: Exception => /*nothing*/
+      }
     }
     return array
   }
 
   def readFromFileToString(filename: String, encoding: String): String = {
-    //toSource(new FileInputStream(filename), encoding).mkString
     var source: scala.io.Source = null
     var fileContent: String = null
     try {
       source = getSource(new FileInputStream(filename), encoding)
       fileContent = source.getLines.mkString
     } finally {
-      source.close()
+      try {
+        source.close()
+      } catch {
+        case e: Exception => /*do nothing*/
+      }
     }
     return fileContent
-  }
-
-  private def getSource(filename: String, encoding: String): scala.io.Source = {
-    scala.io.Source.fromInputStream(new FileInputStream(filename), encoding)
   }
 
   /**
@@ -63,6 +67,34 @@ object FileCommunicationUtil {
       } finally {
         out.close()
       }
+    }
+  }
+
+  /**
+   * Check 
+   */
+  def createUserIdFilesIfNotExists(userId: String, usersPath: String): String = {
+    val idDir = new java.io.File(usersPath + '/' + userId)
+    val projFile = new java.io.File(idDir.getPath + "/" + "prj.txt")
+    val logFile = new java.io.File(idDir.getPath + "/" + "log.txt")
+    if (idDir.exists && idDir.isDirectory()) {
+      createFiles(projFile, logFile)
+      //return idDir.getPath
+      return userId
+    } else {
+      idDir.mkdir()
+      createFiles(projFile, logFile)
+      //return idDir.getPath
+      return userId
+    }
+  }
+
+  private def createFiles(projFile: java.io.File, logFile: java.io.File) = {
+    if (!projFile.exists()) {
+      projFile.createNewFile()
+    }
+    if (!logFile.exists()) {
+      logFile.createNewFile()
     }
   }
 

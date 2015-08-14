@@ -2,11 +2,15 @@ package timeslicer.model.storage.filestorage
 
 import timeslicer.model.storage.Storage
 import timeslicer.model.context.UseCaseContext
+import timeslicer.model.context.UseCaseContextUtil.validateUseCaseContext
 import timeslicer.model.project.Project
 import timeslicer.model.project.Activity
 import timeslicer.model.timeslice.TimeSlice
 import timeslicer.model.user.User
-import timeslicer.model.util.FileCommunicationUtil._
+import timeslicer.model.util.FileCommunicationUtil.readFromFileToString
+import timeslicer.model.util.FileCommunicationUtil.readFromFileToStringArray
+import timeslicer.model.util.FileCommunicationUtil.createUserIdFilesIfNotExists
+import timeslicer.model.util.FileCommunicationUtil.saveToFile
 import timeslicer.model.util.settings.Settings
 import timeslicer.model.project.Project
 import scala.collection.mutable.ListBuffer
@@ -14,21 +18,69 @@ import timeslicer.model.util.DateTime
 import play.api.libs.json.Json
 import timeslicer.model.user.UserImpl
 import play.api.libs.json.JsString
+import timeslicer.model.storage.exception.ItemAlreadyExistsException
+import timeslicer.model.storage.exception.InvalidArgumentException
+import timeslicer.model.message.MessageBuilder
+import java.io.File
 
 /**
  * Text file based implementation of the Storage trait
+ * baseFilePath is where the file structures used by this
+ * Storage implementation is located, ex filestorage/data
+ * users/users.json - depicts all the users in the application
+ * users/<userid>/prj.txt - projects/activities for a userid
+ * users/<userid>/log.txt - timeslice entries for a userid
+ * users/default/log.txt - timeslice entries for the default user
+ * users/default/prj.txt - projects/activities for the default user
  */
-class FileStorage(projectFileName: String, logFileName: String, usersFileName: String) extends Storage {
+class FileStorage(baseFilePath: String, projectFileName: String, logFileName: String, usersFileName: String) extends Storage {
+
+  val calcIdPath: (UseCaseContext) => String = useCaseContext => {
+    val builder = new StringBuilder()
+    builder.append(baseFilePath)
+    builder.append('/')
+    builder.append("users")
+    builder.append('/')
+    builder.append(
+      createUserIdFilesIfNotExists(
+        validateUseCaseContext(useCaseContext).user.id, builder.toString))        
+    builder.append('/')
+    builder.toString()
+  }
+
+  val calcProjectFileName: (UseCaseContext) => String = useCaseContext => {
+    val builder = new StringBuilder(calcIdPath(useCaseContext))
+    builder.append(projectFileName)
+    builder.toString()
+  }
+
+  val calcLogFileName: (UseCaseContext) => String = useCaseContext => {
+    val builder = new StringBuilder(calcIdPath(useCaseContext))
+    builder.append(logFileName)
+    builder.toString()
+  }
+  
+  val calcUsersFileName: () => String = () => {
+    val builder = new StringBuilder(baseFilePath)    
+    builder.append('/')
+    builder.append("users")    
+    builder.append('/')    
+    builder.append(usersFileName)
+    builder.toString
+  }
 
   override def projects(useCaseContext: UseCaseContext): Option[Seq[Project]] = {
-    val strSeq = readFromFileToStringArray(projectFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
+    //println("In projects " + calcProjectFileName(useCaseContext))
+    val strSeq = readFromFileToStringArray(calcProjectFileName(useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq
     var currentProjectName = ""
     var currentActivityName = ""
     var currentActivityList: ListBuffer[Activity] = null
     var projectList: ListBuffer[Project] = new ListBuffer
 
     def addToProjectList = {
-      projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
+      if (currentProjectName.trim().length()>0){        
+    	  projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))        
+      }
     }
 
     strSeq.foreach(item => {
@@ -85,7 +137,7 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
   }
 
   override def activities(project: Project, useCaseContext: UseCaseContext): Option[Seq[Activity]] = {
-    val strSeq = readFromFileToStringArray(projectFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
+    val strSeq = readFromFileToStringArray(calcProjectFileName(useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq
 
     var pos = strSeq.toStream.takeWhile(item =>
       !item.equals("#" + project.name)).length
@@ -125,7 +177,7 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
   }
 
   override def timeslices(start: String, end: String, useCaseContext: UseCaseContext): Option[Seq[TimeSlice]] = {
-    val strSeq = readFromFileToStringArray(logFileName, Settings.propertiesMap("ProjectFileEncoding")).toSeq
+    val strSeq = readFromFileToStringArray(calcLogFileName(useCaseContext), Settings.propertiesMap("LogFileEncoding")).toSeq
     /*
      * remove all empty lines and sort them
      */
@@ -168,7 +220,7 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
   }
 
   def users(): Option[Seq[User]] = {
-    val fileContent = readFromFileToString(usersFileName, Settings.propertiesMap("ProjectFileEncoding"))
+    val fileContent = readFromFileToString(calcUsersFileName(), Settings.propertiesMap("ProjectFileEncoding"))
     val json = Json.parse(fileContent)
     val fnames = (json \ "users" \\ "firstName").asInstanceOf[ListBuffer[JsString]]
     val lnames = (json \ "users" \\ "lastName").asInstanceOf[ListBuffer[JsString]]
@@ -189,24 +241,43 @@ class FileStorage(projectFileName: String, logFileName: String, usersFileName: S
       user
     }
 
-//    userImpls.foreach(item => {
-//      println(item.toString)
-//      println("-------------")
-//    })
     return Option(userImpls)
-    
-    //return None
+
   }
+
   override def addProject(project: Project, useCaseContext: UseCaseContext): Unit = {
-
+    /*
+     * check if the project name already exists
+     * if not add the the project name to prj.txt
+     */
+    val currentProjects: Seq[Project] = projects(useCaseContext).get
+    if (currentProjects.filter(i => i.name.equals(project.name)).length < 1) {
+      saveToFile(calcProjectFileName(useCaseContext), "#" + project.name, true)
+    } else {
+      throw new ItemAlreadyExistsException("There is already a project with the name " + project.name)
+    }
   }
-  override def addActivity(activity: Activity, useCaseContext: UseCaseContext): Unit = {
 
+  override def addActivity(project: Project, activity: Activity, useCaseContext: UseCaseContext): Unit = {
+    /*
+     * find the project to which the activity is
+     * to be added
+		 * check if the activity name already exists
+		 * if not add the the project name to prj.txt
+		 */
+    //println(project.name)
+    val strSeq = readFromFileToStringArray(calcProjectFileName(useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq
+    val projectIndex = strSeq.indexOf("#" + project.name)
   }
   override def addTimeSlice(timeslice: TimeSlice, useCaseContext: UseCaseContext): Unit = {
-
+    /*
+     * add TimeSlice to log.txt
+     */
   }
   override def addUser(user: User, useCaseContext: UseCaseContext): Unit = {
-
+    /*
+     * add user structure to users.json
+     */
   }
 }
+

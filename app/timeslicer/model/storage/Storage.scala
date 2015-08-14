@@ -46,7 +46,7 @@ trait Storage {
   /**
    * Add an activity for user in UseCaseContext
    */
-  def addActivity(activity:Activity, useCaseContext:UseCaseContext):Unit
+  def addActivity(project:Project,activity:Activity, useCaseContext:UseCaseContext):Unit
   
   /**
    * Add a timeslice for user in UseCaseContext

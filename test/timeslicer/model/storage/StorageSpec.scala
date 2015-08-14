@@ -33,7 +33,7 @@ class StorageSpec extends Specification with Mockito {
   storage.activities(project, useCaseContext) returns Option(activitySeq)
   storage.users() returns Option(usersSeq)
   storage.timeslices("","",useCaseContext) returns Option(timeslices)
-  storage.addActivity(Activity("act1"), useCaseContext)
+  storage.addActivity(project,Activity("act1"), useCaseContext)
   
   
 
@@ -54,7 +54,7 @@ class StorageSpec extends Specification with Mockito {
       storage.users.get.length > 0 must beTrue
     }
     "add actitivty" in {
-      storage.addActivity(Activity("act1"), useCaseContext)
+      storage.addActivity(project,Activity("act1"), useCaseContext)
       ok
     }
     "add project" in {
