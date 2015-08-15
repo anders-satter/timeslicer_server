@@ -43,7 +43,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     builder.append('/')
     builder.append(
       createUserIdFilesIfNotExists(
-        validateUseCaseContext(useCaseContext).user.id, builder.toString))        
+        validateUseCaseContext(useCaseContext).user.id, builder.toString))
     builder.append('/')
     builder.toString()
   }
@@ -59,12 +59,12 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     builder.append(logFileName)
     builder.toString()
   }
-  
+
   val calcUsersFileName: () => String = () => {
-    val builder = new StringBuilder(baseFilePath)    
+    val builder = new StringBuilder(baseFilePath)
     builder.append('/')
-    builder.append("users")    
-    builder.append('/')    
+    builder.append("users")
+    builder.append('/')
     builder.append(usersFileName)
     builder.toString
   }
@@ -78,8 +78,8 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     var projectList: ListBuffer[Project] = new ListBuffer
 
     def addToProjectList = {
-      if (currentProjectName.trim().length()>0){        
-    	  projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))        
+      if (currentProjectName.trim().length() > 0) {
+        projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
       }
     }
 
@@ -240,9 +240,18 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
       user.email = emails(i).asInstanceOf[JsString].value
       user
     }
-
     return Option(userImpls)
+  }
 
+  private def prepareProjectsForPersistence(seq: Seq[Project]): String = {
+    var builder = new StringBuilder
+    seq.foreach(item => {
+      builder.append("#"+item.name)
+      item.activityList.foreach(a => {
+        builder.append("+"+a.name)
+      })
+    })
+    builder.toString
   }
 
   override def addProject(project: Project, useCaseContext: UseCaseContext): Unit = {
@@ -251,10 +260,18 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
      * if not add the the project name to prj.txt
      */
     val currentProjects: Seq[Project] = projects(useCaseContext).get
-    if (currentProjects.filter(i => i.name.equals(project.name)).length < 1) {
-      saveToFile(calcProjectFileName(useCaseContext), "#" + project.name, true)
+    if (currentProjects.filter(i => i.name.equals(project.name)).length < 1) {      
+      val fileContent = prepareProjectsForPersistence(currentProjects ++ Seq(project))
+      saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
     } else {
       throw new ItemAlreadyExistsException("There is already a project with the name " + project.name)
+    }
+  }
+  
+  private def removeProject(project:Project, projSeq:Seq[Project]):Seq[Project] = {
+    projSeq.indexWhere(p=>p.name == project.name) match {
+      case -1 => projSeq
+      case n => (projSeq take n) ++ (projSeq drop (n + 1)) 
     }
   }
 
@@ -266,9 +283,20 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 		 * if not add the the project name to prj.txt
 		 */
     //println(project.name)
-    val strSeq = readFromFileToStringArray(calcProjectFileName(useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq
-    val projectIndex = strSeq.indexOf("#" + project.name)
+    val tmpProjects = projects(useCaseContext)
+     tmpProjects match {
+      case Some(prjSeq) => {
+    	  prjSeq.foreach(p => 
+          if (p.name == project.name) {
+            p.activityList += activity
+          })
+        val fileContent = prepareProjectsForPersistence(prjSeq)
+        saveToFile(calcProjectFileName(useCaseContext), fileContent, false)  
+      }
+      case None => /*do nothing*/
+    }
   }
+  
   override def addTimeSlice(timeslice: TimeSlice, useCaseContext: UseCaseContext): Unit = {
     /*
      * add TimeSlice to log.txt
