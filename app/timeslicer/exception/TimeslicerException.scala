@@ -5,6 +5,6 @@ package timeslicer.exception
  */
 class TimeslicerException(val message:String) extends java.lang.RuntimeException {
   override def getMessage():String = {
-    "Timeslicer Application Exception " + message + " " + super.getMessage
+    "Timeslicer error " + message + " " + super.getMessage
   }
 }

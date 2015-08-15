@@ -292,7 +292,15 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
       case Some(prjSeq) => {
         prjSeq.foreach(p =>
           if (p.name == project.name) {
-            p.activityList += activity
+
+            /*
+             * first check if the activity already exists in the list
+             */
+            if (p.activityList.filter(a => a.name == activity.name).length > 0) {
+              throw new ItemAlreadyExistsException(new MessageBuilder().append("There is already an activity with the name " + activity.name).toString())
+            } else {
+              p.activityList += activity
+            }
           })
         val fileContent = fsUtil.prepareProjectsForPersistence(prjSeq)
         saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
@@ -312,7 +320,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
               p.activityList.indexWhere(a => a.name == activity.name) match {
                 case -1 => /*do nothing*/
                 case n => {
-                  (p.activityList take n) ++ (p.activityList drop (n + 1))
+                  p.activityList.remove(n)
                   val fileContent = fsUtil.prepareProjectsForPersistence(projSeq)
                   saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
                 }

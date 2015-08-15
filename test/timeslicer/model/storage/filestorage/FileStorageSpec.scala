@@ -16,6 +16,8 @@ import timeslicer.model.user.User
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.project.Project
 import timeslicer.model.project.Project
+import timeslicer.model.storage.exception.ItemAlreadyExistsException
+import timeslicer.model.message.MessageBuilder
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {
@@ -178,7 +180,7 @@ class FileStorageSpec extends Specification with Mockito {
        */
       fileStorage.addProject(project1, useCaseContext)
       fileStorage.addProject(project2, useCaseContext)
-      println(fileStorage.projects(useCaseContext).get)
+      //println(fileStorage.projects(useCaseContext).get)
       (fileStorage.projects(useCaseContext).get.filter(p => p.name == project1.name).length > 0) must beTrue
       (fileStorage.projects(useCaseContext).get.filter(p => p.name == project2.name).length > 0) must beTrue
       fileStorage.projects(useCaseContext).get.length == originalLength + 2 must beTrue
@@ -205,10 +207,38 @@ class FileStorageSpec extends Specification with Mockito {
         }
       }
     }
-
-    "add activity" in {
-      fileStorage.addActivity(Project("webtrends", null), Activity("newAct1"), useCaseContext)
-      ok
+    
+    "add activity" should {
+      /*
+       * define a project
+       */
+      val project1 = Project("project1", null)
+    	/*
+    	 * first remove the project to be sure
+       * that we can add it...
+    	 */
+      fileStorage.removeProject(project1, useCaseContext)
+      /*
+       * ...then add it again
+       */
+      fileStorage.addProject(Project("project1", null),useCaseContext)
+      /*
+       * add the activity
+       */
+      fileStorage.addActivity(Project("project1", null), Activity("newAct1"), useCaseContext);
+      
+      "Throw an ItemAlreadyExistsException" in {
+        fileStorage.addActivity(Project("project1", null), Activity("newAct1"), useCaseContext) must throwA(new ItemAlreadyExistsException(new MessageBuilder().append("There is already an activity with the name " + "newAct1").toString()))
+      }      
+      
+      "Remove the activity" in {
+    	  fileStorage.removeActivity(Project("project1", null), Activity("newAct1"), useCaseContext);
+        
+        ok
+      }
+      
+      
+      
     }
 
     "file location test" in {
