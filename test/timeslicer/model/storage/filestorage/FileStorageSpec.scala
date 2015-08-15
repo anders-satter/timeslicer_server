@@ -14,6 +14,8 @@ import timeslicer.model.project.Activity
 import play.Play
 import timeslicer.model.user.User
 import timeslicer.model.context.UseCaseContext
+import timeslicer.model.project.Project
+import timeslicer.model.project.Project
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {
@@ -31,7 +33,7 @@ class FileStorageSpec extends Specification with Mockito {
   val testUsersFileName = "users.json"
   val fileStorage = new FileStorage(testFileStorageBasePath, testPrjFileName, testLogFileName, testUsersFileName)
   //println(fileStorage.calcProjectFileName(useCaseContext))
-  val projectFileSeq = FileCommunicationUtil.readFromFileToStringArray(fileStorage.calcProjectFileName(useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq
+  val projectFileSeq = FileCommunicationUtil.readFromFileToStringArray(fileStorage.calcProjectFileName(useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq.filter(i => i.length() > 1)
   //println("strSeq: " + strSeq.length)
   /*
 	 * TEST
@@ -70,12 +72,12 @@ class FileStorageSpec extends Specification with Mockito {
      and activities equals all items in in the file""" in {
       val strSeq = FileCommunicationUtil.readFromFileToStringArray(
         fileStorage.calcProjectFileName(
-          useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq
+          useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq.filter(i => i.length() > 1)
       val ret = fileStorage.projects(useCaseContext)
       if (strSeq.length < 1 && ret == None) {
         ok
       } else {
-        val itemsInFileCount = strSeq.length
+        val itemsInFileCount = strSeq.filter(i => i.length() > 1).length
         val projects = ret.get
         //get all the projects in prj.txt
         /*
@@ -103,7 +105,7 @@ class FileStorageSpec extends Specification with Mockito {
         fileStorage.calcLogFileName(
           useCaseContext), Settings.propertiesMap("LogFileEncoding")).toSeq
       val ret = fileStorage.timeslices("2014-04-13", "2015-01-07", useCaseContext)
-      if (strSeq.length < 1 && ret == None ){
+      if (strSeq.length < 1 && ret == None) {
         ok
       } else {
         //fileStorage.timeslices("2014-04-13","2015-01-07", useCaseContext).get foreach println
@@ -122,7 +124,86 @@ class FileStorageSpec extends Specification with Mockito {
     }
 
     "add project" in {
+
       ok
+    }
+
+    "remove project in FileStorageUtil" in {
+      val projectSeq: Seq[Project] = Seq(Project("prj1", null), Project("prj2", null), Project("prj3", null))
+      //println(projectSeq)
+      val removedPrj2 = FileStorageUtil.performProjectRemoval(Project("prj2", null), projectSeq)
+      //println(removedPrj2)
+      ok
+    }
+
+    "perform project CRD in FileStorage" in {
+      val project1 = Project("test1", null)
+      val project2 = Project("test2", null)
+
+      /*
+    	 * First remove the projects to assure that
+    	 * we begin from scratch
+       * if neither of the exists, nothing will 
+       * happen
+    	 */
+      fileStorage.removeProject(project1, useCaseContext)
+      fileStorage.removeProject(project2, useCaseContext)
+
+      /*
+       * Check the number of persistent objects to begin with
+       */
+      val originalLength = {
+        fileStorage.projects(useCaseContext) match {
+          case Some(l) => {
+            l.length
+          }
+          case None => {
+            0
+          }
+        }
+      }
+
+      fileStorage.projects(useCaseContext) match {
+        case Some(l) => {
+          (l.filter(p => p.name == project1.name).length < 1) must beTrue
+          (l.filter(p => p.name == project2.name).length < 1) must beTrue
+        }
+        case None => {
+          ok
+        }
+      }
+
+      /*
+       * Add the project and assert it is there
+       */
+      fileStorage.addProject(project1, useCaseContext)
+      fileStorage.addProject(project2, useCaseContext)
+      println(fileStorage.projects(useCaseContext).get)
+      (fileStorage.projects(useCaseContext).get.filter(p => p.name == project1.name).length > 0) must beTrue
+      (fileStorage.projects(useCaseContext).get.filter(p => p.name == project2.name).length > 0) must beTrue
+      fileStorage.projects(useCaseContext).get.length == originalLength + 2 must beTrue
+
+      /*
+       * Remove the project again 
+       */
+      fileStorage.removeProject(project1, useCaseContext)
+      fileStorage.projects(useCaseContext) match {
+        case Some(l) => {
+          (l.filter(p => p.name == project1.name).length < 1) must beTrue
+        }
+        case None => {
+          ok
+        }
+      }
+      fileStorage.removeProject(project2, useCaseContext)
+      fileStorage.projects(useCaseContext) match {
+        case Some(l) => {
+          (l.filter(p => p.name == project1.name).length < 1) must beTrue
+        }
+        case None => {
+          ok
+        }
+      }
     }
 
     "add activity" in {

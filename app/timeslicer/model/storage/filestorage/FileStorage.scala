@@ -34,7 +34,11 @@ import java.io.File
  * users/default/prj.txt - projects/activities for the default user
  */
 class FileStorage(baseFilePath: String, projectFileName: String, logFileName: String, usersFileName: String) extends Storage {
+  val fsUtil = FileStorageUtil
 
+  /*
+   * Path and file name related functions  
+   */
   val calcIdPath: (UseCaseContext) => String = useCaseContext => {
     val builder = new StringBuilder()
     builder.append(baseFilePath)
@@ -69,6 +73,9 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     builder.toString
   }
 
+  /*
+   * Overrides form Storage trait
+   */
   override def projects(useCaseContext: UseCaseContext): Option[Seq[Project]] = {
     //println("In projects " + calcProjectFileName(useCaseContext))
     val strSeq = readFromFileToStringArray(calcProjectFileName(useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq
@@ -243,69 +250,96 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     return Option(userImpls)
   }
 
-  private def prepareProjectsForPersistence(seq: Seq[Project]): String = {
-    var builder = new StringBuilder
-    seq.foreach(item => {
-      builder.append("#"+item.name)
-      item.activityList.foreach(a => {
-        builder.append("+"+a.name)
-      })
-    })
-    builder.toString
-  }
-
   override def addProject(project: Project, useCaseContext: UseCaseContext): Unit = {
     /*
      * check if the project name already exists
      * if not add the the project name to prj.txt
      */
-    val currentProjects: Seq[Project] = projects(useCaseContext).get
-    if (currentProjects.filter(i => i.name.equals(project.name)).length < 1) {      
-      val fileContent = prepareProjectsForPersistence(currentProjects ++ Seq(project))
-      saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
-    } else {
-      throw new ItemAlreadyExistsException("There is already a project with the name " + project.name)
-    }
-  }
-  
-  private def removeProject(project:Project, projSeq:Seq[Project]):Seq[Project] = {
-    projSeq.indexWhere(p=>p.name == project.name) match {
-      case -1 => projSeq
-      case n => (projSeq take n) ++ (projSeq drop (n + 1)) 
+    this.projects(useCaseContext) match {
+      case Some(projSeq) => {
+        if (projSeq.filter(p => p.name == project.name).length > 0) {
+          //project exists already
+          throw new ItemAlreadyExistsException("There is already a project with the name " + project.name)
+
+        } else {
+          //add the project
+          val fileContent = fsUtil.prepareProjectsForPersistence(projSeq ++ Seq(project))
+          saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
+        }
+      }
+      case None => {
+        //add the project
+        val fileContent = fsUtil.prepareProjectsForPersistence(Seq(project))
+        saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
+      }
     }
   }
 
-  override def addActivity(project: Project, activity: Activity, useCaseContext: UseCaseContext): Unit = {
-    /*
-     * find the project to which the activity is
-     * to be added
-		 * check if the activity name already exists
-		 * if not add the the project name to prj.txt
-		 */
-    //println(project.name)
-    val tmpProjects = projects(useCaseContext)
-     tmpProjects match {
+  override def removeProject(project: Project, useCaseContext: UseCaseContext): Unit = {
+    val currentProjects: Option[Seq[Project]] = projects(useCaseContext)
+    currentProjects match {
       case Some(prjSeq) => {
-    	  prjSeq.foreach(p => 
-          if (p.name == project.name) {
-            p.activityList += activity
-          })
-        val fileContent = prepareProjectsForPersistence(prjSeq)
-        saveToFile(calcProjectFileName(useCaseContext), fileContent, false)  
+        val resSeq = fsUtil.performProjectRemoval(project, prjSeq)
+        saveToFile(calcProjectFileName(useCaseContext), fsUtil.prepareProjectsForPersistence(resSeq), false)
       }
       case None => /*do nothing*/
     }
   }
-  
+
+  override def addActivity(project: Project, activity: Activity, useCaseContext: UseCaseContext): Unit = {
+    val tmpProjects = projects(useCaseContext)
+    tmpProjects match {
+      case Some(prjSeq) => {
+        prjSeq.foreach(p =>
+          if (p.name == project.name) {
+            p.activityList += activity
+          })
+        val fileContent = fsUtil.prepareProjectsForPersistence(prjSeq)
+        saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
+      }
+      case None => /*do nothing*/
+    }
+  }
+
+  override def removeActivity(project: Project, activity: Activity, useCaseContext: UseCaseContext): Unit = {
+    projects(useCaseContext) match {
+      case Some(projSeq) => {
+        projSeq.foreach(p => {
+          if (p.name == project.name) {
+            if (p.activityList == null) {
+              /*do nothing, should probably log here*/
+            } else {
+              p.activityList.indexWhere(a => a.name == activity.name) match {
+                case -1 => /*do nothing*/
+                case n => {
+                  (p.activityList take n) ++ (p.activityList drop (n + 1))
+                  val fileContent = fsUtil.prepareProjectsForPersistence(projSeq)
+                  saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
+                }
+              }
+            }
+          }
+        })
+      }
+      case None => /*do nothing, should probably do some logging here*/
+    }
+  }
+
   override def addTimeSlice(timeslice: TimeSlice, useCaseContext: UseCaseContext): Unit = {
     /*
      * add TimeSlice to log.txt
      */
   }
+  override def removeTimeSlice(timeslice: TimeSlice, useCaseContext: UseCaseContext): Unit = {
+
+  }
   override def addUser(user: User, useCaseContext: UseCaseContext): Unit = {
     /*
      * add user structure to users.json
      */
+  }
+  override def removeUser(user: User, useCaseContext: UseCaseContext): Unit = {
+
   }
 }
 

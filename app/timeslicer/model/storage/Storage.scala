@@ -42,18 +42,35 @@ trait Storage {
    * Add a project for user in UseCaseContext
    */
   def addProject(project:Project, useCaseContext:UseCaseContext):Unit
+  /**
+   * Remove a project for user in UseCaseContext
+   */
+  def removeProject(project:Project, useCaseContext:UseCaseContext):Unit
   
   /**
    * Add an activity for user in UseCaseContext
    */
   def addActivity(project:Project,activity:Activity, useCaseContext:UseCaseContext):Unit
+  /**
+   * Remove an activity for user in UseCaseContext
+   */
+  def removeActivity(project:Project,activity:Activity, useCaseContext:UseCaseContext):Unit
   
   /**
    * Add a timeslice for user in UseCaseContext
    */
   def addTimeSlice(timeslice:TimeSlice, useCaseContext:UseCaseContext):Unit  
   /**
-   * Add a timeslice for user in UseCaseContext
+   * Remove a timeslice for user in UseCaseContext
+   */
+  def removeTimeSlice(timeslice:TimeSlice, useCaseContext:UseCaseContext):Unit  
+  
+  /**
+   * Add a user of the system
    */
   def addUser(user:User, useCaseContext:UseCaseContext):Unit  
+  /**
+   * Remove a user of the system
+   */
+  def removeUser(user:User, useCaseContext:UseCaseContext):Unit  
 }
