@@ -18,6 +18,7 @@ import timeslicer.model.project.Project
 import timeslicer.model.project.Project
 import timeslicer.model.storage.exception.ItemAlreadyExistsException
 import timeslicer.model.message.MessageBuilder
+import timeslicer.model.timeslice.TimeSlice
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {
@@ -233,12 +234,39 @@ class FileStorageSpec extends Specification with Mockito {
       
       "Remove the activity" in {
     	  fileStorage.removeActivity(Project("project1", null), Activity("newAct1"), useCaseContext);
-        
+        fileStorage.projects(useCaseContext) match {
+          case Some(prjList) => {
+            /* This is were we should be at this point, since we should have project1 still defined */
+            prjList.filter(p => p.name == project1.name).map(p => {
+              p.activityList.indexOf(Activity("newAct1")) == -1 must beTrue
+            })
+          }
+          case None => {
+            ok
+          }        
+        }
         ok
       }
       
-      
-      
+      "Remove the project" in {
+        fileStorage.removeProject(project1, useCaseContext)
+        fileStorage.projects(useCaseContext) match {
+          case Some(pl) => {
+            pl.filter(p => p.name == project1.name).length < 1 must beTrue
+          }
+          case None => ok
+        }
+        
+        /* Another removal of a project should not lead to anything */
+        fileStorage.removeProject(project1, useCaseContext)        
+        ok
+      }
+    }
+    
+    "add a TimeSlice" in {
+      val timeslice1 = TimeSlice("2015-08-14 10:30","2015-08-14 10:55","TProject","TActivity",Option("comment"))
+      fileStorage.addTimeSlice(timeslice1, useCaseContext)
+      ok
     }
 
     "file location test" in {

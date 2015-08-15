@@ -282,7 +282,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
         val resSeq = fsUtil.performProjectRemoval(project, prjSeq)
         saveToFile(calcProjectFileName(useCaseContext), fsUtil.prepareProjectsForPersistence(resSeq), false)
       }
-      case None => /*do nothing*/
+      case None => /*do nothing, should probably log something*/
     }
   }
 
@@ -334,12 +334,14 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
   }
 
   override def addTimeSlice(timeslice: TimeSlice, useCaseContext: UseCaseContext): Unit = {
-    /*
-     * add TimeSlice to log.txt
-     */
+    saveToFile(calcLogFileName(useCaseContext), fsUtil.prepareTimeSliceForPersistence(timeslice), true)
   }
   override def removeTimeSlice(timeslice: TimeSlice, useCaseContext: UseCaseContext): Unit = {
-
+    /*
+     * Should we really have an implementation of this?
+     * Or should we be able to add 'negative' TimeSlice, 
+     * to cancel out a previous one.
+     */
   }
   override def addUser(user: User, useCaseContext: UseCaseContext): Unit = {
     /*

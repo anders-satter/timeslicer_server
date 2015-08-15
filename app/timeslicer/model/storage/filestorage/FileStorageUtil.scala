@@ -2,6 +2,7 @@
 package timeslicer.model.storage.filestorage
 
 import timeslicer.model.project.Project
+import timeslicer.model.timeslice.TimeSlice
 
 object FileStorageUtil {
   def performProjectRemoval(project: Project, projSeq: Seq[Project]): Seq[Project] = {
@@ -23,6 +24,27 @@ object FileStorageUtil {
       }
     })
     builder.toString    
+  }
+  
+  def prepareTimeSliceForPersistence(timeslice:TimeSlice):String = {
+    val builder = new StringBuilder
+    builder.append(timeslice.start)
+    builder.append('\t')
+    builder.append(timeslice.end)
+    builder.append('\t')
+    builder.append("0")
+    builder.append('\t')
+    builder.append('"' + timeslice.project + '"')
+    builder.append('\t')
+    builder.append('"' + timeslice.activity + '"')
+    builder.append('\t')
+    timeslice.comment match{
+      case Some(c) => {
+        builder.append('"' + c + '"')
+      }
+      case None => builder.append('"' + '"')
+    }
+    builder.toString
   }
 
 }
