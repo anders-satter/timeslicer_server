@@ -22,6 +22,7 @@ import timeslicer.model.timeslice.TimeSlice
 import play.api.libs.json.Json
 import scala.collection.mutable.ListBuffer
 import play.api.libs.json.JsString
+import timeslicer.model.user.UserImpl
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {
@@ -312,25 +313,40 @@ class FileStorageSpec extends Specification with Mockito {
       val fileContent = FileCommunicationUtil
         .readFromFileToString(fileStorage.calcUsersFileName(), Settings.propertiesMap("ProjectFileEncoding"))
       val usersInFileCount = {
-        if (fileContent.trim().length()<1){
+        if (fileContent.trim().length() < 1) {
           0
         } else {
-        	val json = Json.parse(fileContent)
-        	val userids = (json \ "users" \\ "userId").asInstanceOf[ListBuffer[JsString]]
-        	userids.length                 
+          val json = Json.parse(fileContent)
+          val userids = (json \ "users" \\ "userId").asInstanceOf[ListBuffer[JsString]]
+          userids.length
         }
       }
+      //Representational State Transfer Protocol
+      //post request then we need to put the
+      //data in the body of the request
       /*call the FileStorage.users service*/
       val usersInServiceCount = fileStorage.users() match {
         case Some(seq) => seq.length
-        case None => 0
-      }      
-      usersInFileCount == usersInServiceCount must beTrue      
+        case None      => 0
+      }
+      usersInFileCount == usersInServiceCount must beTrue
     }
     "Assert that all user in user.json are returned in the FileStorage.users" in {
-      assertFileToServiceConsistency      
+      assertFileToServiceConsistency
     }
-    "add a new user" in {
+    "add a new user... - not yet implemented" in {
+      val user = new UserImpl
+//      user.firstName = 
+//      user.lastName =
+//        //TODO need to create a service to genereate user ids
+//      user.id = 
+//      user.isAuthenticated = false 
+//      user.isAuthorized = false
+//      user.email = "abc@example.com"
+
+      ok
+    }
+    "delet the new user... - not yet implemented" in {
       ok
     }
 
