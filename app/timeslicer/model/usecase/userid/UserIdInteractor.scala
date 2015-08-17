@@ -1,58 +1,81 @@
 package timeslicer.model.usecase.userid
 
-import timeslicer.model.interactor.Interactor
+import scala.annotation.tailrec
 import timeslicer.model.api.RequestModel
-import timeslicer.model.context.UseCaseContext
 import timeslicer.model.api.ResponseModel
-import java.util.Base64
-import scala.compat.Platform
-import java.util.Calendar
-import java.text.SimpleDateFormat
+import timeslicer.model.context.UseCaseContext
+import timeslicer.model.interactor.Interactor
+import timeslicer.model.util.UserIdGenerator
+import timeslicer.model.storage.filestorage.FileStorage
+import scala.collection.mutable.ListBuffer
+import timeslicer.model.message.MessageBuilder
+import timeslicer.model.usecase.userid.exception.UserIdCouldNotBeGeneratedException
+import timeslicer.model.message.MessageBuilder
 
 class UserIdInteractor extends Interactor {
+
   override def execute(request: RequestModel, useCaseContext: UseCaseContext): ResponseModel = {
+
     /*
-     * Generate the userid
+     * First load the users to make a list of userids so
+     * I can make sure that the generated id is unique
      */
-    //val ns = System.nanoTime()
-    //val ms = Platform.currentTime
 
-    //67324384834468
-    //1439728771250
-
-    /*convert day to ms*/
-    val ms = new java.util.Date().getTime()
-    val cal = Calendar.getInstance
-    val day = cal.get(Calendar.DAY_OF_YEAR)
-    //println(day)
-
-    val days = java.util.concurrent.TimeUnit.MILLISECONDS.toDays(ms);
-    //println(days)
-    //cal.set()
-
-//    val truncator = new SimpleDateFormat("yyyy-MM-dd:HH:mm")
-//    val truncator = new SimpleDateFormat("yyyy-MM-dd")
-//    val truncator = new SimpleDateFormat("yyyy-MM")
-    val truncator = new SimpleDateFormat("yyyy")
+    val currentUserIdList = {
+      FileStorage().users() match {
+        case Some(users) => {
+          users.map(u => u.id)
+        }
+        case None => List()
+      }
+    }
     
-    val truncatedTime = truncator.format(ms)
-    println(truncatedTime.toString)
-
-    val date = truncator.parse(truncatedTime)
-    //println(date.getTime())
-    
-    //MjAxNS0wOA==
-
-    /*get the day of ms*/
-    //val strms = String.valueOf(ms)
-    val encodedStr = Base64.getEncoder().encodeToString(truncatedTime.getBytes("utf-8"))
-
-    val decodedStr = new String(Base64.getDecoder().decode(encodedStr), "utf-8")
-    //    println(strms)
-    println(encodedStr)
-    println(decodedStr)
-
-    return UserIdResponseModel("hej").asInstanceOf[ResponseModel]
-
+    var generatedValue = ""
+    var valueCouldNotBeGenerated = false
+    var breakCounter = 0
+    do {      
+    	generatedValue = UserIdGenerator.generate;
+    	breakCounter = breakCounter +1
+    } while (currentUserIdList.contains(generatedValue) && breakCounter < 100)
+    if (breakCounter >= 100 ){
+      throw new UserIdCouldNotBeGeneratedException(
+           new MessageBuilder()
+           .append("User id could not be created within the allowed number of tries (99)").toString)
+    }  
+    /*generate the id*/
+    return UserIdResponseModel(generatedValue)
   }
+
+  //  /**
+  //   * Just some tests in this function below
+  //   */
+  //  private def uniqIdGenerationTest = {
+  //    val ms = new java.util.Date().getTime()
+  //    val cal = Calendar.getInstance
+  //    val day = cal.get(Calendar.DAY_OF_YEAR)
+  //    val days = java.util.concurrent.TimeUnit.MILLISECONDS.toDays(ms);
+  //    val truncator = new SimpleDateFormat("yyyy")
+  //
+  //    val truncatedTime = truncator.format(ms)
+  //    println(truncatedTime.toString)
+  //
+  //    val date = truncator.parse(truncatedTime)
+  //    //println(date.getTime())
+  //
+  //    //MjAxNS0wOA==
+  //
+  //    /*get the day of ms*/
+  //    //val strms = String.valueOf(ms)
+  //    val encodedStr = Base64.getEncoder().encodeToString(truncatedTime.getBytes("utf-8"))
+  //
+  //    val decodedStr = new String(Base64.getDecoder().decode(encodedStr), "utf-8")
+  //    //    println(strms)
+  //    println(encodedStr)
+  //    println(decodedStr)
+  //
+  //    println(java.util.UUID.randomUUID())
+  //    println(new java.rmi.server.UID())
+  //
+  //  }
+
 }

@@ -25,7 +25,8 @@ class UserIdInteractorSpec extends Specification with Mockito {
   
   "Userid test" should {
     "create a userid" in {
-      interactor.execute(requestModel, useCaseContext).asInstanceOf[UserIdResponseModel].userId != null must beTrue      
+      interactor.execute(requestModel, useCaseContext).asInstanceOf[UserIdResponseModel].userId != null must beTrue
+      
     }
   }
 

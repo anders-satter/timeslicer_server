@@ -353,3 +353,13 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
   }
 }
 
+object FileStorage {
+  def apply():FileStorage = {
+    return new FileStorage(
+        Settings.fileStorageBaseFilePath, 
+        Settings.projectFileName, 
+        Settings.logFileName, 
+        Settings.usersFileName)
+  }  
+}
+
