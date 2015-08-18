@@ -9,7 +9,7 @@ import timeslicer.model.storage.filestorage.FileStorage
 import timeslicer.model.usecase.userid.exception.UserIdCouldNotBeGeneratedException
 import timeslicer.model.util.UserIdGenerator
 
-class UserIdInteractor extends Interactor {
+class CreateUserIdInteractor extends Interactor {
 
   override def execute(request: RequestModel, useCaseContext: UseCaseContext): ResponseModel = {
 
@@ -39,7 +39,7 @@ class UserIdInteractor extends Interactor {
            new MessageBuilder()
            .append("User id could not be created within the allowed number of tries (99)").toString)
     }  
-    return UserIdResponseModel(generatedValue)
+    return CreateUserIdResponseModel(generatedValue)
   }
 
   //  /**
