@@ -18,15 +18,33 @@ class UserIdInteractorSpec extends Specification with Mockito {
   useCaseContext.user returns mockedUser
   val interactor = new UserIdInteractor
   val requestModel = mock[UserIdRequestModel]
-  
+
   /*
    * TEST
    */
-  
+
   "Userid test" should {
     "create a userid" in {
       interactor.execute(requestModel, useCaseContext).asInstanceOf[UserIdResponseModel].userId != null must beTrue
-      
+    }
+
+    "create 100 unique userids" in {
+      val sortedIdList =
+        (0 to 99).toList
+          .map(i => interactor.execute(requestModel, useCaseContext).asInstanceOf[UserIdResponseModel].userId)
+          .sortBy(i => i)
+
+      /*sliding is producing a sliding window over the iterator with the size of 2*/
+      /*
+       * this will produce an iteraror, since the sliding operation returns this, 
+       * thus we need to put all of this into a list
+       */
+      val duplicates: List[String] =
+        (for {
+          List(left, right) <- sortedIdList.sliding(2)
+          if (left == right)
+        } yield left).toList
+        duplicates.length < 1 must beTrue
     }
   }
 

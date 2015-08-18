@@ -1,7 +1,7 @@
 package timeslicer.model.util
 
 object UserIdGenerator {
-    val allowedSigns = "abcdefghijklmnopqrstuvxyz1234567890-_!"
+  private val allowedSigns = "abcdefghijklmnopqrstuvxyz1234567890-_!"
 
   def generate: String = {
     val builder = new StringBuilder

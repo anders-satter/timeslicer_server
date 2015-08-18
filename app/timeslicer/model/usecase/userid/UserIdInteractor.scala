@@ -1,16 +1,13 @@
 package timeslicer.model.usecase.userid
 
-import scala.annotation.tailrec
 import timeslicer.model.api.RequestModel
 import timeslicer.model.api.ResponseModel
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.interactor.Interactor
-import timeslicer.model.util.UserIdGenerator
+import timeslicer.model.message.MessageBuilder
 import timeslicer.model.storage.filestorage.FileStorage
-import scala.collection.mutable.ListBuffer
-import timeslicer.model.message.MessageBuilder
 import timeslicer.model.usecase.userid.exception.UserIdCouldNotBeGeneratedException
-import timeslicer.model.message.MessageBuilder
+import timeslicer.model.util.UserIdGenerator
 
 class UserIdInteractor extends Interactor {
 
@@ -20,7 +17,6 @@ class UserIdInteractor extends Interactor {
      * First load the users to make a list of userids so
      * I can make sure that the generated id is unique
      */
-
     val currentUserIdList = {
       FileStorage().users() match {
         case Some(users) => {
@@ -30,19 +26,19 @@ class UserIdInteractor extends Interactor {
       }
     }
     
+    /* Generate the id */
     var generatedValue = ""
     var valueCouldNotBeGenerated = false
     var breakCounter = 0
     do {      
     	generatedValue = UserIdGenerator.generate;
-    	breakCounter = breakCounter +1
+    	breakCounter = breakCounter + 1
     } while (currentUserIdList.contains(generatedValue) && breakCounter < 100)
     if (breakCounter >= 100 ){
       throw new UserIdCouldNotBeGeneratedException(
            new MessageBuilder()
            .append("User id could not be created within the allowed number of tries (99)").toString)
     }  
-    /*generate the id*/
     return UserIdResponseModel(generatedValue)
   }
 
