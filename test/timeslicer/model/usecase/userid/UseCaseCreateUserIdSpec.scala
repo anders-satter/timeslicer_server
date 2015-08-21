@@ -9,7 +9,6 @@ import timeslicer.model.user.User
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseCreateUserIdSpec extends Specification with Mockito {
-  
   /*
    * SETUP
    */
@@ -25,13 +24,13 @@ class UseCaseCreateUserIdSpec extends Specification with Mockito {
    */
   "Userid test" should {
     "create a userid" in {
-      interactor.execute(requestModel, useCaseContext).asInstanceOf[CreateUserIdResponseModel].userId != null must beTrue
+      interactor.execute(requestModel, useCaseContext).userId != null must beTrue
     }
 
     "create 100 unique userids" in {
       val sortedIdList =
         (0 to 99).toList
-          .map(i => interactor.execute(requestModel, useCaseContext).asInstanceOf[CreateUserIdResponseModel].userId)
+          .map(i => interactor.execute(requestModel, useCaseContext).userId)
           .sortBy(i => i)
 
       /*sliding is producing a sliding window over the iterator with the size of 2*/
@@ -48,5 +47,4 @@ class UseCaseCreateUserIdSpec extends Specification with Mockito {
       duplicates.length < 1 must beTrue
     }
   }
-
 }

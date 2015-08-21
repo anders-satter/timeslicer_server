@@ -9,9 +9,9 @@ import timeslicer.model.storage.filestorage.FileStorage
 import timeslicer.model.usecase.userid.exception.UserIdCouldNotBeGeneratedException
 import timeslicer.model.util.UserIdGenerator
 
-class CreateUserIdInteractor extends Interactor {
+class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, CreateUserIdResponseModel] {
 
-  override def execute(request: RequestModel, useCaseContext: UseCaseContext): ResponseModel = {
+  override def execute(request: CreateUserIdRequestModel, useCaseContext: UseCaseContext): CreateUserIdResponseModel = {
 
     /*
      * First load the users to make a list of userids so

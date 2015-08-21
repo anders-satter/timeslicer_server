@@ -36,12 +36,9 @@ class UseCaseGetProjectsSpec extends Specification with Mockito {
 
     "return a ProjectListResponseModel" in {
       interactor.execute(requestModel, useCaseContext)
-        .asInstanceOf[GetProjectsResponseModel]
         .projectList != null must beTrue
       interactor.execute(requestModel, useCaseContext)
-        .asInstanceOf[GetProjectsResponseModel]
         .projectList.length > 0 must beTrue
     }
-
   }
 }

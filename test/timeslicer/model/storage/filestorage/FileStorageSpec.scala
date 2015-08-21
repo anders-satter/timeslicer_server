@@ -1,28 +1,24 @@
 package timeslicer.model.storage.filestorage
 
-import org.specs2.mutable.Specification
-import org.specs2.mock.Mockito
+import scala.collection.mutable.ListBuffer
 import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
+import org.specs2.mock.Mockito
+import org.specs2.mutable.Specification
+import play.api.libs.json.JsLookupResult.jsLookupResultToJsLookup
+import play.api.libs.json.JsString
+import play.api.libs.json.JsValue.jsValueToJsLookup
+import play.api.libs.json.Json
 import timeslicer.model.context.UseCaseContext
-import timeslicer.model.project.Project
-import timeslicer.model.util.FileCommunicationUtil
-import timeslicer.model.util.settings.Settings
-import timeslicer.model.project.Project
+import timeslicer.model.message.MessageBuilder
 import timeslicer.model.project.Activity
-import timeslicer.model.project.Activity
-import play.Play
-import timeslicer.model.user.User
-import timeslicer.model.context.UseCaseContext
-import timeslicer.model.project.Project
 import timeslicer.model.project.Project
 import timeslicer.model.storage.exception.ItemAlreadyExistsException
-import timeslicer.model.message.MessageBuilder
 import timeslicer.model.timeslice.TimeSlice
-import play.api.libs.json.Json
-import scala.collection.mutable.ListBuffer
-import play.api.libs.json.JsString
+import timeslicer.model.user.User
 import timeslicer.model.user.UserImpl
+import timeslicer.model.util.FileCommunicationUtil
+import timeslicer.model.util.settings.Settings
+import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {

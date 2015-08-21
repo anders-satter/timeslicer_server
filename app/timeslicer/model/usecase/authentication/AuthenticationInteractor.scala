@@ -11,8 +11,8 @@ import timeslicer.model.user.UserImpl
  * The use case should return a ResponseModel with a 
  * UseCaseContext that is filled with a User
  */
-class AuthenticationInteractor extends Interactor {
-  override def execute(req: RequestModel, context: UseCaseContext): ResponseModel = {
+class AuthenticationInteractor extends Interactor[AuthenticationRequestModel,AuthenticationResponseModel ] {
+  override def execute(req: AuthenticationRequestModel, context: UseCaseContext): AuthenticationResponseModel = {
     val useCaseContext = new UseCaseContextImpl();
     val user = new UserImpl
     user.id = "111111111111"

@@ -8,6 +8,7 @@ import timeslicer.model.context.UseCaseContext
  * The Interactor is responsible for the main
  * execution of a use case.
  */
-trait Interactor {
-  def execute(request:RequestModel, useCaseContext:UseCaseContext):ResponseModel
+trait Interactor[R <: RequestModel, S <: ResponseModel]  {
+  def execute(request: R, useCaseContext: UseCaseContext): S
 }
+

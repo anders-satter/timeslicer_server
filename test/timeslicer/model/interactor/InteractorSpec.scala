@@ -26,7 +26,7 @@ class InteractorSpec extends Specification with Mockito{
       Option("value1")
     }
   }
-  class TestInteractor extends Interactor {
+  class TestInteractor extends Interactor[RequestModel,TestResponseModel] {
     override def execute(reg: RequestModel, context: UseCaseContext): TestResponseModel = {
       return new TestResponseModel
     }
@@ -40,10 +40,10 @@ class InteractorSpec extends Specification with Mockito{
    */
   "Interactor" should {
     "return value1" in {
-      mockedInteractor.execute(mockedRequest, mockedUseCaseContext).asInstanceOf[TestResponseModel].responseValue.get == "value1" must beTrue;
+      mockedInteractor.execute(mockedRequest, mockedUseCaseContext).responseValue.get == "value1" must beTrue;
     }    
     "not return value2" in {
-    	mockedInteractor.execute(mockedRequest, mockedUseCaseContext).asInstanceOf[TestResponseModel].responseValue.get == "value2" must beFalse;
+    	mockedInteractor.execute(mockedRequest, mockedUseCaseContext).responseValue.get == "value2" must beFalse;
     }        
   }
 }

@@ -9,21 +9,19 @@ import org.specs2.mock.Mockito
 @RunWith(classOf[JUnitRunner])
 class UseCaseAuthenticationSpec extends Specification with Mockito {
   val interactor = new AuthenticationInteractor
-  val requestModel = mock[AuthenticationRequestModel]  
+  val requestModel = mock[AuthenticationRequestModel]
   var useCaseContext = null
 
   "AuthenticationInteractor" should {
-    
+
     "return useCaseContext" in {
       interactor.execute(requestModel, useCaseContext)
-        .asInstanceOf[AuthenticationResponseModel]
         .useCaseContext.get must not(beNull)
     }
-    
+
     "return user" in {
-    	interactor.execute(requestModel, useCaseContext)
-    	.asInstanceOf[AuthenticationResponseModel]
-    			.useCaseContext.get.user must not(beNull)
+      interactor.execute(requestModel, useCaseContext)
+        .useCaseContext.get.user must not(beNull)
     }
   }
 }

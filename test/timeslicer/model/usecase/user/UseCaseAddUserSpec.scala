@@ -15,16 +15,12 @@ class UseCaseAddUserSpec extends Specification with Mockito{
    * SETUP
    */
   val interactor = new AddUserInteractor
-  val request:RequestModel = AddUserRequestModel()
   val useCaseContext = mock[UseCaseContext]
   val user = new UserImpl
   user.firstName = "Test1"
   user.lastName = "Testson"
+  val request = AddUserRequestModel(user) 
   val userIdInteractor = new CreateUserIdInteractor
-  //val 
-  //user.id =  
-  
-  
   
   /*
    * TEST
@@ -32,9 +28,7 @@ class UseCaseAddUserSpec extends Specification with Mockito{
   "AddUser test" should {
     "add a new user" in {
       val response = interactor
-        .execute(request, useCaseContext)
-        .asInstanceOf[AddUserResponseModel]
-      
+        .execute(request, useCaseContext)        
       ok
     }
   }
