@@ -22,6 +22,7 @@ import timeslicer.model.storage.exception.ItemAlreadyExistsException
 import timeslicer.model.storage.exception.InvalidArgumentException
 import timeslicer.model.message.MessageBuilder
 import java.io.File
+import com.fasterxml.jackson.databind.JsonNode
 
 /**
  * Text file based implementation of the Storage trait
@@ -344,9 +345,20 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
      */
   }
   override def addUser(user: User, useCaseContext: UseCaseContext): Unit = {
-    /*
-     * add user structure to users.json
-     */
+    
+    /*validate user*/
+    user.firstName != null && user.firstName.length>0
+    
+
+    /*get all current users*/
+    val updatedUserList = (users match {
+      case Some(seq) => seq
+      case None      => Seq()
+    }) ++ Seq(user)
+    
+    /* add user structure to users.json */
+
+    val jnode = Json.toJson(user)
   }
   override def removeUser(user: User, useCaseContext: UseCaseContext): Unit = {
 
@@ -354,12 +366,12 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 }
 
 object FileStorage {
-  def apply():FileStorage = {
+  def apply(): FileStorage = {
     return new FileStorage(
-        Settings.fileStorageBaseFilePath, 
-        Settings.projectFileName, 
-        Settings.logFileName, 
-        Settings.usersFileName)
-  }  
+      Settings.fileStorageBaseFilePath,
+      Settings.projectFileName,
+      Settings.logFileName,
+      Settings.usersFileName)
+  }
 }
 

@@ -2,6 +2,13 @@ package timeslicer.model.user
 
 import timeslicer.exception.TimeslicerException
 import timeslicer.model.message.ErrorMessageBuilder
+import play.api.libs.json.Json
+import play.api.libs.json.Writes
+import play.api.libs.json.Reads._
+import play.api.libs.json.Reads
+import play.api.libs.json.JsPath
+import play.api.libs.functional.syntax._ // Combinator syntax
+import scala.util.Try
 
 class UserImpl extends User {
 
@@ -32,14 +39,14 @@ class UserImpl extends User {
   }
   def lastName = _lastName
   def lastName_=(value: String): Unit = _lastName = {
-		  if (value != null && value.length >= userLastNameMinLength && value.length <= userLastNameMaxLength) {
-			  value
-		  } else {
-			  val messageBuilder = new ErrorMessageBuilder();
-			  messageBuilder.append("User name must be between " + userLastNameMinLength + " and " + userLastNameMaxLength + " in length.")
-			  messageBuilder.append("Supplied value was: " + value)
-			  throw new IllegalArgumentException(messageBuilder.toString())
-		  }
+    if (value != null && value.length >= userLastNameMinLength && value.length <= userLastNameMaxLength) {
+      value
+    } else {
+      val messageBuilder = new ErrorMessageBuilder();
+      messageBuilder.append("User name must be between " + userLastNameMinLength + " and " + userLastNameMaxLength + " in length.")
+      messageBuilder.append("Supplied value was: " + value)
+      throw new IllegalArgumentException(messageBuilder.toString())
+    }
   }
 
   def id = _id
@@ -58,10 +65,10 @@ class UserImpl extends User {
   def isAuthenticated_=(value: Boolean): Unit = _isAuthenticated = value
 
   def isAuthorized = _isAuthorized
-  def isAuthorized_= (value: Boolean) = _isAuthorized = value
-  
+  def isAuthorized_=(value: Boolean) = _isAuthorized = value
+
   def email: Option[String] = _email
-  def email_= (email: String): Unit = {
+  def email_=(email: String): Unit = {
     if (email != null &&
       email.length() > 0
       && email.contains("@")
@@ -71,8 +78,8 @@ class UserImpl extends User {
       throw new IllegalArgumentException(email + " is not a valid email adress")
     }
   }
-  
-  override def toString():String = {
+
+  override def toString(): String = {
     val buff = new StringBuilder
     buff.append(_firstName)
     buff.append('\n')
@@ -87,4 +94,113 @@ class UserImpl extends User {
     buff.append(_email)
     return buff.toString
   }
+
+  def validate: Boolean = {
+    var ret = false
+    //var results: Map[String, Boolean] =  scala.collection.mutable.Map[String, Boolean]
+    var results =  scala.collection.mutable.Map[String, Boolean]()
+
+    /*
+     * 
+     */
+    //I don't now what he is capable of, but this
+    //this is not the best way
+
+    if (!assertStrValue(_firstName,
+      userFirstNameMinLength,
+      userFirstNameMaxLength)) {
+      results += ("firstName" -> false)
+    } else {
+      results += ("firstName" -> true)
+      ret = true
+    }
+    if (!assertStrValue(_lastName,
+      userLastNameMinLength,
+      userLastNameMaxLength)) {
+      results += ("lastName" -> false)
+    } else {
+      results += ("lastName" -> true)
+      ret = true
+    }
+    if (!assertStrValue(_id,
+      userIdMinLength,
+      userIdMaxLength)) {
+      results += ("id" -> false)
+    } else {
+      results += ("id" -> true)
+      ret = true
+    }
+    if (assertBooleanValue(_isAuthenticated, false)) {
+      results += ("isAuthenticated" -> true)
+    } else results += ("isAuthenticated" -> false)
+
+    if (assertBooleanValue(_isAuthorized, false)) {
+      results += ("isAuthorized" -> true)
+    } else results += ("isAuthorized" -> false)
+
+    _email match {
+      case Some(value) => {
+        if (!assertStrValue(value,
+          userIdMinLength,
+          userIdMaxLength)) {
+          results += ("id" -> false)
+        } else {
+          results += ("id" -> true)
+          ret = true
+        }
+      }
+      case None => {
+        results += ("id" -> true)
+      }
+    }
+
+    return ret
+  }
+
+  private def assertStrValue(str: String, min: Int, max: Int): Boolean = {
+    return (str != null && str.length() >= min && str.length <= max)
+  }
+
+  private def assertBooleanValue(bool: Boolean, expectedValue: Boolean): Boolean = {
+    return (bool == expectedValue)
+  }
+}
+
+object UserImpl {
+  def apply(firstName: String, lastName: String, id: String, isAuthenticated: Boolean, isAuthorized: Boolean, email: String) = {
+    val user = new UserImpl
+    user._firstName = firstName
+    user._lastName = lastName
+    user._id = id
+    user._isAuthenticated = isAuthenticated
+    user._isAuthorized = isAuthorized
+    user._email = Option(email)
+    user.validate
+    user
+  }
+
+  def applyJson(firstName: String,
+                lastName: String,
+                id: String,
+                isAuthorized: String,
+                isAuthenticated: String,
+                email: String) = {
+    val user = new UserImpl
+    user._firstName = firstName
+    user._lastName = lastName
+    user._id = id
+    user._isAuthenticated = Try(isAuthenticated.toBoolean).getOrElse(false)
+    user._isAuthorized = Try(isAuthorized.toBoolean).getOrElse(false)
+    user._email = Option(email)
+    user.validate
+    user
+  }
+
+  implicit val userImplReads: Reads[UserImpl] = (
+    (JsPath \ "firstName").read[String] and
+    (JsPath \ "lastName").read[String] and
+    (JsPath \ "id").read[String] and
+    (JsPath \ "isAuthorized").read[String] and
+    (JsPath \ "isAuthenticated").read[String] and
+    (JsPath \ "email").read[String])(UserImpl.applyJson _)
 }

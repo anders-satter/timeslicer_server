@@ -7,7 +7,8 @@ import timeslicer.model.context.UseCaseContext
 import timeslicer.model.storage.Storage
 import timeslicer.model.storage.StorageImpl
 
-class AddUserInteractor extends Interactor[AddUserRequestModel, AddUserResponseModel] {  
+class AddUserInteractor extends Interactor[AddUserRequestModel, AddUserResponseModel] {
+  
   override def execute(request:AddUserRequestModel, useCaseContext:UseCaseContext):AddUserResponseModel = {
     val storage = StorageImpl()
     storage.addUser(request.asInstanceOf[AddUserRequestModel].user, useCaseContext)
