@@ -19,6 +19,7 @@ import timeslicer.model.user.UserImpl
 import timeslicer.model.util.FileCommunicationUtil
 import timeslicer.model.util.settings.Settings
 import org.specs2.runner.JUnitRunner
+import timeslicer.model.usecase.userid.CreateUserIdInteractor
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {
@@ -331,15 +332,18 @@ class FileStorageSpec extends Specification with Mockito {
       assertFileToServiceConsistency
     }
     "add a new user... - not yet implemented" in {
+      val userIdInteractor = new CreateUserIdInteractor
       val user = new UserImpl
-//      user.firstName = 
-//      user.lastName =
-//        //TODO need to create a service to genereate user ids
-//      user.id = 
-//      user.isAuthenticated = false 
-//      user.isAuthorized = false
-//      user.email = "abc@example.com"
-
+      user.firstName = "TestFörnamn" 
+      user.lastName = "TestEfternamn"
+        //TODO need to create a service to genereate user ids
+      user.id = userIdInteractor.execute(null, useCaseContext).userId 
+      user.isAuthenticated = false 
+      user.isAuthorized = false
+      user.email = "abc@example.com"
+      
+      fileStorage.addUser(user, useCaseContext)
+      
       ok
     }
     "delet the new user... - not yet implemented" in {

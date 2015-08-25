@@ -35,7 +35,7 @@ class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, Create
     	breakCounter = breakCounter + 1
     } while (currentUserIdList.contains(generatedValue) && breakCounter < 100)
     if (breakCounter >= 100 ){
-      throw new UserIdCouldNotBeGeneratedException(
+      throw new UserIdCouldNotBeGeneratedException(          
            new MessageBuilder()
            .append("User id could not be created within the allowed number of tries (99)").toString)
     }  

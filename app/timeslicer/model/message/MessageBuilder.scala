@@ -1,5 +1,11 @@
 package timeslicer.model.message
 
+/**
+ * Each message must have its own copy of 
+ * the MessageBuilder so usage is
+ * new MessageBuilder().append(...
+ * 
+ */
 class MessageBuilder {
   val messageBuilder = new StringBuilder()
   messageBuilder.append("Timeslicer application")
@@ -10,3 +16,4 @@ class MessageBuilder {
   }
   override def toString() = messageBuilder.toString()
 }
+

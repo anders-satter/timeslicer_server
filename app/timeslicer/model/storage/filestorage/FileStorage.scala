@@ -347,18 +347,20 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
   override def addUser(user: User, useCaseContext: UseCaseContext): Unit = {
     
     /*validate user*/
-    user.firstName != null && user.firstName.length>0
+    println("validating...")
+    user.validate
     
-
     /*get all current users*/
     val updatedUserList = (users match {
       case Some(seq) => seq
       case None      => Seq()
     }) ++ Seq(user)
-    
+        
     /* add user structure to users.json */
-
     val jnode = Json.toJson(user)
+    //println(updatedUserList)
+    val userListJson = Json.toJson(updatedUserList)
+    println(userListJson)
   }
   override def removeUser(user: User, useCaseContext: UseCaseContext): Unit = {
 

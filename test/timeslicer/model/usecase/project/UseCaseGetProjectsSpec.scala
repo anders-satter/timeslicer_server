@@ -27,6 +27,7 @@ class UseCaseGetProjectsSpec extends Specification with Mockito {
     override def isAuthorized = true
     override def isAuthenticated = true
     override def email = None
+    override def validate = true
   }
   /*
    * TEST

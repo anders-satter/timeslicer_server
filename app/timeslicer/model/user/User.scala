@@ -41,21 +41,4 @@ object User {
         case None    => ""
       }))
   }
-
-  //  implicit val userReads: Reads[UserImpl] = (
-  //    (JsPath \ "firstName").read[String] and    
-  //    (JsPath \ "lastName").read[String] and
-  //    (JsPath \ "email").read[String])
-  //    (UserImpl.apply _)
-  //  implicit val userReads: Reads[UserImpl] = {
-  //    //val fname = (JsPath \ "firstName").read[String]
-  //    Reads(UserImpl.apply("","","",""))
-  //  }
-
-  //  implicit val locationReads: Reads[UserImpl] = (
-  //    (JsPath \ "firstName").read[String] and
-  //    (JsPath \ "lastName").read[String])
-  //  (UserImpl.apply _)
-
- 
 }
