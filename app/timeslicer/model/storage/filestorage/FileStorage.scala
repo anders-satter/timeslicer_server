@@ -15,14 +15,16 @@ import timeslicer.model.util.settings.Settings
 import timeslicer.model.project.Project
 import scala.collection.mutable.ListBuffer
 import timeslicer.model.util.DateTime
-import play.api.libs.json.Json
 import timeslicer.model.user.UserImpl
-import play.api.libs.json.JsString
 import timeslicer.model.storage.exception.ItemAlreadyExistsException
 import timeslicer.model.storage.exception.InvalidArgumentException
 import timeslicer.model.message.MessageBuilder
 import java.io.File
 import com.fasterxml.jackson.databind.JsonNode
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import timeslicer.model.util.JsonUser
+import timeslicer.model.util.UsersContainer
 
 /**
  * Text file based implementation of the Storage trait
@@ -232,9 +234,9 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     val json = Json.parse(fileContent)
     val fnames = (json \ "users" \\ "firstName").asInstanceOf[ListBuffer[JsString]]
     val lnames = (json \ "users" \\ "lastName").asInstanceOf[ListBuffer[JsString]]
-    val userids = (json \ "users" \\ "userId").asInstanceOf[ListBuffer[JsString]]
-    val isauths = (json \ "users" \\ "isAuthenticated").asInstanceOf[ListBuffer[JsString]]
-    val isauthoz = (json \ "users" \\ "isAuthorized").asInstanceOf[ListBuffer[JsString]]
+    val userids = (json \ "users" \\ "id").asInstanceOf[ListBuffer[JsString]]
+    val isauths = (json \ "users" \\ "isAuthenticated").asInstanceOf[ListBuffer[JsBoolean]]
+    val isauthoz = (json \ "users" \\ "isAuthorized").asInstanceOf[ListBuffer[JsBoolean]]
     val emails = (json \ "users" \\ "email").asInstanceOf[ListBuffer[JsString]]
 
     val name = fnames(0).asInstanceOf[JsString].value
@@ -344,27 +346,92 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
      * to cancel out a previous one.
      */
   }
+
   override def addUser(user: User, useCaseContext: UseCaseContext): Unit = {
-    
-    /*validate user*/
-    println("validating...")
-    user.validate
-    
-    /*get all current users*/
-    val updatedUserList = (users match {
+
+    var currentUsersList = (users match {
       case Some(seq) => seq
       case None      => Seq()
-    }) ++ Seq(user)
-        
-    /* add user structure to users.json */
-    val jnode = Json.toJson(user)
-    //println(updatedUserList)
-    val userListJson = Json.toJson(updatedUserList)
-    println(userListJson)
-  }
-  override def removeUser(user: User, useCaseContext: UseCaseContext): Unit = {
+    })
+
+    if (fsUtil.matchesUserName(currentUsersList, user)) {
+      throw new ItemAlreadyExistsException("User with name " + user.firstName.trim + " " + user.lastName + " already exists")
+    }
+
+    if (fsUtil.matchesEmail(currentUsersList, user)) {
+      throw new ItemAlreadyExistsException("User with email " + user.email + " already exists")
+    }
+
+    /*get all current users and add the new user*/
+    val updatedUserList = currentUsersList ++ Seq(user)
+
+    /*convert seq of User to seq of JsonUser*/
+    val jsonUserSeq = updatedUserList.map(u => {
+      JsonUser(u.firstName,
+        u.lastName,
+        u.id,
+        u.isAuthenticated,
+        u.isAuthorized,
+        (u.email match {
+          case Some(email) => email
+          case None        => ""
+        }))
+    }).toSeq
+    /*put the users in the container*/
+    val userContainer = UsersContainer(jsonUserSeq)
+
+    /*make a user case class to simplity persisting*/
+    val userWrites = Json.writes[JsonUser]
+    implicit val userSequenceWrites: Writes[Seq[JsonUser]] = Writes.seq(userWrites)
+    val containerWrites = Json.writes[UsersContainer]
+    val usersJson = Json.toJson(userContainer)(containerWrites)
+
+    /**/
+    saveToFile(calcUsersFileName(), usersJson.toString, false)
 
   }
+  /**
+   *
+   */
+  override def removeUser(user: User, useCaseContext: UseCaseContext): Unit = {
+    var currentUsersList = (users match {
+      case Some(seq) => seq
+      case None      => Seq()
+    })
+
+    if (fsUtil.matchesId(currentUsersList, user)) {
+
+      val updatedUserList = fsUtil.performUserRemoval(currentUsersList, user)
+
+      /*convert seq of User to seq of JsonUser*/
+      val jsonUserSeq = updatedUserList.map(u => {
+        JsonUser(u.firstName,
+          u.lastName,
+          u.id,
+          u.isAuthenticated,
+          u.isAuthorized,
+          (u.email match {
+            case Some(email) => email
+            case None        => ""
+          }))
+      }).toSeq
+      /*put the users in the container*/
+      val userContainer = UsersContainer(jsonUserSeq)
+
+      /*make a user case class to simplity persisting*/
+      val userWrites = Json.writes[JsonUser]
+      implicit val userSequenceWrites: Writes[Seq[JsonUser]] = Writes.seq(userWrites)
+      val containerWrites = Json.writes[UsersContainer]
+      val usersJson = Json.toJson(userContainer)(containerWrites)
+
+      /**/
+      saveToFile(calcUsersFileName(), usersJson.toString, false)
+
+    } else {
+
+    }
+  }
+
 }
 
 object FileStorage {

@@ -3,8 +3,48 @@ package timeslicer.model.storage.filestorage
 
 import timeslicer.model.project.Project
 import timeslicer.model.timeslice.TimeSlice
+import timeslicer.model.user.User
 
 object FileStorageUtil {
+
+  def matchesEmail(seq: Seq[User], user: User): Boolean = {
+    seq.filter(u => {
+      val email = (u.email match {
+        case Some(email) => {
+          val userEmail = (user.email match {
+            case Some(em) => {
+              em == email
+            }
+            case None => false
+          })
+        }
+        case None => false
+      })
+      false
+    }).length > 0
+  }
+
+  def matchesUserName(seq: Seq[User], user: User): Boolean = {
+    seq.filter(u => {
+      val name = u.firstName.trim + u.lastName.trim
+      val newUserName = user.firstName.trim + user.lastName.trim
+      name == newUserName
+    }).length > 0
+  }
+
+  def matchesId(seq: Seq[User], user: User): Boolean = {
+    seq.filter(u => {
+      user.id == u.id
+    }).length > 0
+  }
+
+  def performUserRemoval(seq: Seq[User], user: User): Seq[User] = {
+    seq.indexWhere(u => user.id == u.id) match {
+      case -1 => seq
+      case n  => (seq take n) ++ (seq drop (n + 1))
+    }
+  }
+
   def performProjectRemoval(project: Project, projSeq: Seq[Project]): Seq[Project] = {
     projSeq.indexWhere(p => p.name == project.name) match {
       case -1 => projSeq
@@ -23,10 +63,10 @@ object FileStorageUtil {
         })
       }
     })
-    builder.toString    
+    builder.toString
   }
-  
-  def prepareTimeSliceForPersistence(timeslice:TimeSlice):String = {
+
+  def prepareTimeSliceForPersistence(timeslice: TimeSlice): String = {
     val builder = new StringBuilder
     builder.append(timeslice.start)
     builder.append('\t')
@@ -38,7 +78,7 @@ object FileStorageUtil {
     builder.append('\t')
     builder.append('"' + timeslice.activity + '"')
     builder.append('\t')
-    timeslice.comment match{
+    timeslice.comment match {
       case Some(c) => {
         builder.append('"' + c + '"')
       }

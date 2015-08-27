@@ -43,7 +43,7 @@ class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, Create
   }
 
   //  /**
-  //   * Just some tests in this function below
+  //   * Just some experiments to generate a unique id below
   //   */
   //  private def uniqIdGenerationTest = {
   //    val ms = new java.util.Date().getTime()

@@ -158,11 +158,13 @@ object JsonExperiements {
   val validation: JsResult[OneFieldClass] = threefieldJson.validate[OneFieldClass](re)
   println(validation)
 
+  println("")
+  println("-------------")
   println("complex json object")
   case class Container(users: Seq[OneFieldClass])
   val seq = Seq(OneFieldClass(2), OneFieldClass(8), OneFieldClass(7), OneFieldClass(5))
 
-  //Reads
+  //Writes
   val wrO = Json.writes[OneFieldClass]
   implicit val cjwr: Writes[Seq[OneFieldClass]] = Writes.seq(wrO)
   val contwr = Json.writes[Container]
@@ -176,7 +178,9 @@ object JsonExperiements {
   val reO = Json.reads[OneFieldClass]
   implicit val cjre: Reads[Seq[OneFieldClass]] = Reads.seq(reO)
   val contre = Json.reads[Container]
-  val readSeq = Json.parse(complexJson.toString).as[Container](contre)
+  //val readSeq = Json.parse(complexJson.toString).as[Container](contre)
+  println("using validate to initialze the object")
+  val readSeq = complexJson.validate[Container](contre)
   println(readSeq)
 
   def main(args: Array[String]): Unit = {}

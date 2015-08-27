@@ -312,12 +312,13 @@ class FileStorageSpec extends Specification with Mockito {
       val usersInFileCount = {
         if (fileContent.trim().length() < 1) {
           0
-        } else {
+        } else {          
           val json = Json.parse(fileContent)
-          val userids = (json \ "users" \\ "userId").asInstanceOf[ListBuffer[JsString]]
+          val userids = (json \ "users" \\ "id").asInstanceOf[ListBuffer[JsString]]
           userids.length
         }
       }
+     
       //Representational State Transfer Protocol
       //post request then we need to put the
       //data in the body of the request
@@ -331,7 +332,7 @@ class FileStorageSpec extends Specification with Mockito {
     "Assert that all user in user.json are returned in the FileStorage.users" in {
       assertFileToServiceConsistency
     }
-    "add a new user... - not yet implemented" in {
+    "add a new user" in {
       val userIdInteractor = new CreateUserIdInteractor
       val user = new UserImpl
       user.firstName = "TestFörnamn" 
@@ -346,7 +347,7 @@ class FileStorageSpec extends Specification with Mockito {
       
       ok
     }
-    "delet the new user... - not yet implemented" in {
+    "delete a user" in {
       ok
     }
 

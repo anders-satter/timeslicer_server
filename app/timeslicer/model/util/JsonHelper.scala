@@ -5,6 +5,10 @@ import play.api.libs.json._
 import timeslicer.model.user.User
 import timeslicer.model.user.UserImpl
 
+
+case class JsonUser(firstName: String, lastName: String, id: String, isAuthenticated: Boolean, isAuthorized: Boolean, email: String)
+case class UsersContainer(users: Seq[JsonUser])
+
 /**
  * Class converting to json.
  */

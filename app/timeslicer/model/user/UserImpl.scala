@@ -31,7 +31,7 @@ class UserImpl extends User {
     if (value != null && value.length >= userFirstNameMinLength && value.length <= userFirstNameMaxLength) {
       value
     } else {
-      val messageBuilder = new ErrorMessageBuilder();
+      val messageBuilder = new ErrorMessageBuilder();      
       messageBuilder.append("User name must be between " + userFirstNameMinLength + " and " + userFirstNameMaxLength + " in length.")
       messageBuilder.append("Supplied value was: " + value)
       throw new IllegalArgumentException(messageBuilder.toString())
@@ -74,7 +74,9 @@ class UserImpl extends User {
       && email.contains("@")
       && email.contains(".")) {
       _email = Option(email)
-    } else {
+    } else if (email != null && email.length <1){
+      _email = None
+    } else {   
       throw new IllegalArgumentException(email + " is not a valid email adress")
     }
   }
@@ -166,41 +168,41 @@ class UserImpl extends User {
   }
 }
 
-object UserImpl {
-  def apply(firstName: String, lastName: String, id: String, isAuthenticated: Boolean, isAuthorized: Boolean, email: String) = {
-    val user = new UserImpl
-    user._firstName = firstName
-    user._lastName = lastName
-    user._id = id
-    user._isAuthenticated = isAuthenticated
-    user._isAuthorized = isAuthorized
-    user._email = Option(email)
-    user.validate
-    user
-  }
-
-  def applyJson(firstName: String,
-                lastName: String,
-                id: String,
-                isAuthorized: String,
-                isAuthenticated: String,
-                email: String) = {
-    val user = new UserImpl
-    user._firstName = firstName
-    user._lastName = lastName
-    user._id = id
-    user._isAuthenticated = Try(isAuthenticated.toBoolean).getOrElse(false)
-    user._isAuthorized = Try(isAuthorized.toBoolean).getOrElse(false)
-    user._email = Option(email)
-    user.validate
-    user
-  }
-
-  implicit val userImplReads: Reads[UserImpl] = (
-    (JsPath \ "firstName").read[String] and
-    (JsPath \ "lastName").read[String] and
-    (JsPath \ "id").read[String] and
-    (JsPath \ "isAuthorized").read[String] and
-    (JsPath \ "isAuthenticated").read[String] and
-    (JsPath \ "email").read[String])(UserImpl.applyJson _)
-}
+//object UserImpl {
+//  def apply(firstName: String, lastName: String, id: String, isAuthenticated: Boolean, isAuthorized: Boolean, email: String) = {
+//    val user = new UserImpl
+//    user._firstName = firstName
+//    user._lastName = lastName
+//    user._id = id
+//    user._isAuthenticated = isAuthenticated
+//    user._isAuthorized = isAuthorized
+//    user._email = Option(email)
+//    user.validate
+//    user
+//  }
+//
+//  def applyJson(firstName: String,
+//                lastName: String,
+//                id: String,
+//                isAuthorized: String,
+//                isAuthenticated: String,
+//                email: String) = {
+//    val user = new UserImpl
+//    user._firstName = firstName
+//    user._lastName = lastName
+//    user._id = id
+//    user._isAuthenticated = Try(isAuthenticated.toBoolean).getOrElse(false)
+//    user._isAuthorized = Try(isAuthorized.toBoolean).getOrElse(false)
+//    user._email = Option(email)
+//    user.validate
+//    user
+//  }
+//
+//  implicit val userImplReads: Reads[UserImpl] = (
+//    (JsPath \ "firstName").read[String] and
+//    (JsPath \ "lastName").read[String] and
+//    (JsPath \ "id").read[String] and
+//    (JsPath \ "isAuthorized").read[String] and
+//    (JsPath \ "isAuthenticated").read[String] and
+//    (JsPath \ "email").read[String])(UserImpl.applyJson _)
+//}
