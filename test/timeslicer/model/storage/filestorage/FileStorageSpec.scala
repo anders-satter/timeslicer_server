@@ -351,6 +351,80 @@ class FileStorageSpec extends Specification with Mockito {
       ok
     }
 
+    "test user matches" should {
+      
+      /*
+       * SETUP
+       */
+      val user1 = new UserImpl
+      user1.firstName = "First" 
+      user1.lastName = "Sirname"
+        //TODO need to create a service to genereate user1 ids
+      user1.id = "111111111111" 
+      user1.isAuthenticated = false 
+      user1.isAuthorized = false
+      user1.email = "" // empty email
+       
+      val user2 = new UserImpl
+      user2.firstName = "Second" 
+      user2.lastName = "Sirname"
+        //TODO need to create a service to genereate user2 ids
+      user2.id = "222222222222" 
+      user2.isAuthenticated = false 
+      user2.isAuthorized = false
+      user2.email = "abc2@example.com"
+      
+      val user3 = new UserImpl
+      user3.firstName = "Third" 
+      user3.lastName = "Sirname"
+      //TODO need to create a service to genereate user3 ids
+      user3.id = "333333333333" 
+      user3.isAuthenticated = false 
+      user3.isAuthorized = false
+      user3.email = "abc3@example.com"
+      
+      val users = Seq(user1, user2, user3)
+      
+      val user4 = new UserImpl
+      user4.firstName = "Fourth" 
+      user4.lastName = "Sirname"
+      //TODO need to create a service to genereate user4 ids
+      user4.id = "444444444444" 
+      user4.isAuthenticated = false 
+      user4.isAuthorized = false
+      user4.email = "abc4@example.com"
+            
+      //println(FileStorageUtil.matchesId(users, user3))
+      //println(FileStorageUtil.matchesUserName(users, user4))
+      
+        
+      /*
+       * TESTS  
+       */
+        
+      "user email should match" in {
+        FileStorageUtil.matchesEmail(users, user3) must beTrue
+      }
+      "user email should not match" in {
+    	  FileStorageUtil.matchesEmail(users, user4) must beFalse
+      }
+      
+      "user  name should match" in {  
+    	  FileStorageUtil.matchesUserName(users, user3) must beTrue
+      }
+      "user name should not match" in {
+    	  FileStorageUtil.matchesUserName(users, user4) must beFalse
+      }
+      
+      "user id should match" in {  
+    	  FileStorageUtil.matchesId(users, user3) must beTrue
+      }
+      "user id should not match" in {
+    	  FileStorageUtil.matchesId(users, user4) must beFalse
+      }      
+    }
+    
+    
   }
 
   //  "Location test" should {
