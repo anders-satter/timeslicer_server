@@ -391,7 +391,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 
   }
   /**
-   *
+   * Removes a user from the data store
    */
   override def removeUser(user: User, useCaseContext: UseCaseContext): Unit = {
     var currentUsersList = (users match {
@@ -399,8 +399,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
       case None      => Seq()
     })
 
-    if (fsUtil.matchesId(currentUsersList, user)) {
-
+    if (fsUtil.matchesId(currentUsersList, user)) {      
       val updatedUserList = fsUtil.performUserRemoval(currentUsersList, user)
 
       /*convert seq of User to seq of JsonUser*/
@@ -418,7 +417,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
       /*put the users in the container*/
       val userContainer = UsersContainer(jsonUserSeq)
 
-      /*make a user case class to simplity persisting*/
+      /*make a user case class to simplify persisting*/
       val userWrites = Json.writes[JsonUser]
       implicit val userSequenceWrites: Writes[Seq[JsonUser]] = Writes.seq(userWrites)
       val containerWrites = Json.writes[UsersContainer]

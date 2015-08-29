@@ -5,4 +5,5 @@ package timeslicer.model.api
  * output of a use case execution 
  * (Performed by an Interactor)
  */
-trait ResponseModel {}
+trait ResponseModel {
+}

@@ -332,26 +332,9 @@ class FileStorageSpec extends Specification with Mockito {
     "Assert that all user in user.json are returned in the FileStorage.users" in {
       assertFileToServiceConsistency
     }
-    "add a new user" in {
-      val userIdInteractor = new CreateUserIdInteractor
-      val user = new UserImpl
-      user.firstName = "TestFörnamn" 
-      user.lastName = "TestEfternamn"
-        //TODO need to create a service to genereate user ids
-      user.id = userIdInteractor.execute(null, useCaseContext).userId 
-      user.isAuthenticated = false 
-      user.isAuthorized = false
-      user.email = "abc@example.com"
-      
-      fileStorage.addUser(user, useCaseContext)
-      
-      ok
-    }
-    "delete a user" in {
-      ok
-    }
+    
 
-    "test user matches" should {
+        "test user matches" should {
       
       /*
        * SETUP
@@ -359,7 +342,6 @@ class FileStorageSpec extends Specification with Mockito {
       val user1 = new UserImpl
       user1.firstName = "First" 
       user1.lastName = "Sirname"
-        //TODO need to create a service to genereate user1 ids
       user1.id = "111111111111" 
       user1.isAuthenticated = false 
       user1.isAuthorized = false
@@ -368,7 +350,6 @@ class FileStorageSpec extends Specification with Mockito {
       val user2 = new UserImpl
       user2.firstName = "Second" 
       user2.lastName = "Sirname"
-        //TODO need to create a service to genereate user2 ids
       user2.id = "222222222222" 
       user2.isAuthenticated = false 
       user2.isAuthorized = false
@@ -377,7 +358,6 @@ class FileStorageSpec extends Specification with Mockito {
       val user3 = new UserImpl
       user3.firstName = "Third" 
       user3.lastName = "Sirname"
-      //TODO need to create a service to genereate user3 ids
       user3.id = "333333333333" 
       user3.isAuthenticated = false 
       user3.isAuthorized = false
@@ -388,15 +368,11 @@ class FileStorageSpec extends Specification with Mockito {
       val user4 = new UserImpl
       user4.firstName = "Fourth" 
       user4.lastName = "Sirname"
-      //TODO need to create a service to genereate user4 ids
       user4.id = "444444444444" 
       user4.isAuthenticated = false 
       user4.isAuthorized = false
       user4.email = "abc4@example.com"
             
-      //println(FileStorageUtil.matchesId(users, user3))
-      //println(FileStorageUtil.matchesUserName(users, user4))
-      
         
       /*
        * TESTS  
@@ -406,24 +382,59 @@ class FileStorageSpec extends Specification with Mockito {
         FileStorageUtil.matchesEmail(users, user3) must beTrue
       }
       "user email should not match" in {
-    	  FileStorageUtil.matchesEmail(users, user4) must beFalse
+        FileStorageUtil.matchesEmail(users, user4) must beFalse
       }
       
-      "user  name should match" in {  
-    	  FileStorageUtil.matchesUserName(users, user3) must beTrue
+      "user name should match" in {  
+        FileStorageUtil.matchesUserName(users, user3) must beTrue
       }
       "user name should not match" in {
-    	  FileStorageUtil.matchesUserName(users, user4) must beFalse
+        FileStorageUtil.matchesUserName(users, user4) must beFalse
       }
       
       "user id should match" in {  
-    	  FileStorageUtil.matchesId(users, user3) must beTrue
+        FileStorageUtil.matchesId(users, user3) must beTrue
       }
       "user id should not match" in {
-    	  FileStorageUtil.matchesId(users, user4) must beFalse
+        FileStorageUtil.matchesId(users, user4) must beFalse
       }      
     }
+   
     
+    val userIdInteractor = new CreateUserIdInteractor
+    val testUserid = userIdInteractor.execute(null, useCaseContext).userId
+    val testUser = new UserImpl
+    testUser.firstName = "TestFörnamn" 
+    testUser.lastName = "TestEfternamn"
+    testUser.id = testUserid 
+    testUser.isAuthenticated = false 
+    testUser.isAuthorized = false
+    testUser.email = "abc@example.com"
+    
+    
+    "add a new user" in {
+      val userIdInteractor = new CreateUserIdInteractor      
+      fileStorage.addUser(testUser, useCaseContext)      
+      ok
+    }
+    "remove a user" in {
+      //fileStorage.users() map println
+      
+      
+      //val testUser = new UserImpl
+      testUser.firstName = "TestFörnamn" 
+      testUser.lastName = "TestEfternamn"
+      testUser.id = testUserid
+      testUser.isAuthenticated = false 
+      testUser.isAuthorized = false
+      testUser.email = "abc@example.com"
+
+      
+      fileStorage.removeUser(testUser, null)
+      ok
+    }
+
+ 
     
   }
 

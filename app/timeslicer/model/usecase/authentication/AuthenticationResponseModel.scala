@@ -4,4 +4,4 @@ import timeslicer.model.api.ResponseModel
 import timeslicer.model.context.UseCaseContext
 
 
-case class AuthenticationResponseModel(useCaseContext:Option[UseCaseContext]) extends ResponseModel{} 
+case class AuthenticationResponseModel(useCaseContext:Option[UseCaseContext]) extends ResponseModel{}
