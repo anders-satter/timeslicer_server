@@ -5,12 +5,12 @@ import org.specs2.runner.JUnitRunner
 import play.api.test.WithBrowser
 import java.io.InputStream
 import java.io.ByteArrayInputStream
-import timeslicer.model.api.RequestModel
-import timeslicer.model.api.ResponseModel
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.context.UseCaseContextImpl
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Before
+import timeslicer.model.api.ResponseModel
+import timeslicer.model.api.RequestModel
 
 /**
  * Interactor unit tests

@@ -1,6 +1,7 @@
 package architecture
 
 import timeslicer.exception.TimeslicerException
+import scala.util.Try
 
 object Outline {
 
@@ -23,6 +24,8 @@ object Outline {
    * so the overview of the architecture could always
    * be shown here
    */
+  
+   
   class Result[S <: ResponseModel] {
     private var _response: Option[S] = None
     private var _errorMessage: String = "No error message"
@@ -51,17 +54,17 @@ object Outline {
         case None    => throw new TimeslicerException("Result flat value was none!")
       }
     }
-  }
+  }  
 
   /**
-   * The interactor trait
+   * The interactor trait which executes a use case
    */
   trait Interactor[R <: RequestModel, Result] {
-    def execute(request: R): Result
+	  def execute(request: R): Result
   }
 
   /*
-   * USECASE IMPLEMENTATIONS
+   * USECASE TEST IMPLEMENTATIONS
    */
   case class Req(inputValue: String) extends RequestModel
   case class Resp(res: String) extends ResponseModel
@@ -80,7 +83,7 @@ object Outline {
       result
     }
   }
-
+  
   /*
    * EXECUTION
    */
