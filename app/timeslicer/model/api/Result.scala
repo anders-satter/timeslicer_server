@@ -12,4 +12,7 @@ class Result[S <: ResponseModel] {
   def error_=(v: Option[Try[Throwable]]): Unit = _error = v
   def success = _success
   def error = _error
+  def logInfo(s:S):String = {
+    s.logInfo
+  }
 }
