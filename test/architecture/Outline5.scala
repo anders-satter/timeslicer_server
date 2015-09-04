@@ -8,16 +8,17 @@ import timeslicer.model.api.Result
 import timeslicer.model.context.UseCaseContextImpl
 import timeslicer.model.api.ResponseModel
 import scala.util.Failure
-import scala.util.Failure
 import java.sql.Date
 import scala.reflect.runtime.{ universe => ru }
 
-object Outline4 extends App {
+object Outline5 extends App {
 
   /*
    * DEFINITIONS
    */
-  trait YInteractor[R <: timeslicer.model.api.RequestModel, S <: timeslicer.model.api.ResponseModel] {
+   
+  
+  abstract class YInteractor[R <: timeslicer.model.api.RequestModel, S <: timeslicer.model.api.ResponseModel] {
     val PIPE = '|'
     
     def getTime: String = {
@@ -72,6 +73,8 @@ object Outline4 extends App {
     def log(msg: Any) = println(msg)
   }
    
+  
+  
  //abstract class YInteractorImpl extends YInteractor[R,S] 
   
   /*
