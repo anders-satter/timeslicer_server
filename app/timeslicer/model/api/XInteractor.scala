@@ -1,6 +1,7 @@
 package timeslicer.model.api
 
 import timeslicer.model.context.UseCaseContext
+import timeslicer.model.framework.RequestModel
 
 /**
  * The Interactor is responsible for the main

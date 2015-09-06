@@ -9,8 +9,8 @@ import timeslicer.model.context.UseCaseContext
 import timeslicer.model.context.UseCaseContextImpl
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Before
-import timeslicer.model.api.ResponseModel
-import timeslicer.model.api.RequestModel
+import timeslicer.model.framework.ResponseModel
+import timeslicer.model.framework.RequestModel
 
 /**
  * Interactor unit tests
@@ -26,7 +26,7 @@ class InteractorSpec extends Specification with Mockito{
       Option("value1")
     }
   }
-  class TestInteractor extends Interactor[RequestModel,TestResponseModel] {
+  class TestInteractor extends OldInteractor[RequestModel,TestResponseModel] {
     override def execute(reg: RequestModel, context: UseCaseContext): TestResponseModel = {
       return new TestResponseModel
     }

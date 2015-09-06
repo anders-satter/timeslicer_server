@@ -5,8 +5,8 @@ import scala.collection.mutable.ListBuffer
 /**
  * Holds a project
  */
-case class Project(name: String, activityList:ListBuffer[Activity]) {
-//  var _activityList: List[Activity] = null
-//  def activityList = _activityList
-//  def activityList_=(activityList: List[Activity]): Unit = _activityList = activityList
-}
+//case class Project(val name: String, val activityList:Option[ListBuffer[Activity]])
+/*
+ * TODO make the activitylist an option!
+ */
+case class Project(val name: String, val activityList:ListBuffer[Activity])

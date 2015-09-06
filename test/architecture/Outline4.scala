@@ -4,9 +4,9 @@ import scala.util.Try
 import scala.util.Success
 import scala.util.Failure
 import timeslicer.model.context.UseCaseContext
-import timeslicer.model.api.Result
+import timeslicer.model.framework.Result
 import timeslicer.model.context.UseCaseContextImpl
-import timeslicer.model.api.ResponseModel
+import timeslicer.model.framework.ResponseModel
 import scala.util.Failure
 import scala.util.Failure
 import java.sql.Date
@@ -17,7 +17,7 @@ object Outline4 extends App {
   /*
    * DEFINITIONS
    */
-  trait YInteractor[R <: timeslicer.model.api.RequestModel, S <: timeslicer.model.api.ResponseModel] {
+  trait YInteractor[R <: timeslicer.model.framework.RequestModel, S <: timeslicer.model.framework.ResponseModel] {
     val PIPE = '|'
     
     def getTime: String = {
@@ -77,12 +77,12 @@ object Outline4 extends App {
   /*
    * USE CASE IMPLEMENTATION
    */
-  case class Req(value: String) extends timeslicer.model.api.RequestModel {
+  case class Req(value: String) extends timeslicer.model.framework.RequestModel {
     override def logInfo: String = {
       value.toString
     }
   }
-  case class Resp(value: Int) extends timeslicer.model.api.ResponseModel {
+  case class Resp(value: Int) extends timeslicer.model.framework.ResponseModel {
     override def logInfo: String = {
       value.toString
     }
@@ -93,29 +93,29 @@ object Outline4 extends App {
   val interactor = new InteractorTest
   val useCaseContext: UseCaseContext = new UseCaseContextImpl
 
-  interactor.execute(Req("1"), useCaseContext, (r, u) => {
-    //println("In execute anonymous2")
-    val result = new Result[Resp]
-    Try {
-      result.success = Option(Resp(r.value.toInt))
-    } match {
-      case Failure(e) => result.error = Option(Failure(e))
-      case Success(e) =>
-    }
-    result
-  })
-
-  interactor.execute(Req("sjk"), useCaseContext, (r, u) => {
-    //println("In execute anonymous2")
-    val result = new Result[Resp]
-    Try {
-      result.success = Option(Resp(r.value.toInt))
-    } match {
-      case Failure(e) => result.error = Option(Failure(e))
-      case Success(e) =>
-    }
-    result
-  })
+//  interactor.execute(Req("1"), useCaseContext, (r, u) => {
+//    //println("In execute anonymous2")
+//    val result = new Result[Resp]
+//    Try {
+//      result.success = Option(Resp(r.value.toInt))
+//    } match {
+//      case Failure(e) => result.error = Option(Failure(e)) //not compatible, not the be changed since we don't use this outline
+//      case Success(e) =>
+//    }
+//    result
+//  })
+//
+//  interactor.execute(Req("sjk"), useCaseContext, (r, u) => {
+//    //println("In execute anonymous2")
+//    val result = new Result[Resp]
+//    Try {
+//      result.success = Option(Resp(r.value.toInt))
+//    } match {
+//      case Failure(e) => result.error = Option(Failure(e))
+//      case Success(e) =>
+//    }
+//    result
+//  })
 
 //  def getTypeTag[T: ru.TypeTag](obj: T) = ru.typeTag[T]
 //  //println(getTypeTag(Req).tpe)

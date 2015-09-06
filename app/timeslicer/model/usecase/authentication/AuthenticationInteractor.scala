@@ -1,21 +1,22 @@
 package timeslicer.model.usecase.authentication
 
-import timeslicer.model.api.RequestModel
-import timeslicer.model.api.ResponseModel
+import timeslicer.model.framework.RequestModel
+import timeslicer.model.framework.ResponseModel
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.context.UseCaseContextImpl
 import timeslicer.model.user.UserImpl
 import timeslicer.model.api.XInteractor
-import timeslicer.model.api.Result
+import timeslicer.model.api.ResultOld
+
 
 /**
  * The use case should return a ResponseModel with a 
  * UseCaseContext that is filled with a User
  */
 
-class AuthenticationInteractor extends XInteractor[AuthenticationRequestModel,Result[AuthenticationResponseModel] ] {
-  override def execute(req: AuthenticationRequestModel, context: UseCaseContext): Result[AuthenticationResponseModel] = {
-    val result = new Result[AuthenticationResponseModel]
+class AuthenticationInteractor extends XInteractor[AuthenticationRequestModel,ResultOld[AuthenticationResponseModel] ] {
+  override def execute(req: AuthenticationRequestModel, context: UseCaseContext): ResultOld[AuthenticationResponseModel] = {
+    val result = new ResultOld[AuthenticationResponseModel]
     val useCaseContext = new UseCaseContextImpl();
     val user = new UserImpl
     user.id = "111111111111"

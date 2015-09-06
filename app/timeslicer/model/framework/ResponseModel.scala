@@ -1,4 +1,4 @@
-package timeslicer.model.api
+package timeslicer.model.framework
 
 /**
  * Implementors hold objects of the

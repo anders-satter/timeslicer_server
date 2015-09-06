@@ -29,6 +29,7 @@ class UseCaseGetProjectsSpec extends Specification with Mockito {
     override def email = None
     override def validate = true
   }
+
   /*
    * TEST
    */
@@ -36,10 +37,11 @@ class UseCaseGetProjectsSpec extends Specification with Mockito {
   "ProjectListInteractor" should {
 
     "return a ProjectListResponseModel" in {
-      interactor.execute(requestModel, useCaseContext)
-        .projectList != null must beTrue
-      interactor.execute(requestModel, useCaseContext)
-        .projectList.length > 0 must beTrue
+      val res = interactor.execute(requestModel, useCaseContext).success.map(x => {
+        val list = x.projectList
+        list
+      })
+      res.getOrElse(List()).length == 2 must beTrue
     }
   }
 }

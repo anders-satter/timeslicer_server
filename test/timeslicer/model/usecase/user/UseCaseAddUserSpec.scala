@@ -5,7 +5,7 @@ import org.specs2.mutable.Specification
 import org.specs2.mock.Mockito
 import org.junit.runner.RunWith
 import timeslicer.model.context.UseCaseContext
-import timeslicer.model.api.RequestModel
+import timeslicer.model.framework.RequestModel
 import timeslicer.model.user.UserImpl
 import timeslicer.model.usecase.userid.CreateUserIdInteractor
 

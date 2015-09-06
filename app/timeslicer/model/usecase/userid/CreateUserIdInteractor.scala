@@ -1,15 +1,13 @@
 package timeslicer.model.usecase.userid
 
-import timeslicer.model.api.RequestModel
-import timeslicer.model.api.ResponseModel
 import timeslicer.model.context.UseCaseContext
-import timeslicer.model.interactor.Interactor
+import timeslicer.model.interactor.OldInteractor
 import timeslicer.model.message.MessageBuilder
 import timeslicer.model.storage.filestorage.FileStorage
 import timeslicer.model.usecase.userid.exception.UserIdCouldNotBeGeneratedException
-import timeslicer.model.util.UserIdGenerator
+import timeslicer.model.util.StringIdGenerator
 
-class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, CreateUserIdResponseModel] {
+class CreateUserIdInteractor extends OldInteractor[CreateUserIdRequestModel, CreateUserIdResponseModel] {
 
   override def execute(request: CreateUserIdRequestModel, useCaseContext: UseCaseContext): CreateUserIdResponseModel = {
 
@@ -31,7 +29,7 @@ class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, Create
     var valueCouldNotBeGenerated = false
     var breakCounter = 0
     do {      
-    	generatedValue = UserIdGenerator.generate;
+    	generatedValue = StringIdGenerator.userId();
     	breakCounter = breakCounter + 1
     } while (currentUserIdList.contains(generatedValue) && breakCounter < 100)
     if (breakCounter >= 100 ){

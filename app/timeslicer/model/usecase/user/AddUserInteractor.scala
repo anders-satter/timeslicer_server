@@ -1,8 +1,8 @@
 package timeslicer.model.usecase.user
 
-import timeslicer.model.interactor.Interactor
-import timeslicer.model.api.RequestModel
-import timeslicer.model.api.ResponseModel
+import timeslicer.model.interactor.OldInteractor
+import timeslicer.model.framework.RequestModel
+import timeslicer.model.framework.ResponseModel
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.storage.Storage
 import timeslicer.model.storage.StorageImpl
@@ -11,7 +11,7 @@ import timeslicer.model.storage.filestorage.FileStorageUtil._
 /**
  * Adds a new user to the system, and returns that user on success
  */
-class AddUserInteractor extends Interactor[AddUserRequestModel, AddUserResponseModel] {
+class AddUserInteractor extends OldInteractor[AddUserRequestModel, AddUserResponseModel] {
   
   override def execute(request:AddUserRequestModel, useCaseContext:UseCaseContext):AddUserResponseModel = {
     val storage = StorageImpl()

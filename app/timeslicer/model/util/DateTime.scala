@@ -12,16 +12,17 @@ import timeslicer.model.util.settings.Settings
 
 object DateTime {
   private val format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm")
+  private val formatFullDayAndTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS")
   private val formatDay = new java.text.SimpleDateFormat("yyyy-MM-dd")
   private val formatDayName = new java.text.SimpleDateFormat("EE", Locale.ENGLISH)
   private val formatTime = new java.text.SimpleDateFormat("HH:mm")
+  private val formatFullTime = new java.text.SimpleDateFormat("HH:mm:ss:SSS")
+
   val oneDayMs: Long = 1000 * 60 * 60 * 24
 
   type DayStringToValueConverter = String => Int
-  type ElapsedTimeCalculator = (String,String) => Long
-  
-  
-  
+  type ElapsedTimeCalculator = (String, String) => Long
+
   def elapsedMinutes(start: String, end: String) = {
     val d1 = format.parse(start)
     val d2 = format.parse(end)
@@ -32,24 +33,22 @@ object DateTime {
     formatDay.parse(day).getTime()
   }
 
-//  def day(inDay:String):String => Long = {
-// 
-//        formatDay.parse(inDay).getTime()
-//   
-//  }
-  
+  //  def day(inDay:String):String => Long = {
+  // 
+  //        formatDay.parse(inDay).getTime()
+  //   
+  //  }
 
-  val dayMs = (date:String) => {
+  val dayMs = (date: String) => {
     formatDay.parse(date).getTime()
   }
-  
-  
+
   def getDayValueInStr(day: Long): String = {
     formatDay.format(new java.util.Date(day))
   }
 
   def getDecimalHours(minutes: Long): Double = {
-    BigDecimal(minutes / 60.0).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble    
+    BigDecimal(minutes / 60.0).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
   def getNumberOfDaysInInterval(start: Long, end: Long): Int = {
@@ -90,7 +89,7 @@ object DateTime {
   def currentTime = {
     formatTime.format(Calendar.getInstance.getTime())
   }
-  
+
   def getTimePart(time: String) = {
     val parsedDate = format.parse(time)
     formatTime.format(parsedDate)
@@ -100,6 +99,8 @@ object DateTime {
   def currentDay = {
     formatDay.format(Calendar.getInstance.getTime())
   }
+
+  def now = Calendar.getInstance.getTime().getTime
 
   def isDay(test: String): Boolean = {
     var result = false
@@ -114,6 +115,12 @@ object DateTime {
     result
   }
 
+  case class Now(timeMs:Long, dayPartConverter:Long => String, timePartConverter:Long=>String){
+    def day:String = getDayValueInStr(timeMs)
+    def time:String = fullTimePart(timeMs)
+  }
+  
+  
   def dayNormalTime(day: Long): Double = {
     var result = 0.0
     val name = dayName(day)
@@ -146,7 +153,7 @@ object DateTime {
   }
 
   val OneDayMs = 86400000
-  
+
   class DayType() {
     private val dt = DateTime
     private var _currentDay: Long = 0
@@ -156,21 +163,20 @@ object DateTime {
     def isSaturday = { dt.isSaturday(_currentDay) }
     def isSunday = { dt.isSunday(_currentDay) }
   }
-  
 
   /**
    * list of dates from start date
    * to end date inclusive
    */
-  def getDayList(startDay:String, endDay:String):Array[String] = {
-		  val start = getDayValueInMs(startDay)
-				  val end = getDayValueInMs(endDay)
-				  val buffer = new ListBuffer[String]
-						  //buffer += getDayValueInStr(start) 
-						  for(dayValue <- start to end by OneDayMs){
-							  buffer += getDayValueInStr(dayValue)
-						  }   
-		  return buffer.toArray[String]
+  def getDayList(startDay: String, endDay: String): Array[String] = {
+    val start = getDayValueInMs(startDay)
+    val end = getDayValueInMs(endDay)
+    val buffer = new ListBuffer[String]
+    //buffer += getDayValueInStr(start) 
+    for (dayValue <- start to end by OneDayMs) {
+      buffer += getDayValueInStr(dayValue)
+    }
+    return buffer.toArray[String]
   }
 
   /**
@@ -183,63 +189,59 @@ object DateTime {
       currentDay
     }
   }
+
+  def fullTimePart(time:Long):String = formatFullTime.format(time)
   
   /**
    * the main function is only used for tests
    */
   def main(args: Array[String]) {
-//    val dt = new DayType
-//    dt.currentDay = "2015-01-03"
-//    println(dt.isSaturday)
-//    println(dt.isSunday)
-//
-//    dt.currentDay = "2015-01-04"
-//    println(dt.isSaturday)
-//    println(dt.isSunday)
+    //    val dt = new DayType
+    //    dt.currentDay = "2015-01-03"
+    //    println(dt.isSaturday)
+    //    println(dt.isSunday)
+    //
+    //    dt.currentDay = "2015-01-04"
+    //    println(dt.isSaturday)
+    //    println(dt.isSunday)
 
-      //println(getTimePart("2015-01-04 08:36"))
-    
-    
-//    
-//    println(isSaturday("2015-01-03"))
-//    println(isSaturday("2015-01-04"))
-//
-//    println(isSunday("2015-01-04"))
-//    println(isSunday("2015-01-05"))
-//
-      
-     val d = 0
-     val startDate = "2015-06-01"
-     val stMs = getDayValueInMs(startDate)
-     //println(stMs)
-     val nextDay = stMs + OneDayMs
-     //println(getDayValueInStr(nextDay))
-     
-     
-     
-//     val inc1 = incrementor(d)
-//     println(inc1())
-//     println(inc1())
-//     println(inc1())
-//     println(inc1())
-//     println(inc1())
-//     
-    
-     val dayList = getDayList("2015-06-01", "2015-06-30")
-     dayList.foreach(i =>println(i))
-     
-     
-     
-     //println(getDayValueInMs(startDate))
-     
-     
-//     val inc = incrementor2(2)
-//     println(inc("next")())
-//     println(inc("next")())
-//     println(inc("next")())
-//     println(inc("next")())
-//     println(inc("next")())
-//     println(inc("next")())
-//     //println(inc.next()) 
+    //println(getTimePart("2015-01-04 08:36"))
+
+    //    
+    //    println(isSaturday("2015-01-03"))
+    //    println(isSaturday("2015-01-04"))
+    //
+    //    println(isSunday("2015-01-04"))
+    //    println(isSunday("2015-01-05"))
+    //
+
+    val d = 0
+    val startDate = "2015-06-01"
+    val stMs = getDayValueInMs(startDate)
+    //println(stMs)
+    val nextDay = stMs + OneDayMs
+    //println(getDayValueInStr(nextDay))
+
+    //     val inc1 = incrementor(d)
+    //     println(inc1())
+    //     println(inc1())
+    //     println(inc1())
+    //     println(inc1())
+    //     println(inc1())
+    //     
+
+    val dayList = getDayList("2015-06-01", "2015-06-30")
+    dayList.foreach(i => println(i))
+
+    //println(getDayValueInMs(startDate))
+
+    //     val inc = incrementor2(2)
+    //     println(inc("next")())
+    //     println(inc("next")())
+    //     println(inc("next")())
+    //     println(inc("next")())
+    //     println(inc("next")())
+    //     println(inc("next")())
+    //     //println(inc.next()) 
   }
 }

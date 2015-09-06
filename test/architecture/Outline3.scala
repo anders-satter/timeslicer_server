@@ -4,16 +4,16 @@
 //import scala.util.Success
 //import scala.util.Failure
 //import timeslicer.model.context.UseCaseContext
-//import timeslicer.model.api.Result
+//import timeslicer.model.framework.Result
 //import timeslicer.model.context.UseCaseContextImpl
-//import timeslicer.model.api.ResponseModel
+//import timeslicer.model.framework.ResponseModel
 //
 //object Outline3 {
 //
 //  /*
 //   * DEFINITIONS
 //   */
-//  trait YInteractor[R <: timeslicer.model.api.RequestModel, Result] {
+//  trait YInteractor[R <: timeslicer.model.framework.RequestModel, Result] {
 //    def doBefore(r: R) = {
 //      println("doBefore")
 //      println(r.logInfo)
@@ -32,12 +32,12 @@
 //  /*
 //   * USE CASE IMPLEMENTATION
 //   */
-//  case class Req(value: String) extends timeslicer.model.api.RequestModel {
+//  case class Req(value: String) extends timeslicer.model.framework.RequestModel {
 //    override def logInfo: String = {
 //      value.toString
 //    }
 //  }
-//  case class Resp(value: Int) extends timeslicer.model.api.ResponseModel {
+//  case class Resp(value: Int) extends timeslicer.model.framework.ResponseModel {
 //    override def logInfo: String = {
 //      value.toString
 //    }    
