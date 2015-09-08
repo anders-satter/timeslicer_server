@@ -6,60 +6,45 @@ import org.specs2.runner.JUnitRunner
 import timeslicer.model.context.UseCaseContextImpl
 import org.specs2.mock.Mockito
 import timeslicer.model.user.User
+import timeslicer.model.util.Util.EmptyUseCaseContext
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseAuthenticationSpec extends Specification with Mockito {
   val interactor = new AuthenticationInteractor
   val requestModel = mock[AuthenticationRequestModel]
-  var useCaseContext = null
+  var noneCaseContext = new EmptyUseCaseContext
 
   "AuthenticationInteractor" should {
 
     "return useCaseContext with user" in {
-
       var user: User = null
-
-      interactor.execute(requestModel, useCaseContext).success.map(x => {
+      interactor.execute(requestModel, noneCaseContext).success.map(x => {
         user = x.useCaseContext.user
       })
-
-      interactor.execute(requestModel, useCaseContext).success.map(x => {
+      interactor.execute(requestModel, noneCaseContext).success.map(x => {
         x.useCaseContext.user must not(beNull)
       })
-
       val user1 = for {
-        s <- interactor.execute(requestModel, useCaseContext).success.map(x => x).map(x => x.useCaseContext.user)
+        s <- interactor.execute(requestModel, noneCaseContext).success.map(x => x).map(x => x.useCaseContext.user)
       } yield s
-      println(user1)
+      //println(user1)
+      val user2 = interactor.execute(requestModel, noneCaseContext).success.map(x => x).map(x => x.useCaseContext.user).get
+      //println(user2)
 
-      val user2 = interactor.execute(requestModel, useCaseContext).success.map(x => x).map(x => x.useCaseContext.user).get
-      println(user2)
-      
       //work with the user
-      interactor.execute(requestModel, useCaseContext).success.map(rm => rm).map {
+      interactor.execute(requestModel, noneCaseContext).success.map(rm => rm).map {
         x =>
           {
             val user = x.useCaseContext.user
-            println("Here we will print the users name:")
-            println(user.firstName + " "+  user.lastName)
+            //println("Here we will print the users name:")
+            //println(user.firstName + " " + user.lastName)
           }
       }
-
       user must not(beNull)
-      ok
     }
     "return no error" in {
       var error: scala.util.Try[Throwable] = null
-      interactor.execute(requestModel, useCaseContext).error.map(x => {
-        error = x
-      })
-      error.isFailure must not(beTrue)
-
+      interactor.execute(requestModel, noneCaseContext).error.map(errorContainer => errorContainer) must beNone
     }
-
-    //    "return user" in {
-    //      interactor.execute(requestModel, useCaseContext)
-    //        .useCaseContext.get.user must not(beNull)
-    //    }
   }
 }

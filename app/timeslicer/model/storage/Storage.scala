@@ -68,9 +68,9 @@ trait Storage {
   /**
    * Add a user of the system
    */
-  def addUser(user:User, useCaseContext:UseCaseContext):Unit  
+  def addUser(user:User):Unit  
   /**
    * Remove a user of the system
    */
-  def removeUser(user:User, useCaseContext:UseCaseContext):Unit  
+  def removeUser(user:User):Unit  
 }

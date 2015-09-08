@@ -414,7 +414,7 @@ class FileStorageSpec extends Specification with Mockito {
     
     "add a new user" in {
       val userIdInteractor = new CreateUserIdInteractor      
-      fileStorage.addUser(testUser, useCaseContext)      
+      fileStorage.addUser(testUser)      
       ok
     }
     "remove a user" in {
@@ -430,7 +430,7 @@ class FileStorageSpec extends Specification with Mockito {
       testUser.email = "abc@example.com"
 
       
-      fileStorage.removeUser(testUser, null)
+      fileStorage.removeUser(testUser)
       ok
     }
 

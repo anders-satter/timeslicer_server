@@ -21,8 +21,10 @@ object StringIdGenerator {
 
   private val allowedChars = "abcdefghijklmnopqrstuvxyz1234567890"
  
+  /**
+   * Generates a random string of specified length
+   */
   private def generator(length: Int): () => String = {
-
     def generate: () => String = {
       val builder = new StringBuilder
       val randomGenerator = new java.util.Random

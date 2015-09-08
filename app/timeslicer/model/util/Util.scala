@@ -1,6 +1,10 @@
 package timeslicer.model.util
 
 import java.util.Base64
+import timeslicer.model.context.UseCaseContext
+import timeslicer.model.user.User
+import timeslicer.model.user.UserImpl
+
 
 /**
  * General helper methods
@@ -16,4 +20,12 @@ object Util {
   def b64EncodeStr(str: String) = Base64.getEncoder().encodeToString(str.getBytes)
   def b64DecodeStr(str: String) =  new String(Base64.getDecoder().decode(str), "utf-8")
 
+  class EmptyUseCaseContext extends UseCaseContext {
+    override def user:User = {
+      val us = new UserImpl
+      us.id = "0EMPTY0USER0"
+      us
+    }
+  }
+  
 }

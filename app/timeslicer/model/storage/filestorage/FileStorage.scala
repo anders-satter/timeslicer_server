@@ -1,30 +1,30 @@
 package timeslicer.model.storage.filestorage
 
-import timeslicer.model.storage.Storage
+import scala.collection.mutable.ListBuffer
+
+import play.api.libs.json.JsBoolean
+import play.api.libs.json.JsLookupResult.jsLookupResultToJsLookup
+import play.api.libs.json.JsString
+import play.api.libs.json.JsValue.jsValueToJsLookup
+import play.api.libs.json.Json
+import play.api.libs.json.Writes
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.context.UseCaseContextUtil.validateUseCaseContext
-import timeslicer.model.project.Project
+import timeslicer.model.message.MessageBuilder
 import timeslicer.model.project.Activity
+import timeslicer.model.project.Project
+import timeslicer.model.storage.Storage
+import timeslicer.model.storage.exception.ItemAlreadyExistsException
 import timeslicer.model.timeslice.TimeSlice
 import timeslicer.model.user.User
+import timeslicer.model.user.UserImpl
+import timeslicer.model.util.FileCommunicationUtil.createUserIdFilesIfNotExists
 import timeslicer.model.util.FileCommunicationUtil.readFromFileToString
 import timeslicer.model.util.FileCommunicationUtil.readFromFileToStringArray
-import timeslicer.model.util.FileCommunicationUtil.createUserIdFilesIfNotExists
 import timeslicer.model.util.FileCommunicationUtil.saveToFile
-import timeslicer.model.util.settings.Settings
-import timeslicer.model.project.Project
-import scala.collection.mutable.ListBuffer
-import timeslicer.model.util.DateTime
-import timeslicer.model.user.UserImpl
-import timeslicer.model.storage.exception.ItemAlreadyExistsException
-import timeslicer.model.storage.exception.InvalidArgumentException
-import timeslicer.model.message.MessageBuilder
-import java.io.File
-import com.fasterxml.jackson.databind.JsonNode
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
 import timeslicer.model.util.JsonUser
 import timeslicer.model.util.UsersContainer
+import timeslicer.model.util.settings.Settings
 
 /**
  * Text file based implementation of the Storage trait
@@ -81,60 +81,65 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
    */
   override def projects(useCaseContext: UseCaseContext): Option[Seq[Project]] = {
     //println("In projects " + calcProjectFileName(useCaseContext))
-    val strSeq = readFromFileToStringArray(calcProjectFileName(useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq
+
     var currentProjectName = ""
     var currentActivityName = ""
     var currentActivityList: ListBuffer[Activity] = null
     var projectList: ListBuffer[Project] = new ListBuffer
 
-    def addToProjectList = {
-      if (currentProjectName.trim().length() > 0) {
-        projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
-      }
-    }
 
-    strSeq.foreach(item => {
-      /*
+      val strSeq = readFromFileToStringArray(calcProjectFileName(useCaseContext),
+        Settings.propertiesMap("ProjectFileEncoding")).toSeq
+
+      def addToProjectList = {
+        if (currentProjectName.trim().length() > 0) {
+          projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
+        }
+      }
+
+      strSeq.foreach(item => {
+        /*
        * odd thing makes us needing to use contains instead of startsWith
        * since for the first item in the file (#Administration in the test
        * case) position 0 is empty. Oddly this is not visible in an editor 
        */
-      if (item.contains("#")) {
-        val bracketsPos = item.indexOf("#")
-        /*
+        if (item.contains("#")) {
+          val bracketsPos = item.indexOf("#")
+          /*
          * if the currentProjectName has value then we
          * that was set on a previous round and we need
          * to store the project, along with its activityList
          * to the projectList
          */
-        if (currentProjectName != "") {
-          /*
+          if (currentProjectName != "") {
+            /*
            * sort the activity list before we add it to the project 
            */
-          addToProjectList
-        }
+            addToProjectList
+          }
 
-        /*
+          /*
          * this is a project
          */
-        currentProjectName = item.substring(bracketsPos + 1, item.length())
-        currentActivityList = new ListBuffer()
-      } else if (item.contains("+")) {
-        /*
+          currentProjectName = item.substring(bracketsPos + 1, item.length())
+          currentActivityList = new ListBuffer()
+        } else if (item.contains("+")) {
+          /*
          * this is an activity, just add it to the current activity list
          */
-        currentActivityList += new Activity(item.substring(1, item.length()))
+          currentActivityList += new Activity(item.substring(1, item.length()))
 
-        /*
+          /*
          * if this is the last item in strSeq then we need to add the current
          * project and its list to the list of projects
          */
-      }
-    })
-    /*
+        }
+      })
+      /*
      * take care of the list item in strSeq...
      */
-    addToProjectList
+      addToProjectList
+
 
     /*
      * sort the project list
@@ -144,17 +149,20 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     } else {
       return None
     }
+
   }
 
   override def activities(project: Project, useCaseContext: UseCaseContext): Option[Seq[Activity]] = {
-    val strSeq = readFromFileToStringArray(calcProjectFileName(useCaseContext), Settings.propertiesMap("ProjectFileEncoding")).toSeq
+
+    val strSeq = readFromFileToStringArray(calcProjectFileName(useCaseContext),
+      Settings.propertiesMap("ProjectFileEncoding")).toSeq
 
     var pos = strSeq.toStream.takeWhile(item =>
       !item.equals("#" + project.name)).length
     if (pos == strSeq.length) {
       /*
-       * we didn't find the project name we asked for
-       */
+    				 * we didn't find the project name we asked for
+    				 */
       return None
     } else {
       var activitesForProject: ListBuffer[Activity] = new ListBuffer
@@ -169,6 +177,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
         return None
       }
     }
+
   }
 
   /**
@@ -347,7 +356,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
      */
   }
 
-  override def addUser(user: User, useCaseContext: UseCaseContext): Unit = {
+  override def addUser(user: User): Unit = {
 
     var currentUsersList = (users match {
       case Some(seq) => seq
@@ -393,13 +402,13 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
   /**
    * Removes a user from the data store
    */
-  override def removeUser(user: User, useCaseContext: UseCaseContext): Unit = {
+  override def removeUser(user: User): Unit = {
     var currentUsersList = (users match {
       case Some(seq) => seq
       case None      => Seq()
     })
 
-    if (fsUtil.matchesId(currentUsersList, user)) {      
+    if (fsUtil.matchesId(currentUsersList, user)) {
       val updatedUserList = fsUtil.performUserRemoval(currentUsersList, user)
 
       /*convert seq of User to seq of JsonUser*/

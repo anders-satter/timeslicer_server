@@ -59,9 +59,19 @@ class FrameworkSpec extends Specification with Mockito {
         .success.map(x => x.value).getOrElse(-1) == 1 must beTrue
     }
     "return failure" in {
-    	interactorTest.execute(Req(""), useCaseContext)
-    	.error.map(x => x.failure.map(y => y).get).get.getClass
-      .getSimpleName.equals("NumberFormatException")  must beTrue
+
+      /*
+       * overriding logging since the stacktrace is annoying in the spec
+       * output
+       */
+      def logAfterInteraction[S <: timeslicer.model.framework.ResponseModel](caller: Any, res: Result[S], u: UseCaseContext) = {
+        "No logging in spec"
+      }
+
+      interactorTest.afterLogStringBuilder_=(logAfterInteraction)
+      interactorTest.execute(Req(""), useCaseContext)
+        .error.map(x => x.failure.map(y => y).get).get.getClass
+        .getSimpleName.equals("NumberFormatException") must beTrue
     }
   }
 }
