@@ -5,6 +5,6 @@ import timeslicer.model.user.User
 
 class CreateUserIdRequestModel(user:User) extends RequestModel{
   override def toString ={ 
-    user.toString
+    user.id
   }
 }

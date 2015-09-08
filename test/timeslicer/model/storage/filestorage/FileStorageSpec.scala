@@ -402,7 +402,7 @@ class FileStorageSpec extends Specification with Mockito {
    
     
     val userIdInteractor = new CreateUserIdInteractor
-    val testUserid = userIdInteractor.execute(null, useCaseContext).userId
+    val testUserid = userIdInteractor.execute(null).success.map(u => u.userId).getOrElse("")
     val testUser = new UserImpl
     testUser.firstName = "TestFörnamn" 
     testUser.lastName = "TestEfternamn"

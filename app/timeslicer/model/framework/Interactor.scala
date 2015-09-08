@@ -5,6 +5,10 @@ import scala.util.Try
 import timeslicer.model.util.StringIdGenerator
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.util.{ Util => u, DateTime => dt }
+import timeslicer.model.util.Util.EmptyUseCaseContext
+import timeslicer.model.util.Util.EmptyUseCaseContext
+import timeslicer.model.util.Util.EmptyUseCaseContext
+import timeslicer.model.util.Util.EmptyResponseModel
 
 /**
  * General interactor class to be overridden by specific use case implementations
@@ -35,9 +39,32 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   def post(me: Any, res: Result[S], u: UseCaseContext) = _log(_afterLogStringBuilder(me, res, u))
 
   /**
+   * Will do the actual work, is to be overridden by implementors
+   * This is the implementation where we have an initialized UseCaseContext
+   */
+  def onExecute(r: R, u: UseCaseContext): Result[S] = {
+    /*
+     * default implementation, so implementors can choose to implement
+     * either this onExecute or the other one
+     */
+    return new Result[S]
+  }
+
+  /**
+   * Implmenentation with no UseCaseContext
+   */
+  def onExecute(r: R): Result[S] = {
+    /*
+		 * default implementation, so implementors can choose to implement
+		 * either this onExecute or the other one
+		 */
+    return new Result[S]
+  }
+
+  /**
    * Execution of the interaction
    */
-  def execute(r: R, u: UseCaseContext) = {
+  def execute(r: R, u: UseCaseContext): Result[S] = {
     pre(this, r, u)
     checkAuthorization(this, r, u)
     val res = onExecute(r, u)
@@ -46,9 +73,18 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   }
 
   /**
-   * Will do the actual work, is to be overridden by implementors
+   * Execution of the interaction
+   * with no UseCaseContext
    */
-  def onExecute(r: R, u: UseCaseContext): Result[S]
+  def execute(r: R): Result[S] = {
+    val u = new EmptyUseCaseContext
+    pre(this, r, u)
+    checkAuthorization(this, r, u)
+    val res = onExecute(r)
+    post(this, res, u)
+    res
+  }
+
 }
 
 /**

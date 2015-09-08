@@ -4,6 +4,7 @@ import java.util.Base64
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.user.User
 import timeslicer.model.user.UserImpl
+import timeslicer.model.framework.ResponseModel
 
 
 /**
@@ -27,5 +28,5 @@ object Util {
       us
     }
   }
-  
+  class EmptyResponseModel extends ResponseModel
 }

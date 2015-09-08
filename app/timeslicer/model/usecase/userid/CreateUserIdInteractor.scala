@@ -1,28 +1,25 @@
 package timeslicer.model.usecase.userid
 
 import timeslicer.model.context.UseCaseContext
-import timeslicer.model.interactor.OldInteractor
 import timeslicer.model.message.MessageBuilder
 import timeslicer.model.storage.filestorage.FileStorage
 import timeslicer.model.usecase.userid.exception.UserIdCouldNotBeGeneratedException
 import timeslicer.model.util.StringIdGenerator
+import timeslicer.model.framework.Interactor
+import timeslicer.model.framework.Result
+import scala.util.Failure
 
-class CreateUserIdInteractor extends OldInteractor[CreateUserIdRequestModel, CreateUserIdResponseModel] {
+class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, CreateUserIdResponseModel] {
 
-  override def execute(request: CreateUserIdRequestModel, useCaseContext: UseCaseContext): CreateUserIdResponseModel = {
+  override def onExecute(request: CreateUserIdRequestModel): Result[CreateUserIdResponseModel] = {
 
+    val result = new Result[CreateUserIdResponseModel]
+    
     /*
      * First load the users to make a list of userids so
      * I can make sure that the generated id is unique
-     */
-    val currentUserIdList = {
-      FileStorage().users() match {
-        case Some(users) => {
-          users.map(u => u.id)
-        }
-        case None => List()
-      }
-    }
+     */        
+    val currentUserIdList = FileStorage().users().getOrElse(Seq()).map(u => u.id)
     
     /* Generate the id */
     var generatedValue = ""
@@ -32,14 +29,16 @@ class CreateUserIdInteractor extends OldInteractor[CreateUserIdRequestModel, Cre
     	generatedValue = StringIdGenerator.userId();
     	breakCounter = breakCounter + 1
     } while (currentUserIdList.contains(generatedValue) && breakCounter < 100)
+      
     if (breakCounter >= 100 ){
-      throw new UserIdCouldNotBeGeneratedException(          
+      result.error = Failure(new UserIdCouldNotBeGeneratedException(          
            new MessageBuilder()
-           .append("User id could not be created within the allowed number of tries (99)").toString)
+           .append("User id could not be created within the allowed number of tries (99)").toString))
     }  
-    return CreateUserIdResponseModel(generatedValue)
+    result.success = CreateUserIdResponseModel(generatedValue)
+    result
   }
-
+  
   //  /**
   //   * Just some experiments to generate a unique id below
   //   */

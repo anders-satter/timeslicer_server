@@ -14,7 +14,7 @@ import timeslicer.model.user.UserImpl
 
 class AuthenticationInteractor extends Interactor[AuthenticationRequestModel,AuthenticationResponseModel]  {
   
-  override def onExecute(req: AuthenticationRequestModel, context: UseCaseContext): Result[AuthenticationResponseModel] = {
+  override def onExecute(req: AuthenticationRequestModel): Result[AuthenticationResponseModel] = {
     
     val result = new Result[AuthenticationResponseModel]
     val useCaseContext = new UseCaseContextImpl();
@@ -30,19 +30,3 @@ class AuthenticationInteractor extends Interactor[AuthenticationRequestModel,Aut
     return result
   }
 }
-//class AuthenticationInteractor extends XInteractor[AuthenticationRequestModel,ResultOld[AuthenticationResponseModel] ] {
-//	override def execute(req: AuthenticationRequestModel, context: UseCaseContext): ResultOld[AuthenticationResponseModel] = {
-//			val result = new ResultOld[AuthenticationResponseModel]
-//					val useCaseContext = new UseCaseContextImpl();
-//			val user = new UserImpl
-//					user.id = "111111111111"
-//					user.firstName = "Anders"
-//					user.lastName = "Sätter"
-//					user.isAuthenticated = true
-//					user.isAuthorized = true
-//					user.email = "example@email.com"
-//					useCaseContext.user =user
-//					result.success = Option(AuthenticationResponseModel(useCaseContext))
-//					return result
-//	}
-//}

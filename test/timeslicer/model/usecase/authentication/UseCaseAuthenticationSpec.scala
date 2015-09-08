@@ -18,21 +18,21 @@ class UseCaseAuthenticationSpec extends Specification with Mockito {
 
     "return useCaseContext with user" in {
       var user: User = null
-      interactor.execute(requestModel, noneCaseContext).success.map(x => {
+      interactor.execute(requestModel).success.map(x => {
         user = x.useCaseContext.user
       })
-      interactor.execute(requestModel, noneCaseContext).success.map(x => {
+      interactor.execute(requestModel).success.map(x => {
         x.useCaseContext.user must not(beNull)
       })
       val user1 = for {
-        s <- interactor.execute(requestModel, noneCaseContext).success.map(x => x).map(x => x.useCaseContext.user)
+        s <- interactor.execute(requestModel).success.map(x => x).map(x => x.useCaseContext.user)
       } yield s
       //println(user1)
-      val user2 = interactor.execute(requestModel, noneCaseContext).success.map(x => x).map(x => x.useCaseContext.user).get
+      val user2 = interactor.execute(requestModel).success.map(x => x).map(x => x.useCaseContext.user).get
       //println(user2)
 
       //work with the user
-      interactor.execute(requestModel, noneCaseContext).success.map(rm => rm).map {
+      interactor.execute(requestModel).success.map(rm => rm).map {
         x =>
           {
             val user = x.useCaseContext.user
@@ -44,7 +44,7 @@ class UseCaseAuthenticationSpec extends Specification with Mockito {
     }
     "return no error" in {
       var error: scala.util.Try[Throwable] = null
-      interactor.execute(requestModel, noneCaseContext).error.map(errorContainer => errorContainer) must beNone
+      interactor.execute(requestModel).error.map(errorContainer => errorContainer) must beNone
     }
   }
 }

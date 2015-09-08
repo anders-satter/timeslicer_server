@@ -41,7 +41,6 @@ class FrameworkSpec extends Specification with Mockito {
       Try {
         res.success = Resp(r.value.toInt)
       } match {
-        //case Failure(e) => res.failure(Failure(e))
         case Failure(e) => res.error = Failure(e)
         case Success(e) =>
       }

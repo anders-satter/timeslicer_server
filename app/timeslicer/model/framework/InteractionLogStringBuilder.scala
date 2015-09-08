@@ -21,6 +21,7 @@ object InteractionLogStringBuilder {
     buf.append(PIPE)
     buf.append(t.time)
     buf.append(PIPE)
+    
     /*
      * Ugly, but we don't want logging to fail
      */
@@ -36,7 +37,7 @@ object InteractionLogStringBuilder {
     buf.append(PIPE)
     buf.append(r.getClass.getSimpleName)
     buf.append(PIPE)
-    buf.append(r.logInfo)
+    buf.append(r.toString)
     buf.toString
   }
 
@@ -66,7 +67,7 @@ object InteractionLogStringBuilder {
       buf.append(PIPE)
       buf.append(s.getClass.getSimpleName)
       buf.append(PIPE)
-      buf.append(s.logInfo)
+      buf.append(s.toString)
       buf.toString
     })
 

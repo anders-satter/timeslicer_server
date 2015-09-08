@@ -6,7 +6,6 @@ import timeslicer.model.context.UseCaseContext
 
 case class AuthenticationResponseModel(useCaseContext:UseCaseContext) extends ResponseModel{
   override def toString = {
-    //useCaseContext.user.toString
-    ""
+    useCaseContext.user.id    
   }
 }
