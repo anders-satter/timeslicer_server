@@ -20,6 +20,7 @@ import timeslicer.model.util.FileCommunicationUtil
 import timeslicer.model.util.settings.Settings
 import org.specs2.runner.JUnitRunner
 import timeslicer.model.usecase.userid.CreateUserIdInteractor
+import timeslicer.model.usecase.userid.CreateUserIdRequestModel
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {
@@ -312,13 +313,13 @@ class FileStorageSpec extends Specification with Mockito {
       val usersInFileCount = {
         if (fileContent.trim().length() < 1) {
           0
-        } else {          
+        } else {
           val json = Json.parse(fileContent)
           val userids = (json \ "users" \\ "id").asInstanceOf[ListBuffer[JsString]]
           userids.length
         }
       }
-     
+
       //Representational State Transfer Protocol
       //post request then we need to put the
       //data in the body of the request
@@ -332,110 +333,102 @@ class FileStorageSpec extends Specification with Mockito {
     "Assert that all user in user.json are returned in the FileStorage.users" in {
       assertFileToServiceConsistency
     }
-    
 
-        "test user matches" should {
-      
+    "test user matches" should {
+
       /*
        * SETUP
        */
       val user1 = new UserImpl
-      user1.firstName = "First" 
+      user1.firstName = "First"
       user1.lastName = "Sirname"
-      user1.id = "111111111111" 
-      user1.isAuthenticated = false 
+      user1.id = "111111111111"
+      user1.isAuthenticated = false
       user1.isAuthorized = false
       user1.email = "" // empty email
-       
+
       val user2 = new UserImpl
-      user2.firstName = "Second" 
+      user2.firstName = "Second"
       user2.lastName = "Sirname"
-      user2.id = "222222222222" 
-      user2.isAuthenticated = false 
+      user2.id = "222222222222"
+      user2.isAuthenticated = false
       user2.isAuthorized = false
       user2.email = "abc2@example.com"
-      
+
       val user3 = new UserImpl
-      user3.firstName = "Third" 
+      user3.firstName = "Third"
       user3.lastName = "Sirname"
-      user3.id = "333333333333" 
-      user3.isAuthenticated = false 
+      user3.id = "333333333333"
+      user3.isAuthenticated = false
       user3.isAuthorized = false
       user3.email = "abc3@example.com"
-      
+
       val users = Seq(user1, user2, user3)
-      
+
       val user4 = new UserImpl
-      user4.firstName = "Fourth" 
+      user4.firstName = "Fourth"
       user4.lastName = "Sirname"
-      user4.id = "444444444444" 
-      user4.isAuthenticated = false 
+      user4.id = "444444444444"
+      user4.isAuthenticated = false
       user4.isAuthorized = false
       user4.email = "abc4@example.com"
-            
-        
+
       /*
        * TESTS  
        */
-        
+
       "user email should match" in {
         FileStorageUtil.matchesEmail(users, user3) must beTrue
       }
       "user email should not match" in {
         FileStorageUtil.matchesEmail(users, user4) must beFalse
       }
-      
-      "user name should match" in {  
+
+      "user name should match" in {
         FileStorageUtil.matchesUserName(users, user3) must beTrue
       }
       "user name should not match" in {
         FileStorageUtil.matchesUserName(users, user4) must beFalse
       }
-      
-      "user id should match" in {  
+
+      "user id should match" in {
         FileStorageUtil.matchesId(users, user3) must beTrue
       }
       "user id should not match" in {
         FileStorageUtil.matchesId(users, user4) must beFalse
-      }      
+      }
     }
-   
-    
+
     val userIdInteractor = new CreateUserIdInteractor
-    val testUserid = userIdInteractor.execute(null).success.map(u => u.userId).getOrElse("")
+    val testUserid = userIdInteractor.execute(new CreateUserIdRequestModel).success.map(u => u.userId).getOrElse("")
     val testUser = new UserImpl
-    testUser.firstName = "TestFörnamn" 
+    testUser.firstName = "TestFörnamn"
     testUser.lastName = "TestEfternamn"
-    testUser.id = testUserid 
-    testUser.isAuthenticated = false 
+    testUser.id = testUserid
+    testUser.isAuthenticated = false
     testUser.isAuthorized = false
     testUser.email = "abc@example.com"
-    
-    
+
     "add a new user" in {
-      val userIdInteractor = new CreateUserIdInteractor      
-      fileStorage.addUser(testUser)      
+      val userIdInteractor = new CreateUserIdInteractor
+      fileStorage.addUser(testUser)
       ok
     }
     "remove a user" in {
       //fileStorage.users() map println
-      
-      
+
       //val testUser = new UserImpl
-      testUser.firstName = "TestFörnamn" 
+      testUser.firstName = "TestFörnamn"
       testUser.lastName = "TestEfternamn"
       testUser.id = testUserid
-      testUser.isAuthenticated = false 
+      testUser.isAuthenticated = false
       testUser.isAuthorized = false
       testUser.email = "abc@example.com"
 
-      
       fileStorage.removeUser(testUser)
       ok
     }
 
- 
-    
   }
 
   //  "Location test" should {

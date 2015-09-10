@@ -5,6 +5,7 @@ import timeslicer.model.context.UseCaseContext
 import timeslicer.model.user.User
 import timeslicer.model.user.UserImpl
 import timeslicer.model.framework.ResponseModel
+import timeslicer.model.framework.RequestModel
 
 
 /**
@@ -29,4 +30,5 @@ object Util {
     }
   }
   class EmptyResponseModel extends ResponseModel
+  
 }

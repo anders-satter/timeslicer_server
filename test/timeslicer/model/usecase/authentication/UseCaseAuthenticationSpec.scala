@@ -24,7 +24,9 @@ class UseCaseAuthenticationSpec extends Specification with Mockito {
       interactor.execute(requestModel).success.map(x => {
         x.useCaseContext.user must not(beNull)
       })
+      
       val user1 = for {
+//        s <- interactor.execute(requestModel).success.map(x => x.useCaseContext.user)
         s <- interactor.execute(requestModel).success.map(x => x).map(x => x.useCaseContext.user)
       } yield s
       //println(user1)

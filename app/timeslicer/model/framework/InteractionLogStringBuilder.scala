@@ -22,6 +22,7 @@ object InteractionLogStringBuilder {
     buf.append(t.time)
     buf.append(PIPE)
     
+    
     /*
      * Ugly, but we don't want logging to fail
      */
