@@ -41,36 +41,39 @@ trait Storage {
   /**
    * Add a project for user in UseCaseContext
    */
-  def addProject(project:Project, useCaseContext:UseCaseContext):Unit
+  def addProject(project:Project, useCaseContext:UseCaseContext):Either[StorageFailResult, StorageSuccessResult]
   /**
    * Remove a project for user in UseCaseContext
    */
-  def removeProject(project:Project, useCaseContext:UseCaseContext):Unit
+  def removeProject(project:Project, useCaseContext:UseCaseContext):Either[StorageFailResult, StorageSuccessResult]
   
   /**
    * Add an activity for user in UseCaseContext
    */
-  def addActivity(project:Project,activity:Activity, useCaseContext:UseCaseContext):Unit
+  def addActivity(project:Project,activity:Activity, useCaseContext:UseCaseContext):Either[StorageFailResult, StorageSuccessResult]
   /**
    * Remove an activity for user in UseCaseContext
    */
-  def removeActivity(project:Project,activity:Activity, useCaseContext:UseCaseContext):Unit
+  def removeActivity(project:Project,activity:Activity, useCaseContext:UseCaseContext):Either[StorageFailResult, StorageSuccessResult]
   
   /**
    * Add a timeslice for user in UseCaseContext
    */
-  def addTimeSlice(timeslice:TimeSlice, useCaseContext:UseCaseContext):Unit  
+  def addTimeSlice(timeslice:TimeSlice, useCaseContext:UseCaseContext):Either[StorageFailResult, StorageSuccessResult]
   /**
    * Remove a timeslice for user in UseCaseContext
    */
-  def removeTimeSlice(timeslice:TimeSlice, useCaseContext:UseCaseContext):Unit  
+  def removeTimeSlice(timeslice:TimeSlice, useCaseContext:UseCaseContext):Either[StorageFailResult, StorageSuccessResult]
   
   /**
    * Add a user of the system
    */
-  def addUser(user:User):Unit  
+  def addUser(user:User):Either[StorageFailResult, StorageSuccessResult]
   /**
    * Remove a user of the system
    */
-  def removeUser(user:User):Unit  
+  def removeUser(user:User):Either[StorageFailResult, StorageSuccessResult]
 }
+
+case class StorageFailResult(reason:String)
+case class StorageSuccessResult()
