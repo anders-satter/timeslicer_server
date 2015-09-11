@@ -33,6 +33,7 @@ import scala.util.Try
 import timeslicer.model.storage.StorageFailResult
 import scala.util.Failure
 import scala.util.Success
+import timeslicer.model.storage.StorageSuccessResult
 
 /**
  * Text file based implementation of the Storage trait
@@ -277,7 +278,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 //
 //      } else {
 //        //add the project
-//        val fileContent = fsUtil.prepareProjectsForPersistence(projSeq ++ Seq(project))
+//        val fileContertent = fsUtil.prepareProjectsForPersistence(projSeq ++ Seq(project))
 //        saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
 //      }
 
@@ -323,52 +324,17 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 
   override def addActivity(project: Project, activity: Activity, useCaseContext: UseCaseContext): Either[StorageFailResult, StorageSuccessResult] = {
     var result: Either[StorageFailResult, StorageSuccessResult] = Right(StorageSuccessResult())
-    projects(useCaseContext).getOrElse(Seq()).filter(p => p.name == project.name).foreach(p => {
+    val prjSeq = projects(useCaseContext).getOrElse(Seq())
+    prjSeq.filter(p => p.name == project.name).foreach(p => {
       if (p.activityList.filter(a => a.name == activity.name).length < 1) {
         p.activityList += activity
       } else {
         result = Left(StorageFailResult("activity name already exists in the activity list for the project"))
       }
     })
+    val fileContent = fsUtil.prepareProjectsForPersistence(prjSeq)
+    saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
     result
-
-    //    tmpProjects match {
-    //      case Some(prjSeq) => {
-    //        prjSeq.map(p => p.name).filter(n => n == project.name)
-    //          if (p.name == project.name) {
-    //
-    //            /*
-    //             * first check if the activity already exists in the list
-    //             */
-    //            if (p.activityList.filter(a => a.name == activity.name).length > 0) {
-    //              throw new ItemAlreadyExistsException(new MessageBuilder().append("There is already an activity with the name " + activity.name).toString())
-    //            } else {
-    //              p.activityList += activity
-    //            }
-    //          })
-    //        val fileContent = fsUtil.prepareProjectsForPersistence(prjSeq)
-    //        saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
-    //      }
-
-    //      tmpProjects match {
-    //      case Some(prjSeq) => {
-    //    	  prjSeq.foreach(p =>
-    //    	  if (p.name == project.name) {
-    //    		  
-    //    		  /*
-    //    		   * first check if the activity already exists in the list
-    //    		   */
-    //    		  if (p.activityList.filter(a => a.name == activity.name).length > 0) {
-    //    			  throw new ItemAlreadyExistsException(new MessageBuilder().append("There is already an activity with the name " + activity.name).toString())
-    //    		  } else {
-    //    			  p.activityList += activity
-    //    		  }
-    //    	  })
-    //    	  val fileContent = fsUtil.prepareProjectsForPersistence(prjSeq)
-    //    	  saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
-    //      }
-    //  case None => /*do nothing*/
-    //}
   }
 
   override def removeActivity(project: Project, activity: Activity, useCaseContext: UseCaseContext): Either[StorageFailResult, StorageSuccessResult] = {
@@ -412,6 +378,8 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
      * Or should we be able to add 'negative' TimeSlice, 
      * to cancel out a previous one.
      */
+    return Right(StorageSuccessResult())
+    
   }
 
   override def addUser(user: User): Either[StorageFailResult, StorageSuccessResult] = {

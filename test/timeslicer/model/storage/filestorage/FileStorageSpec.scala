@@ -21,6 +21,7 @@ import timeslicer.model.util.settings.Settings
 import org.specs2.runner.JUnitRunner
 import timeslicer.model.usecase.userid.CreateUserIdInteractor
 import timeslicer.model.usecase.userid.CreateUserIdRequestModel
+import timeslicer.model.storage.StorageFailResult
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {
@@ -230,14 +231,17 @@ class FileStorageSpec extends Specification with Mockito {
       ok
     }
 
-    "Throw an ItemAlreadyExistsException" in {
-      fileStorage.addActivity(Project("project1", null), Activity("newAct1"), useCaseContext) must throwA(new ItemAlreadyExistsException(new MessageBuilder().append("There is already an activity with the name " + "newAct1").toString()))
+    "Return a StorageFailResult" in {
+      fileStorage.addActivity(Project("project1", null), Activity("newAct1"), useCaseContext) must 
+        be equalTo(Left(StorageFailResult("activity name already exists in the activity list for the project")))
+      ok
     }
 
     "Remove the activity" in {
       fileStorage.removeActivity(Project("project1", null), Activity("newAct1"), useCaseContext);
       fileStorage.projects(useCaseContext) match {
         case Some(prjList) => {
+          
           /* This is were we should be at this point, since we should have project1 still defined */
           prjList.filter(p => p.name == project1.name).map(p => {
             p.activityList.indexOf(Activity("newAct1")) == -1 must beTrue
@@ -376,7 +380,6 @@ class FileStorageSpec extends Specification with Mockito {
       /*
        * TESTS  
        */
-
       "user email should match" in {
         FileStorageUtil.matchesEmail(users, user3) must beTrue
       }
