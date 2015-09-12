@@ -35,8 +35,7 @@ object Util {
     override def toString: String = "Empty"
   }
 
-  
-    def matchesEmail(seq: Seq[User], user: User): Boolean = {
+  def matchesEmail(seq: Seq[User], user: User): Boolean = {
     /*
      * email can be an option, so we use flatten to 
      * get the contained values and get rid of all NoneS
@@ -53,6 +52,4 @@ object Util {
       .map(u => u.firstName.trim + u.lastName.trim)
       .contains(user.firstName.trim + user.lastName.trim)
 
-  
-  
 }

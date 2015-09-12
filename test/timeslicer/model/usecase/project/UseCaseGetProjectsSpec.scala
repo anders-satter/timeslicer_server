@@ -8,18 +8,27 @@ import timeslicer.model.project.Project
 import timeslicer.model.storage.Storage
 import timeslicer.model.user.User
 import org.specs2.runner.JUnitRunner
+import timeslicer.test.util.TestUtil
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseGetProjectsSpec extends Specification with Mockito {
   /*
    * SETUP
    */
+  
   val storage = mock[Storage]
   val useCaseContext = mock[UseCaseContext]
   /* create a project list of 2 projects*/
   storage.projects(useCaseContext) returns Option(List(Project("Project1", null), Project("Project2", null)))
-  val requestModel = GetProjectsRequestModel(storage);
+  val requestModel = GetProjectsRequestModel();
+ 
+  /*
+   * Problem, how to inject a mock version of the filestorage?
+   */
   val interactor = new GetProjectsInteractor
+  interactor.log_=(TestUtil.emptyLog) 
+  
+  interactor.storage = storage
   useCaseContext.user returns new User {
     override def firstName = "Anders"
     override def lastName = "Sätter"
@@ -30,6 +39,8 @@ class UseCaseGetProjectsSpec extends Specification with Mockito {
     override def validate = true
   }
 
+  
+  
   /*
    * TEST
    */

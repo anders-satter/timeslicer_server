@@ -6,17 +6,20 @@ import org.specs2.mock.Mockito
 import org.junit.runner.RunWith
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.user.User
+import timeslicer.test.util.TestUtil
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseCreateUserIdSpec extends Specification with Mockito {
   /*
    * SETUP
    */
-  val useCaseContext = mock[UseCaseContext]  
+  val useCaseContext = mock[UseCaseContext]
   val mockedUser = mock[User]
   mockedUser.id returns "222222222222"
   useCaseContext.user returns mockedUser
   val interactor = new CreateUserIdInteractor
+  interactor.log_=(TestUtil.emptyLog)
+
   val requestModel = mock[CreateUserIdRequestModel]
 
   /*
@@ -26,7 +29,7 @@ class UseCaseCreateUserIdSpec extends Specification with Mockito {
     "create a userid" in {
       println(interactor.execute(requestModel).success.map(r => r.userId).getOrElse("Hej"))
       interactor.execute(requestModel).success.map(r => r.userId) != null must beTrue
-      
+
     }
 
     "create 100 unique userids" in {

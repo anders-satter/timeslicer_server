@@ -19,7 +19,7 @@ class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, Create
      * First load the users to make a list of userids so
      * I can make sure that the generated id is unique
      */        
-    val currentUserIdList = FileStorage().users().getOrElse(Seq()).map(u => u.id)
+    val currentUserIdList = storage.users().getOrElse(Seq()).map(u => u.id)
     
     /* Generate the id */
     var generatedValue = ""
@@ -38,37 +38,5 @@ class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, Create
     result.success = CreateUserIdResponseModel(generatedValue)
     result
   }
-  
-  //  /**
-  //   * Just some experiments to generate a unique id below
-  //   */
-  //  private def uniqIdGenerationTest = {
-  //    val ms = new java.util.Date().getTime()
-  //    val cal = Calendar.getInstance
-  //    val day = cal.get(Calendar.DAY_OF_YEAR)
-  //    val days = java.util.concurrent.TimeUnit.MILLISECONDS.toDays(ms);
-  //    val truncator = new SimpleDateFormat("yyyy")
-  //
-  //    val truncatedTime = truncator.format(ms)
-  //    println(truncatedTime.toString)
-  //
-  //    val date = truncator.parse(truncatedTime)
-  //    //println(date.getTime())
-  //
-  //    //MjAxNS0wOA==
-  //
-  //    /*get the day of ms*/
-  //    //val strms = String.valueOf(ms)
-  //    val encodedStr = Base64.getEncoder().encodeToString(truncatedTime.getBytes("utf-8"))
-  //
-  //    val decodedStr = new String(Base64.getDecoder().decode(encodedStr), "utf-8")
-  //    //    println(strms)
-  //    println(encodedStr)
-  //    println(decodedStr)
-  //
-  //    println(java.util.UUID.randomUUID())
-  //    println(new java.rmi.server.UID())
-  //
-  //  }
 
 }

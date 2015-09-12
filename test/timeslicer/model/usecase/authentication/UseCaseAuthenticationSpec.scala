@@ -7,10 +7,15 @@ import timeslicer.model.context.UseCaseContextImpl
 import org.specs2.mock.Mockito
 import timeslicer.model.user.User
 import timeslicer.model.util.Util.EmptyUseCaseContext
+import timeslicer.test.util.TestUtil
+import timeslicer.model.framework.InteractionLogStringBuilder
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseAuthenticationSpec extends Specification with Mockito {
   val interactor = new AuthenticationInteractor
+  
+  interactor.log_=(TestUtil.emptyLog) 
+  
   val requestModel = mock[AuthenticationRequestModel]
   var noneCaseContext = new EmptyUseCaseContext
 

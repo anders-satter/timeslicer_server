@@ -10,18 +10,34 @@ import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.model.util.Util.EmptyResponseModel
 import timeslicer.model.util.Util.EmptyRequestModel
+import timeslicer.model.storage.StorageImpl
+import timeslicer.model.storage.Storage
+import timeslicer.model.util.Util.EmptyRequestModel
 
 /**
  * General interactor class to be overridden by specific use case implementations
  */
 abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
-     
+
   /*
    * Default implementations for log functions 
    */
-  private var _log: String => Unit = (msg: String) => println(msg)
-  private var _beforeLogStringBuilder: (Any, RequestModel, UseCaseContext) => String = InteractionLogStringBuilder.logBeforeInteraction
-  private var _afterLogStringBuilder: (Any, Result[S], UseCaseContext) => String = InteractionLogStringBuilder.logAfterInteraction
+  private[this] var _log: String => Unit = (msg: String) => println(msg)
+  private[this] var _beforeLogStringBuilder: (Any, RequestModel, UseCaseContext) => String = InteractionLogStringBuilder.logBeforeInteraction
+  private[this] var _afterLogStringBuilder: (Any, Result[S], UseCaseContext) => String = InteractionLogStringBuilder.logAfterInteraction
+
+  /**
+   * The default storage is the one set in the
+   * apply function of StorageImpl.
+   * It can also be set directly on the
+   * Interactor implementation, for testing purposes
+   * This means that StorageImpl should *NOT* be called
+   * directly in the onExecute implementations, since
+   * this make them impossible to mock.
+   */
+  private[this] var _storage: Storage = StorageImpl()
+  def storage: Storage = _storage
+  def storage_=(s: Storage): Unit = _storage = s
 
   /*
    * Setters for log functions, for testing and overriding purposes
@@ -45,7 +61,7 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
    */
   def onExecute(r: R, u: UseCaseContext): Result[S] = new Result[S]
   def onExecute(r: R): Result[S] = new Result[S]
- 
+
   /**
    * Execution of the interaction
    */
@@ -69,7 +85,7 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
     post(this, res, u)
     res
   }
- 
+
 }
 
 /**
@@ -80,7 +96,7 @@ class ErrorContainer(t: Failure[Throwable], val id: String) {
    * Get the success of the Failure...
    */
   val failure = t.failed
-  val stacktrace = t.failed.map(x => x.getStackTrace.mkString("\n  "))
+  val stacktrace = t.failed.map(x => x.getStackTrace.mkString("\n"))
 }
 
 class Result[S <: timeslicer.model.framework.ResponseModel] {
