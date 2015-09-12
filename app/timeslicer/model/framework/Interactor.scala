@@ -9,12 +9,13 @@ import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.model.util.Util.EmptyResponseModel
+import timeslicer.model.util.Util.EmptyRequestModel
 
 /**
  * General interactor class to be overridden by specific use case implementations
  */
 abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
-
+     
   /*
    * Default implementations for log functions 
    */
@@ -42,25 +43,9 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
    * Will do the actual work, is to be overridden by implementors
    * This is the implementation where we have an initialized UseCaseContext
    */
-  def onExecute(r: R, u: UseCaseContext): Result[S] = {
-    /*
-     * default implementation, so implementors can choose to implement
-     * either this onExecute or the other one
-     */
-    return new Result[S]
-  }
-
-  /**
-   * Implmenentation with no UseCaseContext
-   */
-  def onExecute(r: R): Result[S] = {
-    /*
-		 * default implementation, so implementors can choose to implement
-		 * either this onExecute or the other one
-		 */
-    return new Result[S]
-  }
-
+  def onExecute(r: R, u: UseCaseContext): Result[S] = new Result[S]
+  def onExecute(r: R): Result[S] = new Result[S]
+ 
   /**
    * Execution of the interaction
    */
@@ -84,7 +69,7 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
     post(this, res, u)
     res
   }
-
+ 
 }
 
 /**
@@ -95,7 +80,7 @@ class ErrorContainer(t: Failure[Throwable], val id: String) {
    * Get the success of the Failure...
    */
   val failure = t.failed
-  val stacktrace = t.failed.map(x => x.getStackTrace.mkString("\n"))
+  val stacktrace = t.failed.map(x => x.getStackTrace.mkString("\n  "))
 }
 
 class Result[S <: timeslicer.model.framework.ResponseModel] {

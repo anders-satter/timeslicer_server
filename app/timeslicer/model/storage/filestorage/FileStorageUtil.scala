@@ -7,22 +7,6 @@ import timeslicer.model.user.User
 
 object FileStorageUtil {
 
-  def matchesEmail(seq: Seq[User], user: User): Boolean = {
-    /*
-     * email can be an option, so we use flatten to 
-     * get the contained values and get rid of all NoneS
-     */
-    user.email match {
-      case Some(e) => seq.toList.map(_.email).flatten.contains(e)
-      case None    => false
-    }
-  }
-
-  def matchesUserName(seq: Seq[User], user: User): Boolean =
-    seq
-      .toList
-      .map(u => u.firstName.trim + u.lastName.trim)
-      .contains(user.firstName.trim + user.lastName.trim)
 
   def matchesId(seq: Seq[User], user: User): Boolean = seq.toList.map(_.id).contains(user.id)
 

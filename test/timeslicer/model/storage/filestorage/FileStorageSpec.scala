@@ -22,6 +22,7 @@ import org.specs2.runner.JUnitRunner
 import timeslicer.model.usecase.userid.CreateUserIdInteractor
 import timeslicer.model.usecase.userid.CreateUserIdRequestModel
 import timeslicer.model.storage.StorageFailResult
+import timeslicer.model.util.Util
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {
@@ -381,17 +382,17 @@ class FileStorageSpec extends Specification with Mockito {
        * TESTS  
        */
       "user email should match" in {
-        FileStorageUtil.matchesEmail(users, user3) must beTrue
+        Util.matchesEmail(users, user3) must beTrue
       }
       "user email should not match" in {
-        FileStorageUtil.matchesEmail(users, user4) must beFalse
+        Util.matchesEmail(users, user4) must beFalse
       }
 
       "user name should match" in {
-        FileStorageUtil.matchesUserName(users, user3) must beTrue
+        Util.matchesUserName(users, user3) must beTrue
       }
       "user name should not match" in {
-        FileStorageUtil.matchesUserName(users, user4) must beFalse
+        Util.matchesUserName(users, user4) must beFalse
       }
 
       "user id should match" in {

@@ -34,6 +34,8 @@ import timeslicer.model.storage.StorageFailResult
 import scala.util.Failure
 import scala.util.Success
 import timeslicer.model.storage.StorageSuccessResult
+import timeslicer.model.util.{Util => u}
+
 
 /**
  * Text file based implementation of the Storage trait
@@ -376,7 +378,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     /*
      * Should we really have an implementation of this?
      * Or should we be able to add 'negative' TimeSlice, 
-     * to cancel out a previous one.
+     * to cancel out erroneous ones?.
      */
     return Right(StorageSuccessResult())
     
@@ -386,11 +388,14 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     var result: (Boolean, String) = (true, "")
     val currentUsersList = FileStorage().users().getOrElse(Seq())
 
-    if (fsUtil.matchesUserName(currentUsersList, user)) {
+    /**
+     * These are really business rules, but are added here to mimic database constraints
+     */
+    if (u.matchesUserName(currentUsersList, user)) {
       return Left(StorageFailResult("User with name " + user.firstName.trim + " " + user.lastName + " already exists"))
     }
 
-    if (fsUtil.matchesEmail(currentUsersList, user)) {
+    if (u.matchesEmail(currentUsersList, user)) {
       return Left(StorageFailResult("User with email " + user.email + " already exists"))
     }
 
@@ -467,7 +472,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
   }
 
 }
-
+ 
 object FileStorage {
   def apply(): FileStorage = {
     return new FileStorage(

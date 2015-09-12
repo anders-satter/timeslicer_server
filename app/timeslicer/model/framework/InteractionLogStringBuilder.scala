@@ -26,7 +26,7 @@ object InteractionLogStringBuilder {
     /*
      * Ugly, but we don't want logging to fail
      */
-    if (u != null) {
+    if (u != null && u.user != null) {
       buf.append(u.user.id)
     } else {
       buf.append(new EmptyUseCaseContext().user.id)
@@ -52,7 +52,7 @@ object InteractionLogStringBuilder {
     /*
      * Ugly, but we don't want logging to fail
      */
-    if (u != null) {
+   if (u != null && u.user != null) {
       buf.append(u.user.id)
     } else {
       buf.append(new EmptyUseCaseContext().user.id)
@@ -87,6 +87,8 @@ object InteractionLogStringBuilder {
       //buf.append(t.failure.failed.get.getStackTrace.mkString)
 
       buf.append(c.id)
+      buf.append(PIPE)
+      buf.append(c.failure)
       buf.append(PIPE)
       buf.append(c.failure.get.getStackTrace.mkString("\n"))
     })

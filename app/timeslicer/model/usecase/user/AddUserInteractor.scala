@@ -11,6 +11,9 @@ import timeslicer.model.framework.Result
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+import timeslicer.model.user.User
+import timeslicer.model.util.{Util => u}
+import timeslicer.model.storage.exception.ItemAlreadyExistsException
 
 /**
  * Adds a new user to the system, and returns that user on success
@@ -22,20 +25,23 @@ class AddUserInteractor extends Interactor[AddUserRequestModel, AddUserResponseM
     val result = new Result[AddUserResponseModel]
     val storage = StorageImpl()
     
-    /*
-     * first check if the user already exists
-     * we will do this on the by checking the names
-     * and the email
-     */
-     val currentUserList = (storage.users() match {
-       case Some(l) => l
-       case None => Seq()
-     })
      
-     if(matchesUserName(currentUserList, request.user)){
-       
-     }
-    
+     val currentUserList:Seq[User] = storage.users().getOrElse(Seq())
+     println(currentUserList)
+     
+
+    if (u.matchesUserName(currentUserList, request.user)) {
+      result.error = Failure(new ItemAlreadyExistsException("User name already exists"))
+      return result
+    }
+
+    if (u.matchesEmail(currentUserList, request.user)) {
+      result.error = Failure(new ItemAlreadyExistsException("Email already exists for a registered user"))
+      return result
+    }
+     
+     
+     
     Try {
       storage.addUser(request.user)
     	result.success = AddUserResponseModel(Option(request.user))
