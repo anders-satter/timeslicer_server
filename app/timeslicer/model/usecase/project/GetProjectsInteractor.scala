@@ -24,20 +24,5 @@ class GetProjectsInteractor extends Interactor[GetProjectsRequestModel, GetProje
       case Success(s) =>
     }
     res
-  }
-  
-//  override def onExecute(r: GetProjectsRequestModel, u: UseCaseContext): Result[GetProjectsResponseModel] = {
-//		  val res = new Result[GetProjectsResponseModel]
-//				  val storage = r.storage
-//				  Try {
-//			  val projects = storage.projects(u).map(x => res.success = GetProjectsResponseModel(x.seq))
-//		  } match {
-//		  case Failure(e) => res.error = Failure(e)
-//		  case Success(s) =>
-//		  }
-//		  res
-//  }
-  
-  
-  
+  }  
 }

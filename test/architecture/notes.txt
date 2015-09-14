@@ -1,0 +1,4 @@
+usecases
+* all projects
+* all timeslices within a timeframe
+*  

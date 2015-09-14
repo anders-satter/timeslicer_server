@@ -275,11 +275,11 @@ class FileStorageSpec extends Specification with Mockito {
     /*
      * create a timeslice
      */
-    val timeslice1 = TimeSlice("2015-08-14 10:30", "2015-08-14 10:55", "TProject", "TActivity", Option("comment"))
+    val timeslice1 = TimeSlice("2015-08-14", "10:30", "2015-08-14","10:55", "TProject", "TActivity", Option("comment"))
 
     "add a TimeSlice" in {
       fileStorage.addTimeSlice(timeslice1, useCaseContext)
-      fileStorage.timeslices(timeslice1.start, timeslice1.end, useCaseContext) match {
+      fileStorage.timeslices(timeslice1.startdate, timeslice1.enddate, useCaseContext) match {
         case Some(tlist) => {
           tlist.length > 0 must beTrue
         }
@@ -293,13 +293,13 @@ class FileStorageSpec extends Specification with Mockito {
       val strSeq = FileCommunicationUtil.readFromFileToStringArray(
         fileStorage.calcLogFileName(
           useCaseContext), Settings.propertiesMap("LogFileEncoding")).toSeq
-      val ret = fileStorage.timeslices(timeslice1.start, timeslice1.end, useCaseContext)
+      val ret = fileStorage.timeslices(timeslice1.startdate, timeslice1.enddate, useCaseContext)
       if (strSeq.length < 1 && ret == None) {
         ok
       } else {
         //fileStorage.timeslices("2014-04-13","2015-01-07", useCaseContext).get foreach println
-        fileStorage.timeslices(timeslice1.start, timeslice1.end, useCaseContext) != None must beTrue
-        fileStorage.timeslices(timeslice1.start, timeslice1.end, useCaseContext).get.length > 0 must beTrue
+        fileStorage.timeslices(timeslice1.startdate, timeslice1.enddate, useCaseContext) != None must beTrue
+        fileStorage.timeslices(timeslice1.startdate, timeslice1.enddate, useCaseContext).get.length > 0 must beTrue
       }
     }
 

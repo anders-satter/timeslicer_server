@@ -1,3 +1,4 @@
+
 package timeslicer.model.storage
 
 import org.specs2.runner.JUnitRunner
@@ -27,7 +28,7 @@ class StorageSpec extends Specification with Mockito {
   project.name returns "Anders"
   val activitySeq = Seq(Activity("act1"), Activity("act2"))
   val usersSeq = Seq(mock[User], mock[User])
-  val timeslices = Seq(TimeSlice("", "", "", "", None), TimeSlice("", "", "", "", None))
+  val timeslices = Seq(TimeSlice("","","", "", "", "", None), TimeSlice("", "","", "", "", "", None))
 
   storage.projects(useCaseContext) returns Option(projectSeq)
   storage.activities(project, useCaseContext) returns Option(activitySeq)
@@ -62,7 +63,7 @@ class StorageSpec extends Specification with Mockito {
     	ok
     }
     "add timeslice" in {
-    	storage.addTimeSlice(TimeSlice("", "", "", "", None), useCaseContext)
+    	storage.addTimeSlice(TimeSlice("", "","", "", "", "", None), useCaseContext)
     	ok
     }
     "return FileStorage implementation" in {

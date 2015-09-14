@@ -195,8 +195,20 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
   private def parseLogline(logLine: String): Option[TimeSlice] = {
     if (logLine.length() > 0) {
       val parts = logLine.split('\t');
-      return Option(TimeSlice(parts(0),
-        parts(1),
+      
+      /*
+       * split the startday
+       */
+      val startPart = parts(0).split(" ")
+      val endPart = parts(1).split(" ")
+      
+      
+      
+      return Option(TimeSlice(
+        startPart(0), 
+        startPart(1),
+        endPart(0),
+        endPart(1),
         parts(3).replaceAll("\"", ""),
         parts(4).replaceAll("\"", ""),
         Option(parts(5).replaceAll("\"", ""))))

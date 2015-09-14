@@ -7,7 +7,6 @@ import timeslicer.model.user.User
 
 object FileStorageUtil {
 
-
   def matchesId(seq: Seq[User], user: User): Boolean = seq.toList.map(_.id).contains(user.id)
 
   def performUserRemoval(seq: Seq[User], user: User): Seq[User] = {
@@ -40,9 +39,13 @@ object FileStorageUtil {
 
   def prepareTimeSliceForPersistence(timeslice: TimeSlice): String = {
     val builder = new StringBuilder
-    builder.append(timeslice.start)
+    builder.append(timeslice.startdate)
+    builder.append(" ")
+    builder.append(timeslice.starttime)
     builder.append('\t')
-    builder.append(timeslice.end)
+    builder.append(timeslice.enddate)
+    builder.append(" ")
+    builder.append(timeslice.endtime)
     builder.append('\t')
     builder.append("0")
     builder.append('\t')
