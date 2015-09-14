@@ -27,7 +27,6 @@ class UseCaseCreateUserIdSpec extends Specification with Mockito {
    */
   "Userid test" should {
     "create a userid" in {
-      println(interactor.execute(requestModel).success.map(r => r.userId).getOrElse("Hej"))
       interactor.execute(requestModel).success.map(r => r.userId) != null must beTrue
 
     }

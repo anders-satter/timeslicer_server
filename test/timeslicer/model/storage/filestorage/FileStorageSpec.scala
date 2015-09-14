@@ -131,16 +131,16 @@ class FileStorageSpec extends Specification with Mockito {
       assertProjectsAndActivities
     }
     "remove project in FileStorageUtil" in {
-      val projectSeq: Seq[Project] = Seq(Project("prj1", null), Project("prj2", null), Project("prj3", null))
+      val projectSeq: Seq[Project] = Seq(Project("prj1", None), Project("prj2", None), Project("prj3", None))
       //println(projectSeq)
-      val removedPrj2 = FileStorageUtil.performProjectRemoval(Project("prj2", null), projectSeq)
+      val removedPrj2 = FileStorageUtil.performProjectRemoval(Project("prj2", None), projectSeq)
       //println(removedPrj2)
       ok
     }
 
     "perform project CRD in FileStorage" in {
-      val project1 = Project("test1", null)
-      val project2 = Project("test2", null)
+      val project1 = Project("test1", None)
+      val project2 = Project("test2", None)
 
       /*
        * First remove the projects to assure that
@@ -214,7 +214,7 @@ class FileStorageSpec extends Specification with Mockito {
     /*
        * define a project
        */
-    val project1 = Project("project1", null)
+    val project1 = Project("project1", None)
     /*
     	 * first remove the project to be sure
        * that we can add it...
@@ -223,30 +223,30 @@ class FileStorageSpec extends Specification with Mockito {
     /*
        * ...then add it again
        */
-    fileStorage.addProject(Project("project1", null), useCaseContext)
+    fileStorage.addProject(Project("project1", None), useCaseContext)
     /*
        * add the activity
        */
-    fileStorage.addActivity(Project("project1", null), Activity("newAct1"), useCaseContext);
+    fileStorage.addActivity(Project("project1", None), Activity("newAct1"), useCaseContext);
 
     "Verify that the activity was added" in {
       ok
     }
 
     "Return a StorageFailResult" in {
-      fileStorage.addActivity(Project("project1", null), Activity("newAct1"), useCaseContext) must 
-        be equalTo(Left(StorageFailResult("activity name already exists in the activity list for the project")))
+      fileStorage.addActivity(Project("project1", None), Activity("newAct1"), useCaseContext) must 
+        be equalTo(Left(StorageFailResult("activity name already exists in the activity list for the project", None)))
       ok
     }
 
     "Remove the activity" in {
-      fileStorage.removeActivity(Project("project1", null), Activity("newAct1"), useCaseContext);
+      fileStorage.removeActivity(Project("project1", None), Activity("newAct1"), useCaseContext);
       fileStorage.projects(useCaseContext) match {
         case Some(prjList) => {
           
           /* This is were we should be at this point, since we should have project1 still defined */
           prjList.filter(p => p.name == project1.name).map(p => {
-            p.activityList.indexOf(Activity("newAct1")) == -1 must beTrue
+            p.activityList.get.indexOf(Activity("newAct1")) == -1 must beTrue
           })
         }
         case None => {

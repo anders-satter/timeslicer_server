@@ -6,7 +6,6 @@ import timeslicer.model.framework.ResponseModel
 import timeslicer.model.project.Activity
 import timeslicer.model.project.Project
 import timeslicer.model.framework.Interactor
-import timeslicer.model.interactor.OldInteractor
 import timeslicer.model.framework.Result
 import scala.util.Try
 import scala.util.Failure

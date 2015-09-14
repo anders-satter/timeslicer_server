@@ -1,6 +1,9 @@
 package timeslicer.model.storage.filestorage
 
 import scala.collection.mutable.ListBuffer
+import scala.util.Failure
+import scala.util.Success
+import scala.util.Try
 import play.api.libs.json.JsBoolean
 import play.api.libs.json.JsLookupResult.jsLookupResultToJsLookup
 import play.api.libs.json.JsString
@@ -9,10 +12,11 @@ import play.api.libs.json.Json
 import play.api.libs.json.Writes
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.context.UseCaseContextUtil.validateUseCaseContext
-import timeslicer.model.message.MessageBuilder
 import timeslicer.model.project.Activity
 import timeslicer.model.project.Project
 import timeslicer.model.storage.Storage
+import timeslicer.model.storage.StorageFailResult
+import timeslicer.model.storage.StorageSuccessResult
 import timeslicer.model.storage.exception.ItemAlreadyExistsException
 import timeslicer.model.timeslice.TimeSlice
 import timeslicer.model.user.User
@@ -23,19 +27,10 @@ import timeslicer.model.util.FileCommunicationUtil.readFromFileToStringArray
 import timeslicer.model.util.FileCommunicationUtil.saveToFile
 import timeslicer.model.util.JsonUser
 import timeslicer.model.util.UsersContainer
+import timeslicer.model.util.{ Util => u }
 import timeslicer.model.util.settings.Settings
-import timeslicer.model.storage.StorageFailResult
-import timeslicer.model.storage.StorageSuccessResult
-import timeslicer.model.storage.StorageSuccessResult
 import timeslicer.model.storage.StorageSuccessResult
 import timeslicer.model.storage.StorageFailResult
-import scala.util.Try
-import timeslicer.model.storage.StorageFailResult
-import scala.util.Failure
-import scala.util.Success
-import timeslicer.model.storage.StorageSuccessResult
-import timeslicer.model.util.{Util => u}
-
 
 /**
  * Text file based implementation of the Storage trait
@@ -103,7 +98,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 
     def addToProjectList = {
       if (currentProjectName.trim().length() > 0) {
-        projectList += Project(currentProjectName, currentActivityList.sortBy(_.name))
+        projectList += Project(currentProjectName, Option(currentActivityList.sortBy(_.name).toSeq))
       }
     }
 
@@ -195,17 +190,15 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
   private def parseLogline(logLine: String): Option[TimeSlice] = {
     if (logLine.length() > 0) {
       val parts = logLine.split('\t');
-      
+
       /*
        * split the startday
        */
       val startPart = parts(0).split(" ")
       val endPart = parts(1).split(" ")
-      
-      
-      
+
       return Option(TimeSlice(
-        startPart(0), 
+        startPart(0),
         startPart(1),
         endPart(0),
         endPart(1),
@@ -285,42 +278,26 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 
   override def addProject(project: Project, useCaseContext: UseCaseContext): Either[StorageFailResult, StorageSuccessResult] = {
     var result: Either[StorageFailResult, StorageSuccessResult] = Right(StorageSuccessResult())
-    this.projects(useCaseContext).foreach(p => {
-//      if (projSeq.filter(p => p.name == project.name).length > 0) {
-//        //project exists already
-//        throw new ItemAlreadyExistsException("There is already a project with the name " + project.name)
-//
-//      } else {
-//        //add the project
-//        val fileContertent = fsUtil.prepareProjectsForPersistence(projSeq ++ Seq(project))
-//        saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
-//      }
-
-    })
-
+    val prjSeq = this.projects(useCaseContext)
     /*
      * check if the project name already exists
      * if not add the the project name to prj.txt
      */
-    this.projects(useCaseContext) match {
-      case Some(projSeq) => {
-        if (projSeq.filter(p => p.name == project.name).length > 0) {
-          //project exists already
-          throw new ItemAlreadyExistsException("There is already a project with the name " + project.name)
+    prjSeq.getOrElse(Seq()).foreach(item => if (item.name == project.name) {
+      return Left(StorageFailResult("There is already a project with the name " + project.name, None))
+    })
 
-        } else {
-          //add the project
-          val fileContent = fsUtil.prepareProjectsForPersistence(projSeq ++ Seq(project))
-          saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
-        }
-      }
-      case None => {
-        //add the project
-        val fileContent = fsUtil.prepareProjectsForPersistence(Seq(project))
-        saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
-      }
+    
+    /*add the project to the list of projects and persist*/
+    val newPrjSeq: Seq[Project] = prjSeq.getOrElse(Seq()) :+ project
+    val fileContent = fsUtil.prepareProjectsForPersistence(newPrjSeq)
+    Try {
+      saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
+    } match {
+      case Success(s) => return Right(StorageSuccessResult())
+      case Failure(e) => return Left(StorageFailResult(e.getMessage, Option(e)))
     }
-    result
+    return Right(StorageSuccessResult())
   }
 
   override def removeProject(project: Project, useCaseContext: UseCaseContext): Either[StorageFailResult, StorageSuccessResult] = {
@@ -331,7 +308,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
         val resSeq = fsUtil.performProjectRemoval(project, prjSeq)
         saveToFile(calcProjectFileName(useCaseContext), fsUtil.prepareProjectsForPersistence(resSeq), false)
       }
-      case None => result = Left(StorageFailResult("Could not remove project"))
+      case None => result = Left(StorageFailResult("Could not remove project", None))
     }
     result
   }
@@ -340,10 +317,10 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     var result: Either[StorageFailResult, StorageSuccessResult] = Right(StorageSuccessResult())
     val prjSeq = projects(useCaseContext).getOrElse(Seq())
     prjSeq.filter(p => p.name == project.name).foreach(p => {
-      if (p.activityList.filter(a => a.name == activity.name).length < 1) {
-        p.activityList += activity
+      if (p.activityList.getOrElse(Seq()).contains(Activity(activity.name))) {
+        p.activityList.getOrElse(Seq()) :+ activity
       } else {
-        result = Left(StorageFailResult("activity name already exists in the activity list for the project"))
+        result = Left(StorageFailResult("activity name already exists in the activity list for the project", None))
       }
     })
     val fileContent = fsUtil.prepareProjectsForPersistence(prjSeq)
@@ -359,10 +336,11 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
             if (p.activityList == null) {
               /*do nothing, should probably log here*/
             } else {
-              p.activityList.indexWhere(a => a.name == activity.name) match {
+              p.activityList.getOrElse(Seq()).indexWhere(a => a.name == activity.name) match {
                 case -1 => /*do nothing*/
                 case n => {
-                  p.activityList.remove(n)
+                  /*remove through the use of patch(index, replacement, numOfItems)*/
+                  p.activityList.getOrElse(Seq()).patch(n, Nil, 1)
                   val fileContent = fsUtil.prepareProjectsForPersistence(projSeq)
                   saveToFile(calcProjectFileName(useCaseContext), fileContent, false)
                 }
@@ -371,7 +349,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
           }
         })
       }
-      case None => Left(StorageFailResult("Couldn't remove Activity"))
+      case None => Left(StorageFailResult("Couldn't remove Activity", None))
     }
     Right(StorageSuccessResult())
   }
@@ -380,7 +358,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     Try {
       saveToFile(calcLogFileName(useCaseContext), fsUtil.prepareTimeSliceForPersistence(timeslice), true)
     } match {
-      case Failure(e) => Left(StorageFailResult(e.getMessage))
+      case Failure(e) => Left(StorageFailResult(e.getMessage, Option(e)))
       case Success(s) => Right(StorageSuccessResult())
 
     }
@@ -393,7 +371,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
      * to cancel out erroneous ones?.
      */
     return Right(StorageSuccessResult())
-    
+
   }
 
   override def addUser(user: User): Either[StorageFailResult, StorageSuccessResult] = {
@@ -404,11 +382,11 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
      * These are really business rules, but are added here to mimic database constraints
      */
     if (u.matchesUserName(currentUsersList, user)) {
-      return Left(StorageFailResult("User with name " + user.firstName.trim + " " + user.lastName + " already exists"))
+      return Left(StorageFailResult("User with name " + user.firstName.trim + " " + user.lastName + " already exists", None))
     }
 
     if (u.matchesEmail(currentUsersList, user)) {
-      return Left(StorageFailResult("User with email " + user.email + " already exists"))
+      return Left(StorageFailResult("User with email " + user.email + " already exists", None))
     }
 
     /*get all current users and add the new user*/
@@ -479,12 +457,12 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 
     } else {
       //println("couldn't ")
-      Left(StorageFailResult("couldn't remove user"))
+      Left(StorageFailResult("couldn't remove user", None))
     }
   }
 
 }
- 
+
 object FileStorage {
   def apply(): FileStorage = {
     return new FileStorage(

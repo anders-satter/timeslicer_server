@@ -85,8 +85,8 @@ class JsonHelperSpec extends Specification {
       val jsres1: JsResult[Long] = (jsValue1 \ "user" \ "name").validate[Long]
 
       //println(name)
-      println(jsres1)
-      1 == 1
+      //println(jsres1)
+      ok
     }
     
     "assert deserialized UserImpl has the same values as the serialized UserImpl - this test is not used for the moment" in {

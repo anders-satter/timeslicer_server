@@ -9,8 +9,8 @@ import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[JUnitRunner])
 class ProjectSpec extends Specification with Mockito {
-  val actList:ListBuffer[Activity] = new ListBuffer
-  val project = Project("Project1", actList)
+  val actList:Seq[Activity] = null
+  val project = Project("Project1", Option(actList))
   "Project" should {
 //    "take a name" in {
 //      project.name = "Project1"

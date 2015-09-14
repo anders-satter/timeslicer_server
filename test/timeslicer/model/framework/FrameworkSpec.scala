@@ -3,16 +3,15 @@ package timeslicer.model.framework
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-
 import org.junit.runner.RunWith
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
-
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.context.UseCaseContextImpl
 import timeslicer.model.user.UserImpl
 import timeslicer.model.util.StringIdGenerator
+import timeslicer.test.util.TestUtil
 
 @RunWith(classOf[JUnitRunner])
 class FrameworkSpec extends Specification with Mockito {
@@ -48,6 +47,7 @@ class FrameworkSpec extends Specification with Mockito {
     }
   }
   val interactorTest = new InteractorTest
+  interactorTest.log_=(TestUtil.emptyLog)
 
   /*
    * TEST

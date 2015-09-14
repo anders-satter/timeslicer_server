@@ -231,7 +231,7 @@ object DateTime {
     //     
 
     val dayList = getDayList("2015-06-01", "2015-06-30")
-    dayList.foreach(i => println(i))
+    //dayList.foreach(i => println(i))
 
     //println(getDayValueInMs(startDate))
 

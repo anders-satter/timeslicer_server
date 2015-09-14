@@ -1,4 +1,5 @@
 usecases
 * all projects
 * all timeslices within a timeframe
-*  
+* get sum of all
+* 

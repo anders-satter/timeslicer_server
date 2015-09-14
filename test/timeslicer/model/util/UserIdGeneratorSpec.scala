@@ -17,7 +17,6 @@ class UserIdGeneratorSpec extends Specification with Mockito{
   "UserIdGenerator test" should {
     "generate a userId with length of 12" in {
       val userid = StringIdGenerator.userId()
-      println(userid)
       userid.length()==12 must beTrue
     }    
   }

@@ -75,5 +75,5 @@ trait Storage {
   def removeUser(user:User):Either[StorageFailResult, StorageSuccessResult]
 }
 
-case class StorageFailResult(reason:String)
+case class StorageFailResult(reason:String, exception:Option[Throwable])
 case class StorageSuccessResult()

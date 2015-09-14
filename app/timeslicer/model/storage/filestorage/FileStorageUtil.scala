@@ -27,12 +27,17 @@ object FileStorageUtil {
     seq.foreach(item => {
       builder.append("#" + item.name)
       builder.append('\n')
-      if (item.activityList != null) {
-        item.activityList.foreach(a => {
-          builder.append("+" + a.name)
-          builder.append('\n')
-        })
-      }
+//      if (item.activityList != null) {
+//        item.activityList.foreach(a => {
+//          builder.append("+" + a.name)
+//          builder.append('\n')
+//        })
+//      }      
+    	  item.activityList.getOrElse(Seq()).foreach(a => {
+    		  builder.append("+" + a.name)
+    		  builder.append('\n')
+    	  })
+      
     })
     builder.toString
   }

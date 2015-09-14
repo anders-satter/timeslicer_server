@@ -27,7 +27,7 @@ class DateTimeSpec extends Specification {
       //println(DateTime.day("2015-01-01"))
       //val d = DateTime.day("2015-01-01")
       val d:Long = DateTime.dayMs("2015-01-01")
-      println(d)
+      //println(d)
       1==1
     }
   }  
