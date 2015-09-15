@@ -110,9 +110,6 @@ class Result[S <: timeslicer.model.framework.ResponseModel] {
   def error = _errorContainer.map(x => x)
   def error_=(fail: Failure[Throwable]): Unit = _errorContainer = Option(new ErrorContainer(fail, StringIdGenerator.errorId))
 
-  def logInfo(s: S): String = {
-    s.logInfo
-  }
 }
 
   

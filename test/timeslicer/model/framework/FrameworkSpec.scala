@@ -19,12 +19,12 @@ class FrameworkSpec extends Specification with Mockito {
    * SETUP
    */
   case class Req(value: String) extends timeslicer.model.framework.RequestModel {
-    override def logInfo: String = {
+    override def toString: String = {
       value.toString
     }
   }
   case class Resp(value: Int) extends timeslicer.model.framework.ResponseModel {
-    override def logInfo: String = {
+    override def toString: String = {
       value.toString
     }
   }

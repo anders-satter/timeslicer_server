@@ -5,9 +5,4 @@ package timeslicer.model.framework
  * output of a use case execution
  * (Performed by an Interactor)
  */
-trait ResponseModel {
-  def logInfo: String = {
-    ""
-  }
-
-}
+trait ResponseModel 

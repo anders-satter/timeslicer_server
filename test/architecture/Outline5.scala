@@ -40,7 +40,7 @@ object Outline5 extends App {
       buf.append(PIPE)
       buf.append(r.getClass.getSimpleName)
       buf.append(PIPE)
-      buf.append(r.logInfo)
+      buf.append(r.toString)
       buf.toString
     }
 
@@ -65,7 +65,7 @@ object Outline5 extends App {
         buf.append(PIPE)
         buf.append(s.getClass.getSimpleName)
         buf.append(PIPE)
-        buf.append(s.logInfo)
+        buf.append(s.toString)
         buf.toString
       })
 
@@ -130,12 +130,12 @@ object Outline5 extends App {
    * USE CASE IMPLEMENTATION
    */
   case class Req(value: String) extends timeslicer.model.framework.RequestModel {
-    override def logInfo: String = {
+    override def toString: String = {
       value.toString
     }
   }
   case class Resp(value: Int) extends timeslicer.model.framework.ResponseModel {
-    override def logInfo: String = {
+    override def toString: String = {
       value.toString
     }
   }
@@ -219,7 +219,7 @@ object Outline5 extends App {
   def success = _success
   def error = _errorContainer.map(x => x)
   def logInfo(s: S): String = {
-    s.logInfo
+    s.toString
   }
 }
   
