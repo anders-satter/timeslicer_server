@@ -31,6 +31,7 @@ import timeslicer.model.util.{ Util => u }
 import timeslicer.model.util.settings.Settings
 import timeslicer.model.storage.StorageSuccessResult
 import timeslicer.model.storage.StorageFailResult
+import timeslicer.model.util.DateTime
 
 /**
  * Text file based implementation of the Storage trait
@@ -214,42 +215,21 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     /*
      * remove all empty lines and sort them
      */
-    val filteredAndSorted = strSeq.filter(item => item != null && item.length() > 0).sortBy(_.toString())
-
+    val filteredAndSorted = strSeq.toList.filter(item => item != null && item.length() > 0).sortBy(_.toString())
+    println(filteredAndSorted.length)
     /*
      * select lines within the interval
      * Now that the lines are sorted I suppose
      */
-    val startPos = filteredAndSorted.toStream.takeWhile(item => !item.contains(start)).length
-    if (startPos == filteredAndSorted.length) {
-      /*
-       * didn't find start date
-       */
-      return None
-    } else {
+    val dayList = DateTime.getDayList(start, end)
+    val itemList = for {
+      d <- dayList
+      i <- filteredAndSorted
+      if (i.contains(d))
+    } yield i
 
-      /*
-       * Find the last item of end
-       * going from back to the last position
-       * of the end date Option
-       */
-      val endPos = filteredAndSorted.length - (filteredAndSorted.length - 1 to startPos)
-        .toStream.takeWhile(i => !filteredAndSorted(i).contains(end)).length
-
-      var foundItems: ListBuffer[TimeSlice] = new ListBuffer
-      (startPos to endPos - 1)
-        .toStream.map(i => {
-          filteredAndSorted(i)
-        })
-        .foreach(item => {
-          parseLogline(item) match {
-            case Some(t) => foundItems += t
-            case None    => /*do nothing...*/
-          }
-        })
-      return Option(foundItems)
-    }
-    return None
+    val timeSliceSeq = itemList.map(i => parseLogline(i)).flatMap(x => x).toSeq
+    return Option(timeSliceSeq)
   }
 
   def users(): Option[Seq[User]] = {
@@ -287,7 +267,6 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
       return Left(StorageFailResult("There is already a project with the name " + project.name, None))
     })
 
-    
     /*add the project to the list of projects and persist*/
     val newPrjSeq: Seq[Project] = prjSeq.getOrElse(Seq()) :+ project
     val fileContent = fsUtil.prepareProjectsForPersistence(newPrjSeq)
