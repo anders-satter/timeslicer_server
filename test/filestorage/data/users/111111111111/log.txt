@@ -1321,7 +1321,7 @@
 2014-04-13 16:35	2014-04-13 16:35	0	"Malware"	"updLogging20130814"	"oiuyoiu"
 2014-04-13 16:35	2014-04-13 16:35	0	"﻿Administration"	"sola"	"oiuyoiu"
 2014-04-13 16:35	2014-04-13 18:09	0	"Team TDE"	"dynamicLinkAf2"	"oiuyoiu"
-2014-04-13 18:09	2014-04-13 18:09	0	"Team TDE"	"intraTaskForce"	"oiuyoiu"
+2014-04-13 18:09	2014-04-13 18:10	0	"Team TDE"	"intraTaskForce"	"oiuyoiu"
 2014-04-14 22:14	2014-04-14 22:14	0	"Malware"	"Proj_X474_Funktion_E001_Ämål_508_Xkod_01"	"lkjh"
 2014-04-14 22:14	2014-04-14 22:14	0	"Lönebedömning"	"mig_själv"	"lkjh"
 2014-04-14 22:14	2014-04-14 22:15	0	"Designgrupp"	"Möte"	"lkjh"
@@ -1339,3 +1339,4 @@
 2015-01-02 20:36	2015-01-02 20:40	0	"Anders"	"go home"	"Detta är inte vad det är som "
 2015-01-07 22:53	2015-01-07 23:00	0	"BestForTDE"	"PortalPage"	""
 2015-01-07 23:00	2015-01-07 23:55	0	"Annat"	"Möte"	""
+

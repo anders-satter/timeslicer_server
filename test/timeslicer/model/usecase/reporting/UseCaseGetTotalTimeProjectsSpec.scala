@@ -30,17 +30,11 @@ class UseCaseGetTotalTimeProjectsSpec extends Specification with Mockito{
   
   val interactor = new GetTotalTimeProjectsInteractor
   interactor.storage = fileStorage
-  //interactor.log_=(TestUtil.emptyLog) 
+  interactor.log_=(TestUtil.emptyLog) 
   
-  val startdate = "2014-01-01"
-  val enddate = "2015-02-28"
+  val startdate = "2003-01-01"
+  val enddate = "2015-02-28"  
   val request = GetTotalTimeProjectsRequestModel(startdate,enddate)
-  
-
-  
-  
-  
-  
   /*
    * TEST
    */
@@ -50,4 +44,5 @@ class UseCaseGetTotalTimeProjectsSpec extends Specification with Mockito{
       ok
     }   
   }
+  
 }

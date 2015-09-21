@@ -52,4 +52,17 @@ object Util {
       .map(u => u.firstName.trim + u.lastName.trim)
       .contains(user.firstName.trim + user.lastName.trim)
 
+  def round(value: Double, decimals: Int): Double = {
+    return BigDecimal(value).setScale(decimals, BigDecimal.RoundingMode.HALF_UP).toDouble
+  }
+
+  def round2(value: Double) = round(value, 2);
+
+  def percent(x: Long, y: Long, decimals: Int): Double = {
+    if (x != 0 && y != 0) {
+      return round(x.toDouble / y.toDouble * 100, decimals)
+    } else {
+      return 0.0
+    }
+  }
 }

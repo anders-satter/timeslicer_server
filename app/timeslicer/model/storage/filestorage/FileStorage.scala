@@ -209,26 +209,18 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     }
     return None
   }
-
   override def timeslices(start: String, end: String, useCaseContext: UseCaseContext): Option[Seq[TimeSlice]] = {
     val strSeq = readFromFileToStringArray(calcLogFileName(useCaseContext), Settings.propertiesMap("LogFileEncoding")).toSeq
-    /*
-     * remove all empty lines and sort them
-     */
     val filteredAndSorted = strSeq.toList.filter(item => item != null && item.length() > 0).sortBy(_.toString())
-    println(filteredAndSorted.length)
-    /*
-     * select lines within the interval
-     * Now that the lines are sorted I suppose
-     */
-    val dayList = DateTime.getDayList(start, end)
-    val itemList = for {
-      d <- dayList
-      i <- filteredAndSorted
-      if (i.contains(d))
-    } yield i
-
-    val timeSliceSeq = itemList.map(i => parseLogline(i)).flatMap(x => x).toSeq
+    val selection = filteredAndSorted.filter(i => {
+      val curDate = i.split(" ")(0)
+      if (curDate.length() > 0) {
+        curDate >= start && curDate <= end
+      } else {
+        false
+      }      
+    })
+    val timeSliceSeq = selection.map(i => parseLogline(i)).flatMap(x => x).toSeq
     return Option(timeSliceSeq)
   }
 
