@@ -12,7 +12,6 @@ case class TotalResultStructure(val startday: String, val endday: String, val pr
 
 case class SumProject(val name: String, val activities: Seq[SumActivity]){
   def duration = activities.toList.foldLeft(0L)((x, activity) => x + activity.duration)
-  //def percentOfTotalHours(totResultDuration:Long):Double = u.round2(this.duration/totResultDuration)
 	def percentOfTotalHours(totResultDuration:Long):Double = this.duration/totResultDuration
 }
 
