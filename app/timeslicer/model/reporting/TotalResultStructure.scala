@@ -2,6 +2,21 @@ package timeslicer.model.reporting
 import timeslicer.model.util.{ DateTime => dt, Util => u }
 import timeslicer.model.timeslice.TimeSlice
 
+/**
+ * Should be presented as a matrix showing this:
+ * 
+ *  Prj  Act  date1 date2 date3 date4 ... Sum
+ *  ---  ---  ----- ----- ----- ----- --- ---
+ *  Prj1 Act1   1     1     1     1         4
+ *  Prj1 Act2   0     1     3     3         7
+ *  Prj2 Act1   0     7     9     3         19
+ *  ---  ---  ----- ----- ----- ----- ---  --- 
+ *  Sum         2     9     10    7         29
+ */
+
+case class DailyResultStructure(val startday:String, val endday:String, val projects:Seq[SumProject]) {
+  def compile = ???
+}
 
 /**
  * A result structure that holds all projects within the reporting interval

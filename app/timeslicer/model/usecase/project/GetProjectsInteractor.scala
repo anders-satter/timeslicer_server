@@ -20,7 +20,7 @@ class GetProjectsInteractor extends Interactor[GetProjectsRequestModel, GetProje
       res.success = GetProjectsResponseModel(storage.projects(u).getOrElse(Seq()))  
     } match {
       case Failure(e) => res.error = Failure(e)
-      case Success(s) =>
+      case Success(s) => /*do nothing to show all this*/
     }
     res
   }  
