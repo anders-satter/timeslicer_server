@@ -11,7 +11,7 @@ import timeslicer.test.util.TestUtil
 import timeslicer.model.util.{ Util => u, DateTime => dt }
 
 @RunWith(classOf[JUnitRunner])
-class UseCaseGetTotalTimeProjectsSpec extends Specification with Mockito {
+class UseCaseGetTotalTimeSpec extends Specification with Mockito {  
   /*
    * SETUP
    */
@@ -28,13 +28,14 @@ class UseCaseGetTotalTimeProjectsSpec extends Specification with Mockito {
   val useCaseContext = mock[UseCaseContext]
   useCaseContext.user returns mockedUser
 
-  val interactor = new GetTotalTimeProjectsInteractor
+  val interactor = new GetTotalTimeInteractor
   interactor.storage = fileStorage
   interactor.log_=(TestUtil.emptyLog)
 
   val startdate = "2014-01-01"
   val enddate = "2015-02-28"
-  val request = GetTotalTimeProjectsRequestModel(startdate, enddate)
+  val request = GetTotalTimeRequestModel(startdate, enddate)
+
   /*
    * TEST
    */

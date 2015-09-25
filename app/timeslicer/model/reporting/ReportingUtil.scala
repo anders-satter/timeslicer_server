@@ -4,6 +4,7 @@ import scala.collection.mutable.ListBuffer
 
 object ReportingUtil {
   
+  
   def summarizeSelection(slices: Seq[timeslicer.model.timeslice.TimeSlice]):Seq[SumProject] = {
     val sortedOnProjects = slices.sortBy(item => item.project)
     val projectMap = sortedOnProjects.groupBy { x => x.project }    

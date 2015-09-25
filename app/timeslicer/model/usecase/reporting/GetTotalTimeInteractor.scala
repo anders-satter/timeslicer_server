@@ -27,16 +27,16 @@ import timeslicer.model.reporting.{ ReportingUtil => ru }
  * But actually only returns structure of project
  * 
  */
-class GetTotalTimeProjectsInteractor extends Interactor[GetTotalTimeProjectsRequestModel, GetTotalTimeProjectsResponseModel] {
-  override def onExecute(request: GetTotalTimeProjectsRequestModel, useCaseContext: UseCaseContext) = {
-    val result = new Result[GetTotalTimeProjectsResponseModel]
+class GetTotalTimeInteractor extends Interactor[GetTotalTimeRequestModel, GetTotalTimeResponseModel] {
+  override def onExecute(request: GetTotalTimeRequestModel, useCaseContext: UseCaseContext) = {
+    val result = new Result[GetTotalTimeResponseModel]
 
     val slices = storage.timeslices(request.startday, request.endday, useCaseContext).getOrElse(Seq())
 
     val projectList = ru.summarizeSelection(slices)
 
     Try {
-      result.success = GetTotalTimeProjectsResponseModel(TotalResultStructure(request.startday, request.endday, projectList))
+      result.success = GetTotalTimeResponseModel(TotalResultStructure(request.startday, request.endday, projectList))
     } match {
       case Failure(e) => result.error = Failure(e)
       case Success(c) =>
