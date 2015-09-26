@@ -7,6 +7,8 @@ import timeslicer.model.reporting.DailyResultStructure
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+import timeslicer.model.util.{ DateTime => dt }
+import timeslicer.model.reporting.{ ReportingUtil => ru }
 
 /**
  * Returns a summary structure of projects and activities for each day in the time interval,
@@ -24,9 +26,28 @@ class GetTimePerDayInteractor extends Interactor[GetTimePerDayRequestModel, GetT
   override def onExecute(request: GetTimePerDayRequestModel,
                          useCaseContext: UseCaseContext): Result[GetTimePerDayResponseModel] = {
     val result = new Result[GetTimePerDayResponseModel]
+
+    //storage.timeslices(request.startday, request.endday, useCaseContext).get foreach println
+
+    /*
+     *  we are going to return a 2-dim Seq that shows the above structure
+     *  and we assume the seq of timeslices returned from storage
+     *  is sorted on startdate
+     */
+
+    val dayList = dt.getDayList(request.startday, request.endday)
+    val timeslices = storage.timeslices(request.startday, request.endday, useCaseContext).getOrElse(Seq())
+    dayList.foreach(day => {
+       //ru.summarizeSelection(timeslices.filter(x=>x.startdate==day)).map(sp => sp.duration) foreach println
+      val dailyList = ru.summarizeSelection(timeslices.filter(x=>x.startdate==day))
+      //dailyList foreach println
+      dailyList.foreach(p => {        
+        println(p.duration)        
+      })
+    })
+
     val resultStructure = DailyResultStructure(request.startday, request.endday, Seq())
-    
-    
+
     Try {
       result.success = GetTimePerDayResponseModel(resultStructure)
     } match {

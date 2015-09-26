@@ -9,13 +9,13 @@ import timeslicer.exception.TimeslicerException
  * start, end, project, activity, optional comment
  * and a duration method.
  */
-case class TimeSlice(startdate: String, 
-                     starttime: String,
-                     enddate: String, 
-                     endtime: String,
-                     project: String,
-                     activity: String,
-                     comment: Option[String] = None) {
+case class TimeSlice(val startdate: String, 
+                     val starttime: String,
+                     val enddate: String, 
+                     val endtime: String,
+                     val project: String,
+                     val activity: String,
+                     val comment: Option[String] = None) {
   /**
    * Calculates the duration of the TimeSlice and
    * converts in ms
