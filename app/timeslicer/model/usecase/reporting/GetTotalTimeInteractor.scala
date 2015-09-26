@@ -33,7 +33,7 @@ class GetTotalTimeInteractor extends Interactor[GetTotalTimeRequestModel, GetTot
 
     val slices = storage.timeslices(request.startday, request.endday, useCaseContext).getOrElse(Seq())
 
-    val projectList = ru.summarizeSelection(slices)
+    val projectList = ru.projectActivityStructure(slices)
 
     Try {
       result.success = GetTotalTimeResponseModel(TotalResultStructure(request.startday, request.endday, projectList))

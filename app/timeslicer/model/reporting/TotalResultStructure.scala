@@ -1,6 +1,7 @@
-package timeslicer.model.reporting
+package timeslicer.model.reporting;
 import timeslicer.model.util.{ DateTime => dt, Util => u }
 import timeslicer.model.timeslice.TimeSlice
+
 
 /**
  * Should be presented as a matrix showing this:

@@ -34,16 +34,39 @@ class GetTimePerDayInteractor extends Interactor[GetTimePerDayRequestModel, GetT
      *  and we assume the seq of timeslices returned from storage
      *  is sorted on startdate
      */
-
     val dayList = dt.getDayList(request.startday, request.endday)
     val timeslices = storage.timeslices(request.startday, request.endday, useCaseContext).getOrElse(Seq())
+    
+    val intervalPrjActStruct = ru.projectActivityStructure(timeslices, true)
+    //intervalPrjActStruct foreach println
+    val projActCombinations = intervalPrjActStruct.map(p => p.activities.map(a => p.name + "|" +a.name))
+    projActCombinations foreach println
+    
+    /*find the prjact combination in the structure*/
+    
+    /*
+     * run a structure for the day
+     * search for each prjAct combination in the structure, if not found
+     * set it to 0
+     * 
+     */
+    
+    
     dayList.foreach(day => {
-       //ru.summarizeSelection(timeslices.filter(x=>x.startdate==day)).map(sp => sp.duration) foreach println
-      val dailyList = ru.summarizeSelection(timeslices.filter(x=>x.startdate==day))
-      //dailyList foreach println
-      dailyList.foreach(p => {        
-        println(p.duration)        
-      })
+      val currentDayList = ru.projectActivityStructure(timeslices.filter(x => x.startdate == day))
+      
+
+      //      val sortedProjectList = currentDayList.sortBy(p => p.name)
+      //      val sortedPjrAndActivitiesList = sortedProjectList.map(p => {
+      //        p.activities.sortBy(a => a.name).map(a => {
+      //          day + "|" +p.name + "|" + a.name + "|" + a.duration 
+      //        }) 
+      //      }) foreach println
+      val list = for {
+        p <- currentDayList.sortBy(p => p.name)
+        a <- p.activities
+      } yield p.name + a.name
+      //list foreach println
     })
 
     val resultStructure = DailyResultStructure(request.startday, request.endday, Seq())
