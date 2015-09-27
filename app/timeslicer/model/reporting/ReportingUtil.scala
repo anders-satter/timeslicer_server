@@ -31,29 +31,25 @@ object ReportingUtil {
     }
   }
 
-  def getDuration(projectName: String, activityName: String, prjList: Seq[SumProject]): Long = {
-//    println(projectName)
-//    println(activityName)
-    
-    
-    val item = prjList.toList.filter(p => p.name == projectName).map(p => {
-//      p.activities.map(a => {
-//        println(a.name)
-//        if (a.name == activityName) {
-//          a.duration
-//        } else {
-//          0
-//        }
-//      })
-      val actList = p.activities.filter(a => a.name == activityName)
-      if (actList.length > 0) {
-        actList(0).duration
-      } else {
-        0
-      }
-    })
-    //return item(0)(0)
-    return item(0)
-  }
+  /**
+   * Returns the duration of a combination of project and activity,
+   * if it is not found, it will return 0
+   */
+  def getDuration(projectName: String, activityName: String, prjList: Seq[SumProject]): Long =
+    prjList.toList
+      .find(p => p.name == projectName).getOrElse(new EmptySumProject)
+      .activities
+      .find(a => a.name == activityName).getOrElse(new EmptySumActivity)
+      .duration
+
+  def projectActivityCombinations(prjList: Seq[SumProject]): Seq[Tuple2[String, String]] =
+    if (prjList.isEmpty) {
+      return Seq()
+    } else {
+      for {
+        p <- prjList
+        a <- p.activities
+      } yield (p.name, a.name)
+    }
 
 }

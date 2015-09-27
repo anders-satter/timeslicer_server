@@ -13,7 +13,7 @@ class UseCaseGetTimePerDaySpec extends Specification with Mockito {
 
   /*
  * Returns a summary structure of projects and activities for each day in the time interval,
- * should facilitate a structure like this
+ * should facilitate to make a structure a structure like this:
  *
  *  Prj  Act  date1 date2 date3 date4 ... Sum
  *  ---  ---  ----- ----- ----- ----- --- ---
@@ -27,54 +27,7 @@ class UseCaseGetTimePerDaySpec extends Specification with Mockito {
   /*
 	 * SETUP
 	 */
-  //  val testFileStorageBasePath = "test/filestorage/data"
-  //  val testPrjFileName = "prj.txt"
-  //  val testLogFileName = "log.txt"
-  //  val testUsersFileName = "users.json"
-  //  val fileStorage = new FileStorage(testFileStorageBasePath, testPrjFileName, testLogFileName, testUsersFileName)
-
-  val testdata = Seq(
-    TimeSlice("2015-01-01", "10:00", "2015-01-01", "10:30", "Prj1", "Act1", Option("")),
-    TimeSlice("2015-01-02", "10:00", "2015-01-02", "10:30", "Prj1", "Act1", Option("")),
-    TimeSlice("2015-01-03", "10:00", "2015-01-03", "10:30", "Prj1", "Act1", Option("")),
-    TimeSlice("2015-01-04", "10:00", "2015-01-04", "10:30", "Prj1", "Act1", Option("")),
-    TimeSlice("2015-01-05", "10:00", "2015-01-05", "10:30", "Prj1", "Act1", Option("")),
-    TimeSlice("2015-01-06", "10:00", "2015-01-06", "10:30", "Prj1", "Act1", Option("")),
-    TimeSlice("2015-01-07", "10:00", "2015-01-07", "10:30", "Prj1", "Act1", Option("")),
-    TimeSlice("2015-01-08", "10:00", "2015-01-08", "10:30", "Prj1", "Act1", Option("")),
-    TimeSlice("2015-01-09", "10:00", "2015-01-09", "10:30", "Prj1", "Act1", Option("")),
-
-    TimeSlice("2015-01-01", "10:00", "2015-01-01", "11:00", "Prj1", "Act2", Option("")),
-    TimeSlice("2015-01-02", "10:00", "2015-01-02", "11:00", "Prj1", "Act2", Option("")),
-    TimeSlice("2015-01-03", "10:00", "2015-01-03", "11:00", "Prj1", "Act2", Option("")),
-    TimeSlice("2015-01-04", "10:00", "2015-01-04", "11:00", "Prj1", "Act2", Option("")),
-    TimeSlice("2015-01-05", "10:00", "2015-01-05", "11:00", "Prj1", "Act2", Option("")),
-    TimeSlice("2015-01-06", "10:00", "2015-01-06", "11:00", "Prj1", "Act2", Option("")),
-    TimeSlice("2015-01-07", "10:00", "2015-01-07", "11:00", "Prj1", "Act2", Option("")),
-    TimeSlice("2015-01-08", "10:00", "2015-01-08", "11:00", "Prj1", "Act2", Option("")),
-    TimeSlice("2015-01-09", "10:00", "2015-01-09", "11:00", "Prj1", "Act2", Option("")),
-
-    TimeSlice("2015-01-01", "10:00", "2015-01-01", "11:00", "Prj2", "Act1", Option("")),
-    TimeSlice("2015-01-02", "10:00", "2015-01-02", "11:00", "Prj2", "Act1", Option("")),
-    TimeSlice("2015-01-03", "10:00", "2015-01-03", "11:00", "Prj2", "Act1", Option("")),
-    TimeSlice("2015-01-04", "10:00", "2015-01-04", "11:00", "Prj2", "Act1", Option("")),
-    TimeSlice("2015-01-05", "10:00", "2015-01-05", "11:00", "Prj2", "Act1", Option("")),
-    TimeSlice("2015-01-06", "10:00", "2015-01-06", "11:00", "Prj2", "Act1", Option("")),
-    TimeSlice("2015-01-07", "10:00", "2015-01-07", "11:00", "Prj2", "Act1", Option("")),
-    TimeSlice("2015-01-08", "10:00", "2015-01-08", "11:00", "Prj2", "Act1", Option("")),
-    TimeSlice("2015-01-09", "10:00", "2015-01-09", "11:00", "Prj2", "Act1", Option("")),
-
-    TimeSlice("2015-01-01", "10:00", "2015-01-01", "11:00", "Prj2", "Act2", Option("")),
-    TimeSlice("2015-01-02", "10:00", "2015-01-02", "11:00", "Prj2", "Act2", Option("")),
-    TimeSlice("2015-01-03", "10:00", "2015-01-03", "11:00", "Prj2", "Act2", Option("")),
-    TimeSlice("2015-01-04", "10:00", "2015-01-04", "11:00", "Prj2", "Act2", Option("")),
-    TimeSlice("2015-01-05", "10:00", "2015-01-05", "11:00", "Prj2", "Act2", Option("")),
-    TimeSlice("2015-01-06", "10:00", "2015-01-06", "11:00", "Prj2", "Act2", Option("")),
-    TimeSlice("2015-01-07", "10:00", "2015-01-07", "11:00", "Prj2", "Act2", Option("")),
-    TimeSlice("2015-01-08", "10:00", "2015-01-08", "11:00", "Prj2", "Act2", Option("")),
-    TimeSlice("2015-01-09", "10:00", "2015-01-09", "11:00", "Prj2", "Act2", Option(""))
-    )
-
+  
   /*user and context*/
   val mockedUser = mock[User]
   mockedUser.firstName returns "Anders"
@@ -86,7 +39,7 @@ class UseCaseGetTimePerDaySpec extends Specification with Mockito {
   val enddate = "2015-01-10"
   val request = GetTimePerDayRequestModel(startdate, enddate)
 
-  val sortedTestData = testdata.sortBy(_.toString)
+  val sortedTestData = TestData.testdata.sortBy(_.toString)
   val storage = mock[Storage]
   storage.timeslices(
     startdate, enddate,
@@ -100,14 +53,22 @@ class UseCaseGetTimePerDaySpec extends Specification with Mockito {
    * TEST
    */
   "TimePerDaySpec" should {
-    "Do we have test data?" in {
+    "verify that we have test data" in {
       storage.timeslices(startdate, enddate, useCaseContext).get.length > 0
     }
 
     "simple execution for the use case" in {
       var result = interactor.execute(request, useCaseContext)
-      //println(result.success)
-      ok
+      //      val output = result.success.map(x => {
+      //        x.resultStructure.toString()
+      //      })             
+      //      output foreach println
+
+      var hasData = false
+      result.success.map(x => {
+        hasData  = x.resultStructure.dayMap.length > 0
+      }) 
+      hasData must beTrue
     }
   }
 

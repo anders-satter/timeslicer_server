@@ -4,5 +4,5 @@ import timeslicer.model.framework.ResponseModel
 import timeslicer.model.reporting.DailyResultStructure
 
 case class GetTimePerDayResponseModel(val resultStructure: DailyResultStructure) extends ResponseModel {
-  "No of projects found: " + resultStructure.projects.length
+  override def toString:String = String.valueOf(resultStructure.dayMap.length)
 }

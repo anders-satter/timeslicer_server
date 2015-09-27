@@ -9,6 +9,7 @@ import scala.util.Failure
 import scala.util.Success
 import timeslicer.model.util.{ DateTime => dt }
 import timeslicer.model.reporting.{ ReportingUtil => ru }
+import timeslicer.model.reporting.ProjectActivityDayResult
 
 /**
  * Returns a summary structure of projects and activities for each day in the time interval,
@@ -22,57 +23,33 @@ import timeslicer.model.reporting.{ ReportingUtil => ru }
  *  ---  ---  ----- ----- ----- ----- ---  ---
  *  Sum         2     9     10    7         29
  */
+
+
 class GetTimePerDayInteractor extends Interactor[GetTimePerDayRequestModel, GetTimePerDayResponseModel] {
   override def onExecute(request: GetTimePerDayRequestModel,
                          useCaseContext: UseCaseContext): Result[GetTimePerDayResponseModel] = {
     val result = new Result[GetTimePerDayResponseModel]
 
-    //storage.timeslices(request.startday, request.endday, useCaseContext).get foreach println
-
-    /*
-     *  we are going to return a 2-dim Seq that shows the above structure
-     *  and we assume the seq of timeslices returned from storage
-     *  is sorted on startdate
-     */
     val dayList = dt.getDayList(request.startday, request.endday)
     val timeslices = storage.timeslices(request.startday, request.endday, useCaseContext).getOrElse(Seq())
-    
     val intervalPrjActStruct = ru.projectActivityStructure(timeslices, true)
-    //intervalPrjActStruct foreach println
-    val projActCombinations = intervalPrjActStruct.map(p => p.activities.map(a => p.name + "|" +a.name))
-    projActCombinations foreach println
     
-    /*find the prjact combination in the structure*/
+    /*find the project/activity combinations in the structure*/
+    val projActCombinations = ru.projectActivityCombinations(intervalPrjActStruct)
     
-    /*
-     * run a structure for the day
-     * search for each prjAct combination in the structure, if not found
-     * set it to 0
-     * 
-     */
-    
-    
-    dayList.foreach(day => {
-      val currentDayList = ru.projectActivityStructure(timeslices.filter(x => x.startdate == day))
-      
-
-      //      val sortedProjectList = currentDayList.sortBy(p => p.name)
-      //      val sortedPjrAndActivitiesList = sortedProjectList.map(p => {
-      //        p.activities.sortBy(a => a.name).map(a => {
-      //          day + "|" +p.name + "|" + a.name + "|" + a.duration 
-      //        }) 
-      //      }) foreach println
-      val list = for {
-        p <- currentDayList.sortBy(p => p.name)
-        a <- p.activities
-      } yield p.name + a.name
-      //list foreach println
+    val byDayListMap = dayList.map(day => {
+      /*create a compilation for this day*/
+      val struct = ru.projectActivityStructure(timeslices.filter(x => x.startdate == day))
+      projActCombinations.map(combo => {
+        /*create result for this day for each project/activity combination*/
+        ProjectActivityDayResult(day, combo._1, combo._2, ru.getDuration(combo._1, combo._2, struct))
+      })
+        /*create map structure with day as the key*/
+        .groupBy(_.day)
     })
 
-    val resultStructure = DailyResultStructure(request.startday, request.endday, Seq())
-
     Try {
-      result.success = GetTimePerDayResponseModel(resultStructure)
+      result.success = GetTimePerDayResponseModel(DailyResultStructure(request.startday, request.endday, byDayListMap))
     } match {
       case Failure(e) => result.error = Failure(e)
       case Success(s) =>
