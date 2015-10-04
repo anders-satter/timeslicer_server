@@ -10,6 +10,7 @@ import timeslicer.model.storage.filestorage.FileStorage
 import timeslicer.test.util.TestUtil
 import timeslicer.model.util.{ Util => u, DateTime => dt }
 import timeslicer.model.storage.Storage
+import timeslicer.test.util.TestData
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseGetTotalTimeSpec extends Specification with Mockito {

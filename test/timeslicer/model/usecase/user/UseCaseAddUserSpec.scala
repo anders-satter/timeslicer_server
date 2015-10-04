@@ -10,6 +10,8 @@ import timeslicer.model.user.UserImpl
 import timeslicer.model.usecase.userid.CreateUserIdInteractor
 import timeslicer.model.storage.exception.ItemAlreadyExistsException
 import timeslicer.test.util.TestUtil
+import timeslicer.model.storage.Storage
+import timeslicer.test.util.TestData
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseAddUserSpec extends Specification with Mockito{
@@ -27,6 +29,8 @@ class UseCaseAddUserSpec extends Specification with Mockito{
   
   val request = AddUserRequestModel(user) 
   val userIdInteractor = new CreateUserIdInteractor
+  
+  
   
   /*
    * TEST

@@ -57,7 +57,9 @@ trait Storage {
   def removeActivity(project:Project,activity:Activity, useCaseContext:UseCaseContext):Either[StorageFailResult, StorageSuccessResult]
   
   /**
-   * Add a timeslice for user in UseCaseContext
+   * Add a timeslice for user in UseCaseContext, NB this service happily saves two 
+   * timeslises with the same information. So the StorageFailResult does only 
+   * kick in if there is a saving error from the storage implementation. 
    */
   def addTimeSlice(timeslice:TimeSlice, useCaseContext:UseCaseContext):Either[StorageFailResult, StorageSuccessResult]
   /**

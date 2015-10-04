@@ -36,4 +36,25 @@ case class TimeSlice(val startdate: String,
     val start = startdate + " " + starttime
     return func(start)
   }
+  
+  override def toString:String = {
+    val SEMICOLON = ";"
+    val str:StringBuilder = new StringBuilder
+    str.append(startdate)
+    str.append(SEMICOLON)
+    str.append(starttime)
+    str.append(SEMICOLON)
+    str.append(enddate)
+    str.append(SEMICOLON)
+    str.append(endtime)
+    str.append(SEMICOLON)
+    str.append(project)
+    str.append(SEMICOLON)
+    str.append(activity)
+    str.append(SEMICOLON)
+    comment.foreach(c => str.append(c))    
+    str.append(SEMICOLON)
+    
+    str.toString
+  }
 }

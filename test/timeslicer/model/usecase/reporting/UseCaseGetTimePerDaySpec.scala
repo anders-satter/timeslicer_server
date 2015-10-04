@@ -8,6 +8,7 @@ import timeslicer.model.context.UseCaseContext
 import timeslicer.test.util.TestUtil
 import timeslicer.model.storage.Storage
 import timeslicer.model.timeslice.TimeSlice
+import timeslicer.test.util.TestData
 
 class UseCaseGetTimePerDaySpec extends Specification with Mockito {
 
