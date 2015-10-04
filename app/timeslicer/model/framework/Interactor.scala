@@ -42,7 +42,14 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   /*
    * Setters for log functions, for testing and overriding purposes
    */
-  def log_=(f: String => Unit) = _log = f
+  
+  /**
+   * the log getter seems to be necessary to make the syntax  
+   * interactor.log = ...
+   * working...
+   */
+  def log:String => Unit = _log
+  def log_=(f: String => Unit):Unit = _log = f
   def beforeLogStringBuilder_=(f: (Any, RequestModel, UseCaseContext) => String) = _beforeLogStringBuilder = f
   def afterLogStringBuilder_=(f: (Any, Result[S], UseCaseContext) => String) = _afterLogStringBuilder = f
 
@@ -89,7 +96,8 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
 }
 
 /**
- * Container for Failure thrown in and interaction
+ * Container for Failure thrown in an interaction,
+ * takes a t:Failure[Throwable], id:String
  */
 class ErrorContainer(t: Failure[Throwable], val id: String) {
   /**

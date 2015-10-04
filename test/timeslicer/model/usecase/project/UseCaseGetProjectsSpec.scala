@@ -29,18 +29,8 @@ class UseCaseGetProjectsSpec extends Specification with Mockito {
   interactor.log_=(TestUtil.emptyLog) 
   
   interactor.storage = storage
-  useCaseContext.user returns new User {
-    override def firstName = "Anders"
-    override def lastName = "Sätter"
-    override def id = "111111111111"
-    override def isAuthorized = true
-    override def isAuthenticated = true
-    override def email = None
-    override def validate = true
-  }
+  useCaseContext.user returns TestUtil.testUser
 
-  
-  
   /*
    * TEST
    */

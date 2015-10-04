@@ -18,7 +18,10 @@ class AddTimeSliceInteractor extends Interactor[AddTimeSliceRequestModel, AddTim
     val result = new Result[AddTimeSliceResponseModel]
     storage.addTimeSlice(request.timeslice, useCaseContext) match {
       case Right(r) => result.success = AddTimeSliceResponseModel(true)
-      case Left(l)  => result.error = Failure(l.exception.getOrElse(new Exception("No exception provided from AddTimeSliceInteractor")))
+      case Left(l)  => {
+       result.success = AddTimeSliceResponseModel(false)
+       result.error = Failure(l.exception.getOrElse(new Exception("No exception provided from AddTimeSliceInteractor"))) 
+      }
     }
     result
   }
