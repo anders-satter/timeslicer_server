@@ -21,8 +21,7 @@ class UseCaseRemoveActivitySpec extends Specification with Mockito {
   val useCaseContext = mock[UseCaseContext]
   useCaseContext.user returns TestUtil.testUser
   val project = Project("Prj1", None)
-  val activity = Activity("act1")
-  
+  val activity = Activity("act1")    
   val request = RemoveActivityRequestModel(project, activity)
   
   val interactor = new RemoveActivityInteractor
