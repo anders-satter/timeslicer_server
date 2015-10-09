@@ -378,7 +378,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     /*put the users in the container*/
     val userContainer = UsersContainer(jsonUserSeq)
 
-    /*make a user case class to simplity persisting*/
+    /*make a user case class to simplify persisting*/
     val userWrites = Json.writes[JsonUser]
     implicit val userSequenceWrites: Writes[Seq[JsonUser]] = Writes.seq(userWrites)
     val containerWrites = Json.writes[UsersContainer]

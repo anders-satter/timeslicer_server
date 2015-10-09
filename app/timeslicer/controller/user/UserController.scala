@@ -6,9 +6,14 @@ import timeslicer.model.usecase.user.GetUsersInteractor
 import timeslicer.model.usecase.user.GetUsersRequestModel
 import timeslicer.model.context.UseCaseContextImpl
 import timeslicer.model.user.UserImpl
+import timeslicer.model.usecase.user.GetUsersResponseModel
+import timeslicer.model.util.JsonHelper
 
 class UserController extends Controller {
-  
+
+  /**
+   * return the users
+   */
   def users = Action { request =>
     {
       val reqModel = GetUsersRequestModel()
@@ -22,18 +27,37 @@ class UserController extends Controller {
       user.email = "anders.satter@users.com"
 
       useCaseContext.user = user
+      println("printing the userList")
+      println("----------------------")
 
-      interactor.execute(reqModel, useCaseContext) match {
-        case success => {
-          Ok("")
-        }
-        case error => {
-          Ok("")
+      val list = interactor
+        .execute(reqModel, useCaseContext)
+        .success
+        .getOrElse(GetUsersResponseModel(Seq()))
+        .userList
 
-        }
+      if (list.nonEmpty) {
+        
+        
+//            val userContainer = UsersContainer(jsonUserSeq)
+
+    /*make a user case class to simplify persisting*/
+//    val userWrites = Json.writes[JsonUser]
+//    implicit val userSequenceWrites: Writes[Seq[JsonUser]] = Writes.seq(userWrites)
+//    val containerWrites = Json.writes[UsersContainer]
+//    val usersJson = Json.toJson(userContainer)(containerWrites)
+
+        
+        
+        Ok(JsonHelper.jsonUserList(list))        
+      } else {
+        Ok("{}")
       }
-      NotFound("" + request.cookies)
     }
+    
+    
+    
   }
 
 }
+

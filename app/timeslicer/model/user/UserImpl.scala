@@ -102,12 +102,6 @@ class UserImpl extends User {
     //var results: Map[String, Boolean] =  scala.collection.mutable.Map[String, Boolean]
     var results =  scala.collection.mutable.Map[String, Boolean]()
 
-    /*
-     * 
-     */
-    //I don't now what he is capable of, but this
-    //this is not the best way
-
     if (!assertStrValue(_firstName,
       userFirstNameMinLength,
       userFirstNameMaxLength)) {
