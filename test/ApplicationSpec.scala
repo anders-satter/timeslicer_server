@@ -25,7 +25,8 @@ class ApplicationSpec extends Specification {
       status(home) must equalTo(OK)
       //this should probably be changed to application/json
       //contentType(home) must beSome.which(_ == "text/html")
-
+      
+      
       contentAsString(home) must contain("timeslicer server is ready.")
     }
   }

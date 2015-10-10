@@ -21,8 +21,7 @@ object InteractionLogStringBuilder {
     buf.append(PIPE)
     buf.append(t.time)
     buf.append(PIPE)
-    
-    
+
     /*
      * Ugly, but we don't want logging to fail
      */
@@ -52,7 +51,7 @@ object InteractionLogStringBuilder {
     /*
      * Ugly, but we don't want logging to fail
      */
-   if (u != null && u.user != null) {
+    if (u != null && u.user != null) {
       buf.append(u.user.id)
     } else {
       buf.append(new EmptyUseCaseContext().user.id)
