@@ -21,6 +21,7 @@ trait User {
    */
   def email: Option[String]
   def validate:Boolean
+  def latestTouch:Long
 }
 
 /**

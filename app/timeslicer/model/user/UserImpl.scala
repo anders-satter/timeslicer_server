@@ -153,6 +153,8 @@ class UserImpl extends User {
     return ret
   }
 
+  override def latestTouch:Long = 0L
+  
   private def assertStrValue(str: String, min: Int, max: Int): Boolean = {
     return (str != null && str.length() >= min && str.length <= max)
   }

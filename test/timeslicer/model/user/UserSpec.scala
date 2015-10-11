@@ -6,11 +6,6 @@ import play.api.test.WithBrowser
 import java.io.InputStream
 import java.io.ByteArrayInputStream
 
-/**
- * These are unit tests
- * that we need to run
- */
-
 @RunWith(classOf[JUnitRunner])
 class UserSpec extends Specification {
 

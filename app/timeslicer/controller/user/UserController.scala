@@ -27,9 +27,7 @@ class UserController extends Controller {
       user.email = "anders.satter@users.com"
 
       useCaseContext.user = user
-      println("printing the userList")
-      println("----------------------")
-
+      
       val list = interactor
         .execute(reqModel, useCaseContext)
         .success

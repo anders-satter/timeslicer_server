@@ -20,6 +20,8 @@ object TestUtil {
       override def isAuthenticated = true
       override def email = None
       override def validate = true
+      override def latestTouch = 0L
+      
     }
   }
 
