@@ -1,8 +1,8 @@
-package timeslicer.model.user.mapstorage
+package timeslicer.model.user.activeuser.mapstorage
 
 import scala.collection.mutable.HashMap
 
-import timeslicer.model.user.ActiveUserStorage
+import timeslicer.model.user.activeuser.ActiveUserStorage
 import timeslicer.model.user.User
 
 class ActiveUserMapStorage extends ActiveUserStorage {

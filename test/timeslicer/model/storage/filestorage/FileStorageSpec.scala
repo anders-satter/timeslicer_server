@@ -234,8 +234,8 @@ class FileStorageSpec extends Specification with Mockito {
     }
 
     "Return a StorageFailResult" in {
-      fileStorage.addActivity(Project("project1", None), Activity("newAct1"), useCaseContext) must 
-        be equalTo(Left(StorageFailResult("activity name already exists in the activity list for the project", None)))
+      fileStorage.addActivity(Project("project1", None), Activity("newAct1"), useCaseContext) must
+        be equalTo (Left(StorageFailResult("activity name already exists in the activity list for the project", None)))
       ok
     }
 
@@ -243,7 +243,7 @@ class FileStorageSpec extends Specification with Mockito {
       fileStorage.removeActivity(Project("project1", None), Activity("newAct1"), useCaseContext);
       fileStorage.projects(useCaseContext) match {
         case Some(prjList) => {
-          
+
           /* This is were we should be at this point, since we should have project1 still defined */
           prjList.filter(p => p.name == project1.name).map(p => {
             p.activityList.get.indexOf(Activity("newAct1")) == -1 must beTrue
@@ -275,7 +275,7 @@ class FileStorageSpec extends Specification with Mockito {
     /*
      * create a timeslice
      */
-    val timeslice1 = TimeSlice("2015-08-14", "10:30", "2015-08-14","10:55", "TProject", "TActivity", Option("comment"))
+    val timeslice1 = TimeSlice("2015-08-14", "10:30", "2015-08-14", "10:55", "TProject", "TActivity", Option("comment"))
 
     "add a TimeSlice" in {
       fileStorage.addTimeSlice(timeslice1, useCaseContext)
@@ -346,6 +346,7 @@ class FileStorageSpec extends Specification with Mockito {
        * SETUP
        */
       val user1 = new UserImpl
+      user1.userName = "First"
       user1.firstName = "First"
       user1.lastName = "Sirname"
       user1.id = "111111111111"
@@ -354,6 +355,7 @@ class FileStorageSpec extends Specification with Mockito {
       user1.email = "" // empty email
 
       val user2 = new UserImpl
+      user2.userName = "Second"
       user2.firstName = "Second"
       user2.lastName = "Sirname"
       user2.id = "222222222222"
@@ -362,6 +364,7 @@ class FileStorageSpec extends Specification with Mockito {
       user2.email = "abc2@example.com"
 
       val user3 = new UserImpl
+      user3.userName = "Third"
       user3.firstName = "Third"
       user3.lastName = "Sirname"
       user3.id = "333333333333"
@@ -372,6 +375,7 @@ class FileStorageSpec extends Specification with Mockito {
       val users = Seq(user1, user2, user3)
 
       val user4 = new UserImpl
+      user4.userName = "Fourth"
       user4.firstName = "Fourth"
       user4.lastName = "Sirname"
       user4.id = "444444444444"
@@ -408,30 +412,36 @@ class FileStorageSpec extends Specification with Mockito {
     userIdInteractor.log_=(TestUtil.emptyLog)
     val testUserid = userIdInteractor.execute(new CreateUserIdRequestModel).success.map(u => u.userId).getOrElse("")
     val testUser = new UserImpl
+
+    testUser.userName = "testUserName"
     testUser.firstName = "TestFörnamn"
     testUser.lastName = "TestEfternamn"
     testUser.id = testUserid
     testUser.isAuthenticated = false
     testUser.isAuthorized = false
-    testUser.email = "abc@example.com"
+    testUser.email = "abc@vab.com"
 
     "add a new user" in {
       val userIdInteractor = new CreateUserIdInteractor
-      fileStorage.addUser(testUser)
+      println(fileStorage.addUser(testUser))
+
       ok
     }
+      
+    
     "remove a user" in {
       //fileStorage.users() map println
 
-      //val testUser = new UserImpl
+      val testUser = new UserImpl
+      testUser.userName = "testUserName"
       testUser.firstName = "TestFörnamn"
       testUser.lastName = "TestEfternamn"
       testUser.id = testUserid
       testUser.isAuthenticated = false
       testUser.isAuthorized = false
-      testUser.email = "abc@example.com"
+      testUser.email = "abc@vab.com"
 
-      fileStorage.removeUser(testUser)
+      println(fileStorage.removeUser(testUser))
       ok
     }
 

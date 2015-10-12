@@ -13,6 +13,7 @@ object TestUtil {
 
   def testUser: User = {
     new User {
+      override def userName = "anders"
       override def firstName = "Anders"
       override def lastName = "Sätter"
       override def id = "111111111111"
@@ -20,8 +21,6 @@ object TestUtil {
       override def isAuthenticated = true
       override def email = None
       override def validate = true
-      override def latestTouch = 0L
-      
     }
   }
 

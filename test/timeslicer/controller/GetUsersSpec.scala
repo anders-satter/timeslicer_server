@@ -37,16 +37,13 @@ class GetUsersSpec extends Specification with Mockito {
     //this should probably be changed to application/json
     //contentType(home) must beSome.which(_ == "text/html")
 
-    
-    
-    
     /*users*/
     val r1: Try[Result] = users.value.get
     r1 match {
       case Success(result: Result) => {
         val body: Enumerator[Array[Byte]] = result.body
         /*The 'run' method on the body returns a Future with the byte array */
-        val abf: Future[Array[Byte]] = body.run(usersIteration)
+        val abf: Future[Array[Byte]] = body.run(usersIteratee)
         /*Future.value returns an Option[Try[Array[Byte]]]*/
         val res: Try[Array[Byte]] = abf.value.get
         val bytes: Array[Byte] = res.get
@@ -61,7 +58,7 @@ class GetUsersSpec extends Specification with Mockito {
   /**
    * An Iteratee to collect all bytes from the result body
    */
-  def usersIteration: Iteratee[Array[Byte], Array[Byte]] = {
+  def usersIteratee: Iteratee[Array[Byte], Array[Byte]] = {
     //Inner step function
     def step(idx: Int, total: Array[Byte])(ab: Input[Array[Byte]]): Iteratee[Array[Byte], Array[Byte]] = ab match {
       case Input.EOF | Input.Empty => Done(total, Input.EOF)

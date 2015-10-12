@@ -7,7 +7,7 @@ import timeslicer.model.user.UserImpl
 import play.api.libs.json.Json._
 import scala.collection.SortedMap
 
-case class JsonUser(firstName: String, lastName: String, id: String, isAuthenticated: Boolean, isAuthorized: Boolean, email: String)
+case class JsonUser(userName:String, firstName: String, lastName: String, id: String, isAuthenticated: Boolean, isAuthorized: Boolean, email: String)
 case class UsersContainer(users: Seq[JsonUser])
 
 /**
@@ -23,7 +23,8 @@ object JsonHelper {
      Map(          
         "users" -> 
           userList.map(u => {
-            Map("firstName" -> toJson(u.firstName),
+            Map("userName" -> toJson(u.userName),
+                "firstName" -> toJson(u.firstName),
                 "lastName" -> toJson(u.lastName),
                 "id" -> toJson(u.id),
                 "isAuthorized" -> toJson(u.isAuthorized),

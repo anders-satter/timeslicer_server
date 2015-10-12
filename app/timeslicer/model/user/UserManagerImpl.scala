@@ -1,6 +1,8 @@
 package timeslicer.model.user
 
-import timeslicer.model.user.mapstorage.ActiveUserMapStorage
+import timeslicer.model.user.activeuser.mapstorage.ActiveUserMapStorage
+import timeslicer.model.user.activeuser.ActiveUserStorage
+import timeslicer.model.user.activeuser.ActiveUserStorageImpl
 
 /**
  * Holds ActiveUserStorage and should be used to add

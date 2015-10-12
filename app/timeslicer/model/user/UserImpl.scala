@@ -12,6 +12,8 @@ import scala.util.Try
 
 class UserImpl extends User {
 
+  private val userNameMaxLength = 20
+  private val userNameMinLength = 5
   private val userFirstNameMaxLength = 20
   private val userFirstNameMinLength = 1
   private val userLastNameMaxLength = 30
@@ -19,23 +21,36 @@ class UserImpl extends User {
   private val userIdMaxLength = 12
   private val userIdMinLength = 12
 
+  private var _userName:String = ""
   private var _firstName: String = ""
   private var _lastName: String = ""
   private var _id: String = ""
   private var _isAuthenticated: Boolean = false
   private var _isAuthorized: Boolean = false
-  private var _email: Option[String] = None
+  private var _email: Option[String] = None 
 
-  def firstName = _firstName
-  def firstName_=(value: String): Unit = _firstName = {
-    if (value != null && value.length >= userFirstNameMinLength && value.length <= userFirstNameMaxLength) {
+  
+  def userName = _userName
+  def userName_=(value: String): Unit = _userName = {
+    if (value != null && value.length >= userNameMinLength && value.length <= userNameMaxLength) {
       value
     } else {
       val messageBuilder = new ErrorMessageBuilder();      
-      messageBuilder.append("User name must be between " + userFirstNameMinLength + " and " + userFirstNameMaxLength + " in length.")
+      messageBuilder.append("User name must be between " + userNameMinLength + " and " + userNameMaxLength + " in length.")
       messageBuilder.append("Supplied value was: " + value)
       throw new IllegalArgumentException(messageBuilder.toString())
     }
+  }
+  def firstName = _firstName
+		  def firstName_=(value: String): Unit = _firstName = {
+		  if (value != null && value.length >= userFirstNameMinLength && value.length <= userFirstNameMaxLength) {
+			  value
+		  } else {
+			  val messageBuilder = new ErrorMessageBuilder();      
+			  messageBuilder.append("User name must be between " + userFirstNameMinLength + " and " + userFirstNameMaxLength + " in length.")
+			  messageBuilder.append("Supplied value was: " + value)
+			  throw new IllegalArgumentException(messageBuilder.toString())
+		  }
   }
   def lastName = _lastName
   def lastName_=(value: String): Unit = _lastName = {
@@ -83,6 +98,8 @@ class UserImpl extends User {
 
   override def toString(): String = {
     val buff = new StringBuilder
+    buff.append(_userName)
+    buff.append('\n')
     buff.append(_firstName)
     buff.append('\n')
     buff.append(_lastName)
@@ -99,9 +116,16 @@ class UserImpl extends User {
 
   def validate: Boolean = {
     var ret = false
-    //var results: Map[String, Boolean] =  scala.collection.mutable.Map[String, Boolean]
     var results =  scala.collection.mutable.Map[String, Boolean]()
 
+    if (!assertStrValue(_userName,
+      userNameMinLength,
+      userNameMaxLength)) {
+      results += ("userName" -> false)
+    } else {
+      results += ("userName" -> true)
+      ret = true
+    }
     if (!assertStrValue(_firstName,
       userFirstNameMinLength,
       userFirstNameMaxLength)) {
@@ -152,8 +176,6 @@ class UserImpl extends User {
 
     return ret
   }
-
-  override def latestTouch:Long = 0L
   
   private def assertStrValue(str: String, min: Int, max: Int): Boolean = {
     return (str != null && str.length() >= min && str.length <= max)

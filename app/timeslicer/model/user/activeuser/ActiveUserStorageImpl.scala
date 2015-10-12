@@ -1,6 +1,7 @@
-package timeslicer.model.user
+package timeslicer.model.user.activeuser
 
-import timeslicer.model.user.mapstorage.ActiveUserMapStorage
+import timeslicer.model.user.activeuser.mapstorage.ActiveUserMapStorage
+
 
 /**
  * Will load the current active user storage implementation at

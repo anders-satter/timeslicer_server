@@ -16,8 +16,15 @@ class UserSpec extends Specification {
       builder.toString
     }
     val user = new UserImpl()
-    
-    
+
+    "Test userName field" in {
+      { user.userName = argumentGenerator(4) } must throwA[IllegalArgumentException];
+      { user.userName = argumentGenerator(21) } must throwA[IllegalArgumentException];
+      { user.userName = argumentGenerator(5) } must not(throwA[IllegalArgumentException]);
+      { user.userName = argumentGenerator(20) } must not(throwA[IllegalArgumentException]);
+      { user.userName = null } must throwA[IllegalArgumentException];
+    }
+
     "Test firstName field" in {
       { user.firstName = argumentGenerator(0) } must throwA[IllegalArgumentException];
       { user.firstName = argumentGenerator(21) } must throwA[IllegalArgumentException];
@@ -27,11 +34,11 @@ class UserSpec extends Specification {
     }
 
     "Test lastName field" in {
-    	{ user.lastName = argumentGenerator(0) } must throwA[IllegalArgumentException];
-    	{ user.lastName = argumentGenerator(31) } must throwA[IllegalArgumentException];
-    	{ user.lastName = argumentGenerator(6) } must not(throwA[IllegalArgumentException]);
-    	{ user.lastName = argumentGenerator(30) } must not(throwA[IllegalArgumentException]);
-    	{ user.lastName = null } must throwA[IllegalArgumentException];
+      { user.lastName = argumentGenerator(0) } must throwA[IllegalArgumentException];
+      { user.lastName = argumentGenerator(31) } must throwA[IllegalArgumentException];
+      { user.lastName = argumentGenerator(6) } must not(throwA[IllegalArgumentException]);
+      { user.lastName = argumentGenerator(30) } must not(throwA[IllegalArgumentException]);
+      { user.lastName = null } must throwA[IllegalArgumentException];
     }
 
     "Test id field" in {
@@ -39,7 +46,7 @@ class UserSpec extends Specification {
       { user.id = argumentGenerator(13) } must throwA[IllegalArgumentException];
       { user.id = argumentGenerator(12) } must not(throwA[IllegalArgumentException]);
       { user.id = null } must throwA[IllegalArgumentException];
-      
+
     }
 
     "Test authenticated field" in {
@@ -59,8 +66,8 @@ class UserSpec extends Specification {
       { user.email = "a" } must (throwA[IllegalArgumentException]);
       { user.email = "a@" } must (throwA[IllegalArgumentException]);
       { user.email = "a@." } must not((throwA[IllegalArgumentException]));
-      { user.email = "a@s.se" } must not((throwA[IllegalArgumentException]));           
-      user.email.get == "a@s.se" must beTrue;      
+      { user.email = "a@s.se" } must not((throwA[IllegalArgumentException]));
+      user.email.get == "a@s.se" must beTrue;
     }
   }
 }

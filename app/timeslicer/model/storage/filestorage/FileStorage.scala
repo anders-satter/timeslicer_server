@@ -218,7 +218,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
         curDate >= start && curDate <= end
       } else {
         false
-      }      
+      }
     })
     val timeSliceSeq = selection.map(i => parseLogline(i)).flatMap(x => x).toSeq
     return Option(timeSliceSeq)
@@ -353,7 +353,7 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
      * These are really business rules, but are added here to mimic database constraints
      */
     if (u.matchesUserName(currentUsersList, user)) {
-      return Left(StorageFailResult("User with name " + user.firstName.trim + " " + user.lastName + " already exists", None))
+      return Left(StorageFailResult("User with name " + user.userName.trim + " already exists", None))
     }
 
     if (u.matchesEmail(currentUsersList, user)) {
@@ -365,7 +365,8 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 
     /*convert seq of User to seq of JsonUser*/
     val jsonUserSeq = updatedUserList.map(u => {
-      JsonUser(u.firstName,
+      JsonUser(u.userName,
+        u.firstName,
         u.lastName,
         u.id,
         u.isAuthenticated,
@@ -402,7 +403,8 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 
       /*convert seq of User to seq of JsonUser*/
       val jsonUserSeq = updatedUserList.map(u => {
-        JsonUser(u.firstName,
+        JsonUser(u.userName,
+          u.firstName,
           u.lastName,
           u.id,
           u.isAuthenticated,

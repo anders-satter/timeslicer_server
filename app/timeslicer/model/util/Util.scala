@@ -46,11 +46,19 @@ object Util {
     }
   }
 
+  /**
+   * Now mathches the username instead of firstName+lastName...
+   */
   def matchesUserName(seq: Seq[User], user: User): Boolean =
     seq
       .toList
-      .map(u => u.firstName.trim + u.lastName.trim)
-      .contains(user.firstName.trim + user.lastName.trim)
+      .map(u => u.userName.trim)
+      .contains(user.userName.trim)
+//      def matchesUserName(seq: Seq[User], user: User): Boolean =
+//      seq
+//      .toList
+//      .map(u => u.firstName.trim + u.lastName.trim)
+//      .contains(user.firstName.trim + user.lastName.trim)
 
   def round(value: Double, decimals: Int): Double = {
     return BigDecimal(value).setScale(decimals, BigDecimal.RoundingMode.HALF_UP).toDouble

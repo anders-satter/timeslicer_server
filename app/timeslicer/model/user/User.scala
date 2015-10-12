@@ -11,6 +11,10 @@ import play.api.libs.functional.syntax._ // Combinator syntax
  * User of the
  */
 trait User {
+  /**
+   * The users chosen username for the application
+   */
+  def userName:String
   def firstName: String
   def lastName: String
   def id: String
@@ -21,7 +25,6 @@ trait User {
    */
   def email: Option[String]
   def validate:Boolean
-  def latestTouch:Long
 }
 
 /**
