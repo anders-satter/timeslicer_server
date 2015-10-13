@@ -428,7 +428,6 @@ class FileStorageSpec extends Specification with Mockito {
       ok
     }
       
-    
     "remove a user" in {
       //fileStorage.users() map println
 
@@ -447,10 +446,4 @@ class FileStorageSpec extends Specification with Mockito {
 
   }
 
-  //  "Location test" should {
-  //	  "return application file location" in {
-  //		  //println(Play.application().path())
-  //		  ok
-  //	  }
-  //  }
 }

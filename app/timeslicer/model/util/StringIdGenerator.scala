@@ -5,6 +5,7 @@ import timeslicer.model.util.{ DateTime => dt }
 
 object StringIdGenerator {
   
+	private val allowedChars = "abcdefghijklmnopqrstuvxyz1234567890"
   
   /**
    * A random user id at the length of 12 characters
@@ -19,8 +20,11 @@ object StringIdGenerator {
     dayb64 + "_" + generator(7)()
   }
 
-  private val allowedChars = "abcdefghijklmnopqrstuvxyz1234567890"
- 
+  /**
+   * Generatates a key for the activeuser map
+   */
+  def activeUserStorageKey = generator(21)
+  
   /**
    * Generates a random string of specified length
    */
