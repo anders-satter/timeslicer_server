@@ -32,7 +32,7 @@ class GetUsersSpec extends Specification with Mockito {
 
   "return users" in new WithApplication {
     val users: Future[Result] = route(FakeRequest(GET, "/users")).get
-
+    
     status(users) must equalTo(OK)
     //this should probably be changed to application/json
     //contentType(home) must beSome.which(_ == "text/html")
@@ -57,6 +57,7 @@ class GetUsersSpec extends Specification with Mockito {
   
   /**
    * An Iteratee to collect all bytes from the result body
+   * 
    */
   def usersIteratee: Iteratee[Array[Byte], Array[Byte]] = {
     //Inner step function

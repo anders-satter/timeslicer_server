@@ -35,6 +35,7 @@ object User {
 
   implicit val userWrights = new Writes[User] {
     def writes(user: User) = Json.obj(
+      "userName" -> user.userName,
       "firstName" -> user.firstName,
       "lastName" -> user.lastName,
       "id" -> user.id,
