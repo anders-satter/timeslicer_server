@@ -1,6 +1,8 @@
 package timeslicer.model.user.activeuser
 
 import timeslicer.model.user.activeuser.mapstorage.ActiveUserMapStorage
+import timeslicer.model.user.activeuser.mapstorage.ActorBasedTimeoutManager
+
 
 
 /**
@@ -8,9 +10,13 @@ import timeslicer.model.user.activeuser.mapstorage.ActiveUserMapStorage
  * first load
  */
 object ActiveUserStorageImpl{
-  val currentActiveUsersImplementation = new ActiveUserMapStorage
+  /**
+   * add parenthesis to the apply method to be able to instantiate
+   * this class with ActiveUserStorageImpl() (otherwise we need to 
+   * say ActiveUserStorageImpl.apply)
+   */
   def apply(): ActiveUserStorage = {
-    return currentActiveUsersImplementation
+    new ActiveUserMapStorage(new ActorBasedTimeoutManager)
   }
 
 }

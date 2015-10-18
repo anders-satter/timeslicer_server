@@ -1,6 +1,7 @@
 package timeslicer.model.user.activeuser.mapstorage
 
 import org.specs2.mutable.Specification
+
 import org.junit.runner.RunWith
 import timeslicer.test.util.TestUtil
 import org.specs2.runner.JUnitRunner
@@ -9,6 +10,11 @@ import timeslicer.model.user.UserImpl
 import timeslicer.model.util.StringIdGenerator
 import timeslicer.model.user.User
 import timeslicer.model.user.NoUser
+import akka.actor.ActorSystem
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration.FiniteDuration
+import timeslicer.model.user.activeuser.ActiveUserStorage
+import timeslicer.model.user.activeuser.TimeoutManager
 
 @RunWith(classOf[JUnitRunner])
 class MapStorageSpec extends Specification {
@@ -16,7 +22,14 @@ class MapStorageSpec extends Specification {
   /*
    * SETUP 
    */
-  val storage = new ActiveUserMapStorage
+  val mockedTimeoutManager = new TimeoutManager(){
+      def handleTimeoutHandler(storage:ActiveUserStorage, key:String, timeout:FiniteDuration) = {}
+      def deleteTimeoutHandler(storage:ActiveUserStorage, key:String) = {}
+
+  }
+  val storage = new ActiveUserMapStorage(mockedTimeoutManager)  
+  
+  
   val user1Key = StringIdGenerator.activeUserStorageKey()
   val user2Key = StringIdGenerator.activeUserStorageKey()
   val user3Key = StringIdGenerator.activeUserStorageKey()
@@ -41,15 +54,25 @@ class MapStorageSpec extends Specification {
 
       storage.add(ActiveUser(user1), user1Key)
       storage.add(ActiveUser(user2), user2Key)
-      storage.add(ActiveUser(user3), user3Key)
-
-      storage.numberOfUsers == 3
+      storage.add(ActiveUser(user3), user3Key)      
+      
+      storage.numberOfUsers == 3      
     }
+    
+    "verify existence of keys in storage" in {
+      storage.keySet.contains(user1Key)
+      storage.keySet.contains(user2Key)
+      storage.keySet.contains(user3Key)
+    }
+    
     "retrieve users from storage" in {
-      storage.get(user1Key).getOrElse(ActiveUser(NoUser)).user.id == "111111111111"
-      storage.get(user2Key).getOrElse(ActiveUser(NoUser)).user.id == "222222222222"
-      storage.get(user3Key).getOrElse(ActiveUser(NoUser)).user.id == "333333333333"
+    	storage.get(user1Key).getOrElse(ActiveUser(NoUser)).user.id == "111111111111"
+    			storage.get(user2Key).getOrElse(ActiveUser(NoUser)).user.id == "222222222222"
+    			storage.get(user3Key).getOrElse(ActiveUser(NoUser)).user.id == "333333333333"
     }
+    
+    
+    
     "remove an ActiveUser from map storage" in {
       storage.numberOfUsers == 3
       storage.remove(user1Key)
@@ -58,9 +81,9 @@ class MapStorageSpec extends Specification {
       storage.numberOfUsers == 1      
       storage.remove(user3Key)
       storage.numberOfUsers == 0
-      
     }
-    "remove an obsolete ActiveUser from map storage" in {
+    
+    "remove an obsolete ActiveUser from map storage" in {      
       pending
     }
   }
