@@ -14,6 +14,11 @@ import timeslicer.model.util.Util
 
 object Settings {
 
+  
+  private var _activeUser_inactivityTimeoutDelay: String = ""
+  def activeUser_inactivityTimeoutDelay = _activeUser_inactivityTimeoutDelay
+  private def activeUser_inactivityTimeoutDelay_=(value: String): Unit = _activeUser_inactivityTimeoutDelay = value
+  
   private var _fileStorageBaseFilePath: String = ""
   def fileStorageBaseFilePath = _fileStorageBaseFilePath
   private def fileStorageBaseFilePath_=(value: String): Unit = _fileStorageBaseFilePath = value
@@ -63,6 +68,7 @@ object Settings {
     logFileName = propertiesMap("LogFileName")
     projectFileName = propertiesMap("ProjectFileName")
     usersFileName = propertiesMap("UsersFileName")
+    activeUser_inactivityTimeoutDelay = propertiesMap("ActiveUser_InactivityTimeoutDelay")
   }
 
   /*

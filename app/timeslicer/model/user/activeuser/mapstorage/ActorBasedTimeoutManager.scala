@@ -86,4 +86,22 @@ class ActorBasedTimeoutManager extends TimeoutManager{
     }
   }
 
+/*
+ * Notes on actors  
+ * Actors are run for a timeslice, not in their own thread
+ * Concurrency are lifted to workflow instead of using locks, wait, etc
+ * start, stop, ! asynchronous message, reply
+ * become redefine the behaviour state machines
+ * unbecome HotSwap
+ *
+ * ?, the actor returns a future, will resolved in time
+ * future.onComplete(f => ...)
+ * reduce, fold,
+ * etc
+ *
+ * Clustered actors
+ *  Address
+ */
+
+  
 }

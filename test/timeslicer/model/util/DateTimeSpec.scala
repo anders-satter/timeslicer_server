@@ -1,10 +1,9 @@
 package timeslicer.model.util
+
 import org.specs2.mutable.Specification
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
-
 import play.api.test.WithBrowser
-
 import java.io.InputStream
 import java.io.ByteArrayInputStream
 

@@ -32,4 +32,9 @@ trait ActiveUserStorage {
    * purposes
    */
   def systemGet(key:String): Option[ActiveUser]
+  def properties:ActiveUserStorageProperties
+}
+
+trait ActiveUserStorageProperties{
+  def inactivityTimeoutDelay:Long
 }

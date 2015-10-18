@@ -1,5 +1,6 @@
 package timeslicer.model.user.activeuser.mapstorage
 
+
 import org.specs2.mutable.Specification
 
 import org.junit.runner.RunWith
@@ -13,6 +14,8 @@ import timeslicer.model.user.NoUser
 import akka.actor.ActorSystem
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration._
+
 import timeslicer.model.user.activeuser.ActiveUserStorage
 import timeslicer.model.user.activeuser.TimeoutManager
 
@@ -27,8 +30,8 @@ class MapStorageSpec extends Specification {
       def deleteTimeoutHandler(storage:ActiveUserStorage, key:String) = {}
 
   }
-  val storage = new ActiveUserMapStorage(mockedTimeoutManager)  
-  
+  val mockedFunc = 0 milliseconds
+  val storage = new ActiveUserMapStorage(mockedTimeoutManager, mockedFunc)  
   
   val user1Key = StringIdGenerator.activeUserStorageKey()
   val user2Key = StringIdGenerator.activeUserStorageKey()
