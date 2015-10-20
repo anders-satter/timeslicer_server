@@ -27,8 +27,16 @@ class UserImpl extends User {
   private var _id: String = ""
   private var _isAuthenticated: Boolean = false
   private var _isAuthorized: Boolean = false
-  private var _email: Option[String] = None 
+  private var _email: Option[String] = None
+  private var _passwordHash:String = ""
+  private var _passwordSalt:String = ""
 
+  def passwordHash = _passwordHash
+  def passwordHash_=(hash:String):Unit = _passwordHash = hash
+  
+  def passwordSalt = _passwordSalt
+  def passwordSalt_=(salt:String):Unit = _passwordSalt = salt
+  
   
   def userName = _userName
   def userName_=(value: String): Unit = _userName = {
@@ -96,6 +104,9 @@ class UserImpl extends User {
     }
   }
 
+  
+  
+  
   override def toString(): String = {
     val buff = new StringBuilder
     buff.append(_userName)
@@ -111,6 +122,10 @@ class UserImpl extends User {
     buff.append(_isAuthorized)
     buff.append('\n')
     buff.append(_email)
+    buff.append('\n')
+    buff.append(_passwordHash)
+    buff.append('\n')
+    buff.append(_passwordSalt)
     return buff.toString
   }
 

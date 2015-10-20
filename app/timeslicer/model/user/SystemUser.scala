@@ -9,5 +9,7 @@ object SystemUser extends User{
   override def isAuthenticated = true
   override def isAuthorized = true   
   override def validate = true   
+  override def passwordHash = ""   
+  override def passwordSalt = ""   
   
 }

@@ -25,6 +25,8 @@ trait User {
    */
   def email: Option[String]
   def validate:Boolean
+  def passwordHash:String
+  def passwordSalt:String
 }
 
 /**

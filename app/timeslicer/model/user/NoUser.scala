@@ -1,6 +1,6 @@
 package timeslicer.model.user
 
-object NoUser extends User{
+object NoUser extends User {
   override def userName = "NoUser"
   override def firstName = "NoUser"
   override def lastName = "NoUser"
@@ -9,4 +9,6 @@ object NoUser extends User{
   override def isAuthenticated = false
   override def isAuthorized = false
   override def validate = true
+  override def passwordHash = ""
+  override def passwordSalt = ""  
 }

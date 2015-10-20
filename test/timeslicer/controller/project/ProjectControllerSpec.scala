@@ -31,12 +31,14 @@ class ProjectControllerSpec extends Specification {
    */
   "ProjectControllerSpec" should {
     "return projects in json structure" in {
-     
-      
+
       "return users" in new WithApplication {
-        val projects: Future[Result] = route(FakeRequest(GET, "/projects")).get
+        val freq = FakeRequest(GET, "/projects").withSession("id" -> "453lkj453490s8df09")
         
+        val projects: Future[Result] = route(freq).get
         println(contentAsString(projects))
+               
+        ok
       }
     }
   }

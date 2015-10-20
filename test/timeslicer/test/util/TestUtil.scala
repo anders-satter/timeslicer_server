@@ -21,6 +21,8 @@ object TestUtil {
       override def isAuthenticated = true
       override def email = None
       override def validate = true
+      override def passwordHash = ""
+      override def passwordSalt = ""
     }
   }
 

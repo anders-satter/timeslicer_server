@@ -14,8 +14,18 @@ class ProjectController extends Controller {
   def projects = Action {
     request =>
       {
+        /*
+         * 1. Get logged in user
+         * 2. If the user is not logged in, make her log in
+         * Should this been done in an interaction?
+         * The user needs to be logged in from the client
+         * to, so there needs to be an authentication interaction 
+         * 
+         */
+      
+        request.session.get("id").map(x => println("session value " + x))
+        
         val reqModel = GetProjectsRequestModel()
-
         val interactor = new GetProjectsInteractor
         val useCaseContext = new UseCaseContextImpl
         val user = new UserImpl

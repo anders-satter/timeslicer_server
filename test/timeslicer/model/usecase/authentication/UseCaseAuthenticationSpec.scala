@@ -14,12 +14,13 @@ import timeslicer.model.framework.InteractionLogStringBuilder
 class UseCaseAuthenticationSpec extends Specification with Mockito {
   val interactor = new AuthenticationInteractor
   
-  interactor.log_=(TestUtil.emptyLog) 
+  interactor.log = (TestUtil.emptyLog) 
   
-  val requestModel = mock[AuthenticationRequestModel]
+  val requestModel = AuthenticationRequestModel(Some("anders"), None)
   var noneCaseContext = new EmptyUseCaseContext
 
   "AuthenticationInteractor" should {
+
 
     "return useCaseContext with user" in {
       var user: User = null
