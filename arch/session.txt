@@ -1,0 +1,71 @@
+@startuml
+
+'scale 400 height
+
+skinparam shadowing false
+skinparam package thinline true
+
+'"left to right direction" is that documented? If so I've missed it.
+
+title 
+	Session Model
+end title
+ 
+package "timeslicer.session" <<rect>>{
+
+
+	
+	note top of session
+		When we get a call from the client,
+		and there is no valied session token
+		we create a new session.
+		 
+	end note						
+
+	class "Session"  as session {
+		- token
+	}	
+
+	note top of sessionStorage
+		The session storage contains all stored sessions. 
+		When a new session is added it will have a timeout 
+		connected to it, which will be updated for each
+		call, when the session is touched.  
+	end note
+
+	class "SessionStorage"  as sessionStorage {
+		singleton
+	}	
+
+}
+
+note right of user
+	A session has a user. The user is attached 
+	when the session is created, as an EmptyUser
+	In the authentication process the user is
+	replaced/updated with a new authenticated
+	user. 
+end note
+
+class "User" as user {
+
+}
+
+
+
+'interface InBoundary << (T,#FF7700)  >>
+
+sessionStorage *- session
+session "1"-right-"1" user
+
+'P -right-> vm
+'vm <-left- v
+'P .down.|> ob
+'P -down-> ResM
+'User -down-> c
+'c -[hidden]left ve
+'c -down-> ReqM
+'c -down-> ib
+
+@enduml
+
