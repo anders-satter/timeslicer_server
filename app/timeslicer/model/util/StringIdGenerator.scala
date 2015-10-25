@@ -24,6 +24,11 @@ object StringIdGenerator {
    * Generatates a key for the activeuser map
    */
   def activeUserStorageKey = generator(21)
+
+  /**
+   * generates a storage key for the sessions in SessionStorage
+   */
+  def sessionStorageKey = generator(21)
   
   /**
    * Generates a random string of specified length

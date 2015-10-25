@@ -4,5 +4,8 @@ import timeslicer.model.user.User
 
 trait Session {
   def id: String
-  def user: User
+  def id_=(id:String):Unit
+  
+  def user: Option[User]
+  def user_=(user:User):Unit
 }

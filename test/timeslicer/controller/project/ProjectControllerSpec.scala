@@ -34,10 +34,10 @@ class ProjectControllerSpec extends Specification {
 
       "return users" in new WithApplication {
         val freq = FakeRequest(GET, "/projects").withSession("id" -> "453lkj453490s8df09")
-        
+        //
         val projects: Future[Result] = route(freq).get
         println(contentAsString(projects))
-               
+       
         ok
       }
     }

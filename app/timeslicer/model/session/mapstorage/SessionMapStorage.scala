@@ -10,24 +10,25 @@ import scala.util.Random
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.duration._
 import timeslicer.model.session.impl.SessionImpl
+import timeslicer.model.util.settings.Settings
+import timeslicer.model.session.impl.SessionStoragePropertiesImpl
 
 class SessionMapStorage(val timeoutManager: SessionTimeoutManager,
-                        inactivityTimeoutFunc: FiniteDuration) extends SessionStorage {
+                        val properties: SessionStorageProperties) extends SessionStorage {
 
   private[this] val map = new HashMap[String, Session]
-  def properties: SessionStorageProperties = new SessionStorageProperties {
-    def inactivityTimeoutDelay = inactivityTimeoutFunc.length
-  }
+
+  def inactivityTimeoutDelay:FiniteDuration  = Duration(properties.inactivityTimeoutDelay, MILLISECONDS)
+  
 
   /**
    * Used only for testing
    */
-  private[this] def inactivityTimeout: FiniteDuration = inactivityTimeoutFunc
 
   override def add(session: Session, key: String): Boolean = map.synchronized {
     if (!map.keySet.contains(key)) {
       map += (key -> session)
-      timeoutManager.handleTimeoutHandler(this, key, inactivityTimeout)
+      timeoutManager.handleTimeoutHandler(this, key, inactivityTimeoutDelay)
       true
     } else {
       false
@@ -48,12 +49,12 @@ class SessionMapStorage(val timeoutManager: SessionTimeoutManager,
     }
 
   override def get(key: String): Option[Session] = {
-    timeoutManager.handleTimeoutHandler(this, key, inactivityTimeout)
+    timeoutManager.handleTimeoutHandler(this, key, inactivityTimeoutDelay)
     map.get(key)
   }
 
   /**
-   * Retrievs a user from the system without resetting the
+   * Retreives a user from the system without resetting the
    * users timeout clock
    */
   override def systemGet(key: String): Option[Session] = map.get(key)
@@ -66,15 +67,18 @@ class SessionMapStorage(val timeoutManager: SessionTimeoutManager,
  * Used for testing
  */
 object SessionMapStorage {
-  def f: FiniteDuration = {
-    val value = Random.nextInt(20000) + 2000
-    value milliseconds
+  
+  val properties = new SessionStorageProperties{
+    override def inactivityTimeoutDelay: Long = 20000
   }
-  val cache = new SessionMapStorage(new ActorBasedSessionTimeoutManager, f)
+  
+  val cache = new SessionMapStorage(new ActorBasedSessionTimeoutManager,properties)
+  
   (10 to 99).foreach { i =>
     val session = new SessionImpl
     session.id = "0000000key" + i
     cache.add(session, "0000000key" + i)
+    Thread.sleep(Random.nextInt(2000))
   }
 
   def main(args: Array[String]): Unit = {}

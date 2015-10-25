@@ -15,6 +15,10 @@ import timeslicer.model.util.Util
 object Settings {
 
   
+  private var _session_inactivityTimeoutDelay: String = ""
+  def session_inactivityTimeoutDelay = _session_inactivityTimeoutDelay
+  private [this] def session_inactivityTimeoutDelay_=(value: String): Unit = _session_inactivityTimeoutDelay = value
+
   private var _activeUser_inactivityTimeoutDelay: String = ""
   def activeUser_inactivityTimeoutDelay = _activeUser_inactivityTimeoutDelay
   private def activeUser_inactivityTimeoutDelay_=(value: String): Unit = _activeUser_inactivityTimeoutDelay = value
@@ -69,6 +73,7 @@ object Settings {
     projectFileName = propertiesMap("ProjectFileName")
     usersFileName = propertiesMap("UsersFileName")
     activeUser_inactivityTimeoutDelay = propertiesMap("ActiveUser_InactivityTimeoutDelay")
+    session_inactivityTimeoutDelay = propertiesMap("Session_InactivityTimeoutDelay")
   }
 
   /*

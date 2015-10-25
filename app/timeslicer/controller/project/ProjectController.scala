@@ -9,6 +9,8 @@ import timeslicer.model.user.UserImpl
 import timeslicer.model.usecase.project.GetProjectsResponseModel
 import timeslicer.model.util.JsonHelper
 import timeslicer.model.project.Project
+import timeslicer.model.autthentication.AuthenticationManager
+import timeslicer.controller.util.RequestUtils
 
 class ProjectController extends Controller {
   def projects = Action {
@@ -22,8 +24,12 @@ class ProjectController extends Controller {
          * to, so there needs to be an authentication interaction 
          * 
          */
-      
-        request.session.get("id").map(x => println("session value " + x))
+                  
+        
+        //request.session.get("id").map(x => println("session value " + x))
+        val authManager = new AuthenticationManager
+        val session = authManager.session(RequestUtils.getAuthenticationToken(request))
+        
         
         val reqModel = GetProjectsRequestModel()
         val interactor = new GetProjectsInteractor

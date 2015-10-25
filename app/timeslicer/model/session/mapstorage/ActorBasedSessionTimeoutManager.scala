@@ -12,7 +12,7 @@ import akka.actor.Props
 
 case class AddRemoveMesssage(cache: SessionStorage, key: String, duration: FiniteDuration)
 case class DeactivateMessage()
-case class DoRemoveCall(key: String, cache: SessionStorage)
+case class DoRemoveMessage(key: String, cache: SessionStorage)
 
 class TimedSessionRemovalActor extends Actor with ActorLogging {
   private[this] var cancellable: Cancellable = null
@@ -20,22 +20,23 @@ class TimedSessionRemovalActor extends Actor with ActorLogging {
 
   def receive = {
     case AddRemoveMesssage(cache, key, duration) => {
-      log.info("Received AddRemoveCall for:" + key)
+      log.info("Received AddRemoveCallMessage for:" + key)
       _key = key
       import context.dispatcher
       /*
        * If we already have cancellable we cancel it
        * and assign a new one 
        */
-      println("receiving key:" + key)
+      
       if (cancellable != null) {
         println("cancellable already set for key:" + key)
         cancellable.cancel()
       }
-      println("setting cancellable for key:" + key)
-      cancellable = context.system.scheduler.scheduleOnce(duration, self, DoRemoveCall(key, cache))
+       println("setting cancellable for key:" + key)
+      //println(duration)
+      cancellable = context.system.scheduler.scheduleOnce(duration, self, DoRemoveMessage(key, cache))
     }
-    case DoRemoveCall(key, cache) => {
+    case DoRemoveMessage(key, cache) => {
       cache.remove(key);
     }
 

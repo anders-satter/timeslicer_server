@@ -8,8 +8,10 @@ package timeslicer.model.session
  */
 trait SessionManager {
   /**
-   * current session
+   * current session, if the session is not new there should be a user
+   * connected to the session
    */
-  def session:Session
-  
+  def session(key: String): Session
+  def sessionExists(key:String):Boolean
+
 }

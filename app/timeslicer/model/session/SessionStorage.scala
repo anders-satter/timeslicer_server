@@ -30,5 +30,5 @@ trait SessionStorage {
   
   def properties:SessionStorageProperties
 
-
 }
+

@@ -80,8 +80,9 @@ object ActiveUserMapStorage {
 
   println("hello")
 
-  def f: FiniteDuration = {
+  def f: FiniteDuration = {    
     val value = Random.nextInt(20000) + 2000
+    println(value)
     value milliseconds
   }
 

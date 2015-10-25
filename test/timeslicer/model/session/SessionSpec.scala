@@ -26,7 +26,7 @@ class SessionSpec extends Specification with Mockito {
       mockedSession != null
     }
     "set user in" in {
-      mockedSession.user returns mockedUser
+      mockedSession.user returns Option(mockedUser)
     	mockedSession.user != null
     }
   }
