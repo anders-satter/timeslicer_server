@@ -10,5 +10,4 @@ object SessionStorageImpl {
   def apply(): SessionStorage = {
     new SessionMapStorage(new ActorBasedSessionTimeoutManager, new SessionStoragePropertiesImpl)
   }
-
 }

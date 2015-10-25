@@ -9,6 +9,8 @@ import timeslicer.model.user.User
  */
 object EmptySession extends Session {
   override def id: String = "EMPTY_SESSION"
+  override def id_=(id: String): Unit = {}
+  
   override def user: Option[User] = Some(NoUser)
   override def user_=(user:User):Unit = {}
 }

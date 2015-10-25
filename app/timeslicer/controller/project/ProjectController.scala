@@ -6,11 +6,13 @@ import timeslicer.model.usecase.project.GetProjectsRequestModel
 import timeslicer.model.usecase.project.GetProjectsInteractor
 import timeslicer.model.context.UseCaseContextImpl
 import timeslicer.model.user.UserImpl
+import timeslicer.model.user.User
 import timeslicer.model.usecase.project.GetProjectsResponseModel
 import timeslicer.model.util.JsonHelper
 import timeslicer.model.project.Project
 import timeslicer.model.autthentication.AuthenticationManager
 import timeslicer.controller.util.RequestUtils
+import timeslicer.model.user.NoUser
 
 class ProjectController extends Controller {
   def projects = Action {
@@ -24,36 +26,35 @@ class ProjectController extends Controller {
          * to, so there needs to be an authentication interaction 
          * 
          */
-                  
-        
+
         //request.session.get("id").map(x => println("session value " + x))
         val authManager = new AuthenticationManager
         val session = authManager.session(RequestUtils.getAuthenticationToken(request))
-        
-        
-        val reqModel = GetProjectsRequestModel()
-        val interactor = new GetProjectsInteractor
-        val useCaseContext = new UseCaseContextImpl
-        val user = new UserImpl
-        user.firstName = "Anders"
-        user.lastName = "Sätter"
-        user.id = "111111111111"
-        user.email = "anders.satter@users.com"
+        println("PRINTING: " + session.id)
 
-        useCaseContext.user = user
-
-        
-        val list:Seq[Project] = interactor
-          .execute(reqModel, useCaseContext)
-          .success
-          .getOrElse(GetProjectsResponseModel(Seq()))
-          .projectList
-
-        if (list.nonEmpty) {
-          Ok(JsonHelper.jsonProjectList(list))
-          
+        val user = session.user.getOrElse(NoUser)
+        if (!user.isAuthenticated) {
+          Unauthorized("User is not authorized\n").withSession("AuthenticationId" -> session.id)
         } else {
-          Ok("{}")
+
+          val reqModel = GetProjectsRequestModel()
+          val interactor = new GetProjectsInteractor
+          val useCaseContext = new UseCaseContextImpl
+
+          useCaseContext.user = user
+
+          val list: Seq[Project] = interactor
+            .execute(reqModel, useCaseContext)
+            .success
+            .getOrElse(GetProjectsResponseModel(Seq()))
+            .projectList
+
+          if (list.nonEmpty) {
+            Ok(JsonHelper.jsonProjectList(list))
+
+          } else {
+            Ok("{}")
+          }
         }
       }
   }

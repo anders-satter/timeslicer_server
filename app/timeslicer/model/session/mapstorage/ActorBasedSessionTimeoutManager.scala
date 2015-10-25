@@ -23,16 +23,13 @@ class TimedSessionRemovalActor extends Actor with ActorLogging {
       log.info("Received AddRemoveCallMessage for:" + key)
       _key = key
       import context.dispatcher
-      /*
-       * If we already have cancellable we cancel it
-       * and assign a new one 
-       */
-      
+
+      /*If we already have cancellable we cancel it and assign a new one */
       if (cancellable != null) {
         println("cancellable already set for key:" + key)
         cancellable.cancel()
       }
-       println("setting cancellable for key:" + key)
+      println("setting cancellable for key:" + key)
       //println(duration)
       cancellable = context.system.scheduler.scheduleOnce(duration, self, DoRemoveMessage(key, cache))
     }
@@ -55,27 +52,24 @@ class ActorBasedSessionTimeoutManager extends SessionTimeoutManager {
   private[this] val actorSystem = ActorSystem()
   private[this] val actorMap = new java.util.HashMap[String, ActorRef]
 
-  
-  
-  def handleTimeoutHandler(storage:SessionStorage, key:String, timeout:FiniteDuration) = {
+  def handleTimeoutHandler(storage: SessionStorage, key: String, timeout: FiniteDuration) = {
     handleRemover(actorSystem, storage, key, timeout)
   }
-  def deleteTimeoutHandler(storage:SessionStorage, key:String) = {
+  def deleteTimeoutHandler(storage: SessionStorage, key: String) = {
     deleteRemover(actorSystem, storage, key)
   }
 
-  
-  
   def handleRemover(actorSystem: ActorSystem, cache: SessionStorage, key: String, duration: FiniteDuration) = {
-
     if (actorMap.keySet().contains(key)) {
       println("actor found:" + key)
       var currentActor = actorMap.get(key)
       currentActor ! AddRemoveMesssage(cache, key, duration)
     } else {
-      val remover = actorSystem.actorOf(Props(classOf[TimedSessionRemovalActor]), key)
-      remover ! AddRemoveMesssage(cache, key, duration)
-      actorMap.put(key, remover)
+      if (key.length() > 0){
+    	  val remover = actorSystem.actorOf(Props(classOf[TimedSessionRemovalActor]), key)
+    	  remover ! AddRemoveMesssage(cache, key, duration)
+    	  actorMap.put(key, remover)
+      } 
     }
   }
 

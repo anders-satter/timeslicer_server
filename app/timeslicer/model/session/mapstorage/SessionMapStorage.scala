@@ -26,6 +26,7 @@ class SessionMapStorage(val timeoutManager: SessionTimeoutManager,
    */
 
   override def add(session: Session, key: String): Boolean = map.synchronized {
+    println("adding session with key:" + key)
     if (!map.keySet.contains(key)) {
       map += (key -> session)
       timeoutManager.handleTimeoutHandler(this, key, inactivityTimeoutDelay)
@@ -78,7 +79,7 @@ object SessionMapStorage {
     val session = new SessionImpl
     session.id = "0000000key" + i
     cache.add(session, "0000000key" + i)
-    Thread.sleep(Random.nextInt(2000))
+    Thread.sleep(Random.nextInt(500))
   }
 
   def main(args: Array[String]): Unit = {}
