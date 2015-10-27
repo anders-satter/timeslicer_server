@@ -34,23 +34,20 @@ class ProjectControllerSpec extends Specification {
    * SETUP
    */
 
-  /*
-   * Create a session in session manager storage 
-   */
-
+  /*Create a session in session manager storage */
   val authManager = new AuthenticationManager
+  
+  /**
+   * creating a session with an AuthenticationId with only empty string id
+   */
   val session = authManager.session(AuthenticationToken("AuthenticationId",""))
   val testUser = new UserImpl
   testUser.id = "111111111111"
   testUser.userName = "anders"
   testUser.email = "abc@se.se"
   testUser.isAuthenticated = true
-  
   session.user = testUser
   
-  
-  
-  println("PRINTING: " + session.id)
 
   /*
    * TEST
@@ -63,8 +60,6 @@ class ProjectControllerSpec extends Specification {
 
         val projects: Future[Result] = route(freq).get
         println(contentAsString(projects))
-
-        
         ok
       }
     }

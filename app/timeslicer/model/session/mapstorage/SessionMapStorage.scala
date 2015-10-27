@@ -25,9 +25,10 @@ class SessionMapStorage(val timeoutManager: SessionTimeoutManager,
    * Used only for testing
    */
 
-  override def add(session: Session, key: String): Boolean = map.synchronized {
+  override def add(session: Session, key: String): Boolean = map.synchronized {    
     println("adding session with key:" + key)
     if (!map.keySet.contains(key)) {
+      session.id = key
       map += (key -> session)
       timeoutManager.handleTimeoutHandler(this, key, inactivityTimeoutDelay)
       true

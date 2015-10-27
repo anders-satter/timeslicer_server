@@ -15,27 +15,19 @@ object SessionManagerImpl extends SessionManager {
    * This must always return a Session
    */
   override def session(key: String): Session = {
-    sessionStorage.get(key) match {
-      case Some(session) => session
-      case None => {
-        val key = StringIdGenerator.sessionStorageKey()
-        sessionStorage.add(new SessionImpl, key)
-        sessionStorage.get(key) match {
-          case Some(session) => {           
-        	  session.user = NoUser
-        	  session.id = key
-        	  session
-          }
-          case None => throw new TimeslicerException("Session could not be creted, fatal error")
-        }
+    /**
+     * storage.get(key) returns an option, so
+     * we need to use storage.get(key).getOrElse
+     */
+    sessionStorage.get(key).getOrElse {
+      val newKey = StringIdGenerator.sessionStorageKey()
+      sessionStorage.add(new SessionImpl, newKey)
+      sessionStorage.get(newKey).getOrElse{
+        throw new TimeslicerException("Session could not be creted, fatal error")
       }
-    }
+    }    
   }
-  
-  override def sessionExists(key:String):Boolean = {
-    sessionStorage.get(key) match {
-      case Some(s) => true
-      case None => false
-    }
-  } 
+
+  override def sessionExists(key: String): Boolean = sessionStorage.keySet.contains(key)
+
 }
