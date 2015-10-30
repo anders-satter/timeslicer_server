@@ -2,10 +2,11 @@ package timeslicer.model.usecase.authentication
 
 import timeslicer.model.framework.ResponseModel
 import timeslicer.model.context.UseCaseContext
+import timeslicer.model.user.User
 
 
-case class AuthenticationResponseModel(useCaseContext:UseCaseContext) extends ResponseModel{
+case class AuthenticationResponseModel(user:User) extends ResponseModel{
   override def toString = {
-    useCaseContext.user.id
+    String.valueOf(user.isAuthenticated)
   }
 }

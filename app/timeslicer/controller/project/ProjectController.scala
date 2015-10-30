@@ -26,14 +26,14 @@ class ProjectController extends Controller {
          * to, so there needs to be an authentication interaction 
          * 
          */
-
-        //request.session.get("id").map(x => println("session value " + x))
-        val authManager = new AuthenticationManager
-        val session = authManager.session(RequestUtils.getAuthenticationToken(request))
-        println("PRINTING: " + session.id)
-
-        val user = session.user.getOrElse(NoUser)
-        if (!user.isAuthenticated) {
+        
+        val session = RequestUtils.getSessionWithUser(request)
+        val user = session.user.getOrElse{
+          throw new IllegalStateException("Session and user creation failed")
+        }
+        
+        if (!session.user.get.isAuthenticated) {
+          /*If the user is not authenticated with return an http 401 and the session id*/
           Unauthorized("User is not authorized\n").withSession("AuthenticationId" -> session.id)
         } else {
 

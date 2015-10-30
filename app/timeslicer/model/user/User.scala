@@ -19,7 +19,9 @@ trait User {
   def lastName: String
   def id: String
   def isAuthenticated: Boolean
+  def isAuthenticated_=(value: Boolean): Unit
   def isAuthorized: Boolean
+  def isAuthorized_=(value: Boolean):Unit
   /**
    * Email is optional so...
    */

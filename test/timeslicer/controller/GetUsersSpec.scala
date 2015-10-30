@@ -31,7 +31,7 @@ class GetUsersSpec extends Specification with Mockito {
   println("PLAY VERSION:" + play.core.PlayVersion.current)
 
   "return users" in new WithApplication {
-    val users: Future[Result] = route(FakeRequest(GET, "/users")).get
+    val users: Future[Result] = route(FakeRequest(GET, "/timeslicer/users")).get
     
     status(users) must equalTo(OK)
     //this should probably be changed to application/json

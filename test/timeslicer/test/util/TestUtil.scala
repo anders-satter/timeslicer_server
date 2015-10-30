@@ -17,8 +17,10 @@ object TestUtil {
       override def firstName = "Anders"
       override def lastName = "Sätter"
       override def id = "111111111111"
-      override def isAuthorized = true
       override def isAuthenticated = true
+      override def isAuthenticated_=(value: Boolean): Unit = {}
+      override def isAuthorized = true
+      override def isAuthorized_=(value: Boolean): Unit = {}
       override def email = None
       override def validate = true
       override def passwordHash = ""

@@ -59,8 +59,7 @@ class ProjectControllerSpec extends Specification {
         val freq = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> session.id)
 
         val projects: Future[Result] = route(freq).get
-        println(contentAsString(projects))
-        ok
+        contentAsString(projects).contains("Prj1") must beTrue
       }
     }
   }

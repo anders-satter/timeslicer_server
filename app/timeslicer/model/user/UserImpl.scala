@@ -88,7 +88,7 @@ class UserImpl extends User {
   def isAuthenticated_=(value: Boolean): Unit = _isAuthenticated = value
 
   def isAuthorized = _isAuthorized
-  def isAuthorized_=(value: Boolean) = _isAuthorized = value
+  def isAuthorized_=(value: Boolean):Unit = _isAuthorized = value
 
   def email: Option[String] = _email
   def email_=(email: String): Unit = {

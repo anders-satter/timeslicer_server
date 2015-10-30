@@ -9,46 +9,38 @@ import timeslicer.model.user.User
 import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.test.util.TestUtil
 import timeslicer.model.framework.InteractionLogStringBuilder
+import timeslicer.model.storage.Storage
+import timeslicer.model.user.PasswordHashCaclulator
+import timeslicer.model.user.UserImpl
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseAuthenticationSpec extends Specification with Mockito {
+  
   val interactor = new AuthenticationInteractor
   
-  interactor.log = (TestUtil.emptyLog) 
+  val mockedUser = new UserImpl
+  mockedUser.userName = "TestUser1"
+  mockedUser.email = "abc@mymail.com"  
+  val passwordSalt = PasswordHashCaclulator.createSalt
+  mockedUser.passwordSalt = passwordSalt 
+  mockedUser.passwordHash = PasswordHashCaclulator.createHash("password", mockedUser.passwordSalt) 
   
-  val requestModel = AuthenticationRequestModel(Some("anders"), None)
-  var noneCaseContext = new EmptyUseCaseContext
+  val mockedStorage = mock[Storage]
+  mockedStorage.users returns Some(Seq(mockedUser))
+
+  interactor.log = (TestUtil.emptyLog)
+  interactor.storage = mockedStorage
+
+  val requestModel = AuthenticationRequestModel(Some("TestUser1"), None, "password")
 
   "AuthenticationInteractor" should {
 
-
-    "return useCaseContext with user" in {
+    "return an authenticated user" in {
       var user: User = null
       interactor.execute(requestModel).success.map(x => {
-        user = x.useCaseContext.user
+        user = x.user
       })
-      interactor.execute(requestModel).success.map(x => {
-        x.useCaseContext.user must not(beNull)
-      })
-      
-      val user1 = for {
-//        s <- interactor.execute(requestModel).success.map(x => x.useCaseContext.user)
-        s <- interactor.execute(requestModel).success.map(x => x).map(x => x.useCaseContext.user)
-      } yield s
-      //println(user1)
-      val user2 = interactor.execute(requestModel).success.map(x => x).map(x => x.useCaseContext.user).get
-      //println(user2)
-
-      //work with the user
-      interactor.execute(requestModel).success.map(rm => rm).map {
-        x =>
-          {
-            val user = x.useCaseContext.user
-            //println("Here we will print the users name:")
-            //println(user.firstName + " " + user.lastName)
-          }
-      }
-      user must not(beNull)
+      user.isAuthenticated must beTrue
     }
     "return no error" in {
       var error: scala.util.Try[Throwable] = null
