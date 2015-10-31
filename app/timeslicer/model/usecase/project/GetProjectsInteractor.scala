@@ -14,6 +14,7 @@ import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.model.storage.StorageImpl
 
 class GetProjectsInteractor extends Interactor[GetProjectsRequestModel, GetProjectsResponseModel] {
+  
   override def onExecute(r: GetProjectsRequestModel, u: UseCaseContext): Result[GetProjectsResponseModel] = {
     val res = new Result[GetProjectsResponseModel]
     Try {

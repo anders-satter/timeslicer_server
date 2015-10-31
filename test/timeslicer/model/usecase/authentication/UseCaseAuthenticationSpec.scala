@@ -37,14 +37,14 @@ class UseCaseAuthenticationSpec extends Specification with Mockito {
 
     "return an authenticated user" in {
       var user: User = null
-      interactor.execute(requestModel).success.map(x => {
+      interactor.execute(requestModel,EmptyUseCaseContext()).success.map(x => {
         user = x.user
       })
       user.isAuthenticated must beTrue
     }
     "return no error" in {
       var error: scala.util.Try[Throwable] = null
-      interactor.execute(requestModel).error.map(errorContainer => errorContainer) must beNone
+      interactor.execute(requestModel, EmptyUseCaseContext()).error.map(errorContainer => errorContainer) must beNone
     }
   }
 }

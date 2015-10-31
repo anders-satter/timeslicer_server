@@ -8,10 +8,12 @@ import timeslicer.model.util.StringIdGenerator
 import timeslicer.model.framework.Interactor
 import timeslicer.model.framework.Result
 import scala.util.Failure
+import timeslicer.model.util.Util.EmptyUseCaseContext
+import timeslicer.model.util.Util.EmptyUseCaseContext
 
 class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, CreateUserIdResponseModel] {
 
-  override def onExecute(request: CreateUserIdRequestModel): Result[CreateUserIdResponseModel] = {
+  override def onExecute(request: CreateUserIdRequestModel,useCaseContext:UseCaseContext): Result[CreateUserIdResponseModel] = {
 
     val result = new Result[CreateUserIdResponseModel]
     

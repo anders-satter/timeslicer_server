@@ -24,6 +24,9 @@ import timeslicer.model.usecase.userid.CreateUserIdRequestModel
 import timeslicer.model.storage.StorageFailResult
 import timeslicer.model.util.Util
 import timeslicer.test.util.TestUtil
+import timeslicer.model.util.Util.EmptyUseCaseContext
+import timeslicer.model.util.Util.EmptyUseCaseContext
+import timeslicer.model.util.Util.EmptyUseCaseContext
 
 @RunWith(classOf[JUnitRunner])
 class FileStorageSpec extends Specification with Mockito {
@@ -410,7 +413,7 @@ class FileStorageSpec extends Specification with Mockito {
 
     val userIdInteractor = new CreateUserIdInteractor
     userIdInteractor.log_=(TestUtil.emptyLog)
-    val testUserid = userIdInteractor.execute(new CreateUserIdRequestModel).success.map(u => u.userId).getOrElse("")
+    val testUserid = userIdInteractor.execute(new CreateUserIdRequestModel, EmptyUseCaseContext()).success.map(u => u.userId).getOrElse("")
     val testUser = new UserImpl
 
     testUser.userName = "testUserName"

@@ -26,6 +26,7 @@ import timeslicer.model.reporting.ProjectActivityDayResult
 
 
 class GetTimePerDayInteractor extends Interactor[GetTimePerDayRequestModel, GetTimePerDayResponseModel] {
+  
   override def onExecute(request: GetTimePerDayRequestModel,
                          useCaseContext: UseCaseContext): Result[GetTimePerDayResponseModel] = {
     val result = new Result[GetTimePerDayResponseModel]

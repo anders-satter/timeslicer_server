@@ -8,6 +8,7 @@ import scala.util.Failure
 import scala.util.Success
 
 class GetTimeSlicesInteractor extends Interactor[GetTimeSlicesRequestModel, GetTimeSlicesResponseModel] {
+  
   override def onExecute(request: GetTimeSlicesRequestModel, useCaseContext: UseCaseContext): Result[GetTimeSlicesResponseModel] = {
     
     val result = new Result[GetTimeSlicesResponseModel]

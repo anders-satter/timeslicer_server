@@ -13,6 +13,7 @@ import timeslicer.model.storage.StorageFailResult
 import scala.util.Failure
 
 class AddTimeSliceInteractor extends Interactor[AddTimeSliceRequestModel, AddTimeSliceResponseModel] {
+  
   override def onExecute(request: AddTimeSliceRequestModel,
                          useCaseContext: UseCaseContext): Result[AddTimeSliceResponseModel] = {
     val result = new Result[AddTimeSliceResponseModel]

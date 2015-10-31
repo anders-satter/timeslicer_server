@@ -28,6 +28,7 @@ import timeslicer.model.reporting.{ ReportingUtil => ru }
  * 
  */
 class GetTotalTimeInteractor extends Interactor[GetTotalTimeRequestModel, GetTotalTimeResponseModel] {
+  
   override def onExecute(request: GetTotalTimeRequestModel, useCaseContext: UseCaseContext) = {
     val result = new Result[GetTotalTimeResponseModel]
 

@@ -7,6 +7,7 @@ import org.junit.runner.RunWith
 import timeslicer.model.context.UseCaseContext
 import timeslicer.model.user.User
 import timeslicer.test.util.TestUtil
+import timeslicer.model.util.Util.EmptyUseCaseContext
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseCreateUserIdSpec extends Specification with Mockito {
@@ -27,14 +28,14 @@ class UseCaseCreateUserIdSpec extends Specification with Mockito {
    */
   "Userid test" should {
     "create a userid" in {
-      interactor.execute(requestModel).success.map(r => r.userId) != null must beTrue
+      interactor.execute(requestModel, EmptyUseCaseContext()).success.map(r => r.userId) != null must beTrue
 
     }
 
     "create 100 unique userids" in {
       val sortedIdList =
         (0 to 99).toList
-          .map(i => interactor.execute(requestModel).success.map(u => u.userId).getOrElse("0").asInstanceOf[String])
+          .map(i => interactor.execute(requestModel,EmptyUseCaseContext()).success.map(u => u.userId).getOrElse("0").asInstanceOf[String])
           .sortBy(i => i)
 
       /*sliding is producing a sliding window over the iterator with the size of 2*/

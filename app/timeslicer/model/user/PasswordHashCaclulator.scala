@@ -6,10 +6,10 @@ import java.math.BigInteger
 import java.security.SecureRandom
 /**
  * Will calculate the sha256 value of a password
- * and does also provide 
+ * and does also provide
  */
 object PasswordHashCaclulator {
-  val random = new SecureRandom
+  private[this] val random = new SecureRandom
 
   /**
    * Calculates the sha256 value
@@ -24,27 +24,47 @@ object PasswordHashCaclulator {
     }
     buff.toString
   }
+  /**
+   * Non-scala,probably should use iteration
+   * but that will have to be redone later...
+   */
+  private[this] def sha1000(str: String): String = {
+    val buff = new StringBuffer
+    var res = str
+    (0 to 1000).foreach(i => {
+
+      val digest = java.security.MessageDigest.getInstance("SHA-256")
+      val byteArray: Array[Byte] = digest.digest(res.getBytes())
+      val buff = new StringBuffer
+      byteArray.foreach { byte =>
+        buff.append(Integer.toString((byte & 0xff) + 0x100, 16)
+          .substring(1))
+      }
+      res = buff.toString
+    })
+    res
+  }
 
   def createHash(password: String, salt: String): String = {
-    sha(password + salt)
+    sha1000(password + salt)
   }
 
   def createSalt: String = {
     new SeededRandom().nextBase64String(32)
   }
 
-//  def main(args: Array[String]): Unit = {
-//    println(createSalt)
-//    val res2 = sha("123456")
-//    println(res2.toString)
-//  }
+  //  def main(args: Array[String]): Unit = {
+  //    println(createSalt)
+  //    val res2 = sha("123456")
+  //    println(res2.toString)
+  //  }
 
 }
 /*
  * from 
  * http://grokbase.com/t/gg/play-framework/146s1cwcp1/secure-random-number-generation-in-playframework
  */
-class SeededRandom {
+private[this] class SeededRandom {
 
   private val random = {
     val r = new java.security.SecureRandom()

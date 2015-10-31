@@ -65,9 +65,10 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   /**
    * Will do the actual work, is to be overridden by implementors
    * This is the implementation where we have an initialized UseCaseContext
+   * No implementation will force extension classes to override this
+   * method
    */
-  def onExecute(r: R, u: UseCaseContext): Result[S] = new Result[S]
-  def onExecute(r: R): Result[S] = new Result[S]
+  def onExecute(r: R, u: UseCaseContext): Result[S]
 
   /**
    * Execution of the interaction
@@ -79,20 +80,6 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
     post(this, res, u)
     res
   }
-
-  /**
-   * Execution of the interaction
-   * with no UseCaseContext
-   */
-  def execute(r: R): Result[S] = {
-    val u = new EmptyUseCaseContext
-    pre(this, r, u)
-    checkAuthorization(this, r, u)
-    val res = onExecute(r)
-    post(this, res, u)
-    res
-  }
-
 }
 
 /**

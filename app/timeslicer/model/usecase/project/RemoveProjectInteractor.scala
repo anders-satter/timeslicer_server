@@ -6,6 +6,7 @@ import timeslicer.model.framework.Result
 import scala.util.Failure
 
 class RemoveProjectInteractor extends Interactor[RemoveProjectRequestModel, RemoveProjectResponseModel]{
+  
   override def onExecute(request:RemoveProjectRequestModel,useCaseContext:UseCaseContext):
       Result[RemoveProjectResponseModel] = {    
     val result = new Result[RemoveProjectResponseModel]
