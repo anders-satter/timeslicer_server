@@ -11,7 +11,7 @@ import play.api.test.FakeApplication
 @RunWith(classOf[JUnitRunner])
 class UseCaseCreateUserAccount extends Specification with Mockito {
   
-  /*this is used only to activate logging*/
+  /*this is used only to activate logging in test*/
   FakeApplication(additionalConfiguration = Map(
     "logger.application" -> "INFO"
   ))
@@ -26,8 +26,6 @@ class UseCaseCreateUserAccount extends Specification with Mockito {
    * TEST
    */
   "CreateUserAccount" should {
-
-    
     
     "check user login in" in {
       interactor

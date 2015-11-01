@@ -2,32 +2,25 @@ package timeslicer.model.framework
 
 import scala.util.Failure
 import scala.util.Try
-import timeslicer.model.util.StringIdGenerator
-import timeslicer.model.context.UseCaseContext
-import timeslicer.model.util.{ Util => u, DateTime => dt }
-import timeslicer.model.util.Util.EmptyUseCaseContext
-import timeslicer.model.util.Util.EmptyUseCaseContext
-import timeslicer.model.util.Util.EmptyUseCaseContext
-import timeslicer.model.util.Util.EmptyResponseModel
-import timeslicer.model.util.Util.EmptyRequestModel
-import timeslicer.model.storage.StorageImpl
-import timeslicer.model.storage.Storage
-import timeslicer.model.util.Util.EmptyRequestModel
 import scala.util.control.NonFatal
-import scala.reflect.ScalaLongSignature
+
 import play.api.Logger
+import timeslicer.model.context.UseCaseContext
+import timeslicer.model.storage.Storage
+import timeslicer.model.storage.StorageImpl
+import timeslicer.model.util.StringIdGenerator
 
 /**
  * General interactor class to be overridden by specific use case implementations
  */
 abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   val interactionLogger = Logger("timeslicer_interaction")
-  val errorLogger  = Logger("timeslicer_error")
+  val errorLogger = Logger("timeslicer_error")
   /*
    * Default implementations for log functions 
    */
   private[this] var _log: String => Unit = (msg: String) => interactionLogger.info(msg)
-  
+
   private[this] var _beforeLogStringBuilder: (Any, RequestModel, UseCaseContext) => String = InteractionLogStringBuilder.logBeforeInteraction
   private[this] var _afterLogStringBuilder: (Any, Result[S], UseCaseContext) => String = InteractionLogStringBuilder.logAfterInteraction
   private[this] var _errorLogStringBuilder: (Any, UseCaseContext, Throwable, String) => String = InteractionLogStringBuilder.logAtError
@@ -59,7 +52,6 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   def beforeLogStringBuilder_=(f: (Any, RequestModel, UseCaseContext) => String) = _beforeLogStringBuilder = f
   def afterLogStringBuilder_=(f: (Any, Result[S], UseCaseContext) => String) = _afterLogStringBuilder = f
   def errorLogStringBuilder = _errorLogStringBuilder
-  
 
   /*
    * Hook methods running before and after the interaction    
@@ -89,9 +81,9 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
       res = onExecute(r, u)
     } catch {
       case NonFatal(e) => {
-        /*breaking error*/        
-        val errorId = StringIdGenerator.errorId        
-        errorLogger.error(_errorLogStringBuilder(this,u,e,errorId))
+        /*breaking error*/
+        val errorId = StringIdGenerator.errorId
+        errorLogger.error(_errorLogStringBuilder(this, u, e, errorId))
         res.failure = "ERROR|" + errorId
       }
     } finally {
@@ -131,9 +123,4 @@ class Result[S <: timeslicer.model.framework.ResponseModel] {
   def error_=(fail: Failure[Throwable]): Unit = _errorContainer = Option(new ErrorContainer(fail, StringIdGenerator.errorId))
 
 }
-
-class InitialResult extends Result {
-
-}
-
   
