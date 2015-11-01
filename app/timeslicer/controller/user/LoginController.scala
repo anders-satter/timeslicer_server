@@ -1,7 +1,7 @@
 package timeslicer.controller.user
 
 /**
- * Will show a loging page to
+ * In the login controller, it is a bre
  */
 class LoginController {
   

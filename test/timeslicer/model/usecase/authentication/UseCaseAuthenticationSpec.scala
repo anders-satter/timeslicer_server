@@ -10,7 +10,7 @@ import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.test.util.TestUtil
 import timeslicer.model.framework.InteractionLogStringBuilder
 import timeslicer.model.storage.Storage
-import timeslicer.model.user.PasswordHashCaclulator
+import timeslicer.model.user.PasswordUtil
 import timeslicer.model.user.UserImpl
 
 @RunWith(classOf[JUnitRunner])
@@ -21,9 +21,9 @@ class UseCaseAuthenticationSpec extends Specification with Mockito {
   val mockedUser = new UserImpl
   mockedUser.userName = "TestUser1"
   mockedUser.email = "abc@mymail.com"  
-  val passwordSalt = PasswordHashCaclulator.createSalt
+  val passwordSalt = PasswordUtil.createSalt
   mockedUser.passwordSalt = passwordSalt 
-  mockedUser.passwordHash = PasswordHashCaclulator.createHash("password", mockedUser.passwordSalt) 
+  mockedUser.passwordHash = PasswordUtil.createHash("password", mockedUser.passwordSalt) 
   
   val mockedStorage = mock[Storage]
   mockedStorage.users returns Some(Seq(mockedUser))

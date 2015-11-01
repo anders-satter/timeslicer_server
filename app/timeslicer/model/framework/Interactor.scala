@@ -13,18 +13,24 @@ import timeslicer.model.util.Util.EmptyRequestModel
 import timeslicer.model.storage.StorageImpl
 import timeslicer.model.storage.Storage
 import timeslicer.model.util.Util.EmptyRequestModel
+import scala.util.control.NonFatal
+import scala.reflect.ScalaLongSignature
+import play.api.Logger
 
 /**
  * General interactor class to be overridden by specific use case implementations
  */
 abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
-
+  val interactionLogger = Logger("timeslicer_interaction")
+  val errorLogger  = Logger("timeslicer_error")
   /*
    * Default implementations for log functions 
    */
-  private[this] var _log: String => Unit = (msg: String) => println(msg)
+  private[this] var _log: String => Unit = (msg: String) => interactionLogger.info(msg)
+  
   private[this] var _beforeLogStringBuilder: (Any, RequestModel, UseCaseContext) => String = InteractionLogStringBuilder.logBeforeInteraction
   private[this] var _afterLogStringBuilder: (Any, Result[S], UseCaseContext) => String = InteractionLogStringBuilder.logAfterInteraction
+  private[this] var _errorLogStringBuilder: (Any, UseCaseContext, Throwable, String) => String = InteractionLogStringBuilder.logAtError
 
   /**
    * The default storage is the one set in the
@@ -42,16 +48,18 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   /*
    * Setters for log functions, for testing and overriding purposes
    */
-  
+
   /**
-   * the log getter seems to be necessary to make the syntax  
+   * the log getter seems to be necessary to make the syntax
    * interactor.log = ...
    * working...
    */
-  def log:String => Unit = _log
-  def log_=(f: String => Unit):Unit = _log = f
+  def log: String => Unit = _log
+  def log_=(f: String => Unit): Unit = _log = f
   def beforeLogStringBuilder_=(f: (Any, RequestModel, UseCaseContext) => String) = _beforeLogStringBuilder = f
   def afterLogStringBuilder_=(f: (Any, Result[S], UseCaseContext) => String) = _afterLogStringBuilder = f
+  def errorLogStringBuilder = _errorLogStringBuilder
+  
 
   /*
    * Hook methods running before and after the interaction    
@@ -74,10 +82,22 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
    * Execution of the interaction
    */
   def execute(r: R, u: UseCaseContext): Result[S] = {
-    pre(this, r, u)
-    checkAuthorization(this, r, u)
-    val res = onExecute(r, u)
-    post(this, res, u)
+    var res = new Result[S]
+    try {
+      pre(this, r, u)
+      checkAuthorization(this, r, u)
+      res = onExecute(r, u)
+    } catch {
+      case NonFatal(e) => {
+        /*breaking error*/        
+        val errorId = StringIdGenerator.errorId        
+        println(errorId)
+        errorLogger.error(_errorLogStringBuilder(this,u,e,errorId))
+        res.failure = "ERROR|" + errorId
+      }
+    } finally {
+      post(this, res, u)
+    }
     res
   }
 }
@@ -94,16 +114,26 @@ class ErrorContainer(t: Failure[Throwable], val id: String) {
   val stacktrace = t.failed.map(x => x.getStackTrace.mkString("\n"))
 }
 
-class Result[S <: timeslicer.model.framework.ResponseModel] {
-  private var _success: Option[S] = None
-  private var _error: Option[Try[Throwable]] = None
-  private var _errorContainer: Option[ErrorContainer] = None
-  //def success_=(v: Option[S]): Unit = _success = v
-  def success_=(v: S): Unit = _success = Option(v)
+case class FailureContainer(message: String)
 
+class Result[S <: timeslicer.model.framework.ResponseModel] {
+  private[this] var _success: Option[S] = None
+  private[this] var _error: Option[Try[Throwable]] = None
+  private[this] var _errorContainer: Option[ErrorContainer] = None
+  private[this] var _failure: Option[FailureContainer] = None
+
+  def success_=(v: S): Unit = _success = Option(v)
   def success = _success
+
+  def failure_=(message: String): Unit = _failure = Option(FailureContainer(message))
+  def failure = _failure
+
   def error = _errorContainer.map(x => x)
   def error_=(fail: Failure[Throwable]): Unit = _errorContainer = Option(new ErrorContainer(fail, StringIdGenerator.errorId))
+
+}
+
+class InitialResult extends Result {
 
 }
 

@@ -12,31 +12,30 @@ import scala.util.Try
 
 class UserImpl extends User {
 
-  private val userNameMaxLength = 20
-  private val userNameMinLength = 5
-  private val userFirstNameMaxLength = 20
-  private val userFirstNameMinLength = 1
-  private val userLastNameMaxLength = 30
-  private val userLastNameMinLength = 1
-  private val userIdMaxLength = 12
-  private val userIdMinLength = 12
+  private[this] val userNameMaxLength = 20
+  private[this] val userNameMinLength = 5
+  private[this] val userFirstNameMaxLength = 20
+  private[this] val userFirstNameMinLength = 1
+  private[this] val userLastNameMaxLength = 30
+  private[this] val userLastNameMinLength = 1
+  private[this] val userIdMaxLength = 12
+  private[this] val userIdMinLength = 12
 
-  private var _userName:String = ""
-  private var _firstName: String = ""
-  private var _lastName: String = ""
-  private var _id: String = ""
-  private var _isAuthenticated: Boolean = false
-  private var _isAuthorized: Boolean = false
-  private var _email: Option[String] = None
-  private var _passwordHash:String = ""
-  private var _passwordSalt:String = ""
+  private[this] var _userName:String = ""
+  private[this] var _firstName: String = ""
+  private[this] var _lastName: String = ""
+  private[this] var _id: String = ""
+  private[this] var _isAuthenticated: Boolean = false
+  private[this] var _isAuthorized: Boolean = false
+  private[this] var _email: Option[String] = None
+  private[this] var _passwordHash:String = ""
+  private[this] var _passwordSalt:String = ""
 
   def passwordHash = _passwordHash
   def passwordHash_=(hash:String):Unit = _passwordHash = hash
   
   def passwordSalt = _passwordSalt
   def passwordSalt_=(salt:String):Unit = _passwordSalt = salt
-  
   
   def userName = _userName
   def userName_=(value: String): Unit = _userName = {
@@ -192,11 +191,11 @@ class UserImpl extends User {
     return ret
   }
   
-  private def assertStrValue(str: String, min: Int, max: Int): Boolean = {
+  private[this] def assertStrValue(str: String, min: Int, max: Int): Boolean = {
     return (str != null && str.length() >= min && str.length <= max)
   }
 
-  private def assertBooleanValue(bool: Boolean, expectedValue: Boolean): Boolean = {
+  private[this] def assertBooleanValue(bool: Boolean, expectedValue: Boolean): Boolean = {
     return (bool == expectedValue)
   }
 }

@@ -41,6 +41,30 @@ object InteractionLogStringBuilder {
     buf.toString
   }
 
+  def logAtError(caller: Any, u: UseCaseContext, e:Throwable, id:String): String = {
+    val buf = new StringBuilder
+    val t = time(dt.now)
+    buf.append(PIPE)
+    buf.append(t.time)
+    buf.append(PIPE)
+    if (u != null && u.user != null) {
+      buf.append(u.user.id)
+    } else {
+      buf.append(new EmptyUseCaseContext().user.id)
+    }
+    buf.append(PIPE)
+    buf.append("ERROR")    
+    buf.append(PIPE)
+    buf.append(id)
+    buf.append(PIPE)
+    buf.append(caller.getClass().getSimpleName)
+    buf.append(PIPE)
+    buf.append(e.getMessage)
+    buf.append(PIPE)
+    buf.append(e.getStackTrace.mkString("\n"))
+    buf.toString
+  }
+
   def logAfterInteraction[S <: timeslicer.model.framework.ResponseModel](caller: Any, res: Result[S], u: UseCaseContext) = {
     val buf = new StringBuilder
     val t = time(dt.now)
@@ -57,7 +81,7 @@ object InteractionLogStringBuilder {
       buf.append(new EmptyUseCaseContext().user.id)
     }
     buf.append(PIPE)
-    buf.append("POST")
+    buf.append("PST")
     buf.append(PIPE)
     buf.append(caller.getClass.getSimpleName)
 
@@ -90,6 +114,23 @@ object InteractionLogStringBuilder {
       buf.append(c.failure)
       buf.append(PIPE)
       buf.append(c.failure.get.getStackTrace.mkString("\n"))
+    })
+    res.failure.map(c => {
+    	buf.append(PIPE)
+    	buf.append("FAILURE")
+    	buf.append(PIPE)
+    	/*
+    	 * map, foreach doesn't find the error, we have to use
+    	 * get, but if we come here there *must* be an error :)
+    	 * get cannot be used, because this will throw the exception!
+    	 * we just want to read it and the stack trace
+    	 * so we use Failure.failed = Success(Throwable)
+    	 */
+    	//buf.append(t.failed.get.getStackTrace.mkString("\n"))
+    	//buf.append(t.failure.failed.get.getStackTrace.mkString)
+    	
+    	buf.append(c.message)
+    	buf.append(PIPE)
     })
     buf.toString
   }

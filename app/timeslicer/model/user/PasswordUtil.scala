@@ -8,7 +8,7 @@ import java.security.SecureRandom
  * Will calculate the sha256 value of a password
  * and does also provide
  */
-object PasswordHashCaclulator {
+object PasswordUtil {
   private[this] val random = new SecureRandom
 
   /**
@@ -53,12 +53,21 @@ object PasswordHashCaclulator {
     new SeededRandom().nextBase64String(32)
   }
 
+
+  def isPasswordValid(password: String): Boolean = {
+
+    return password.length() > 7 &&
+      password.filter(x => x.isUpper).length() > 1 &&
+      password.filter(c => c.isDigit).length() > 1 &&
+      password.filter(c => c.isLower).length() > 1
+
+  }
+
   //  def main(args: Array[String]): Unit = {
   //    println(createSalt)
   //    val res2 = sha("123456")
   //    println(res2.toString)
   //  }
-
 }
 /*
  * from 

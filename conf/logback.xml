@@ -1,22 +1,53 @@
 <configuration>
-    
-  <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%coloredLevel - %logger - %message%n%xException</pattern>
-    </encoder>
-  </appender>
+	<conversionRule conversionWord="coloredLevel"
+		converterClass="play.api.Logger$ColoredLevel" />
 
-  <!--
-    The logger name is typically the Java/Scala package name.
-    This configures the log level to log at for a package and its children packages.
-  -->
-  <logger name="play" level="INFO" />
-  <logger name="application" level="DEBUG" />
+	<appender name="FILE1" class="ch.qos.logback.core.FileAppender">
+		<file>${application.home}/logs/application.log</file>
+		<encoder>
+			<pattern>%date - [%level] - from %logger in %thread
+				%n%message%n%xException%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="TS_INTERACTION" class="ch.qos.logback.core.FileAppender">
+		<file>${application.home}/logs/timeslicer_interaction.log</file>
+		<encoder>
+			<pattern>%message%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="TS_ERROR" class="ch.qos.logback.core.FileAppender">
+		<file>${application.home}/logs/timeslicer_error.log</file>
+		<encoder>
+			<pattern>%message%n</pattern>
+		</encoder>
+	</appender>
 
-  <root level="ERROR">
-    <appender-ref ref="STDOUT" />
-  </root>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%coloredLevel - %logger - %message%n%xException</pattern>
+		</encoder>
+	</appender>
+
+	<!-- The logger name is typically the Java/Scala package name. This configures 
+		the log level to log at for a package and its children packages. -->
+	<logger name="play" level="INFO" />
+	
+	<logger name="timeslicer_interaction" level="INFO" additivity="false">
+		<appender-ref ref="TS_INTERACTION" />
+	</logger>
+	
+	<logger name="timeslicer_error" level="ERROR" additivity="false">
+		<appender-ref ref="TS_ERROR" />
+	</logger>
+
+	<logger name="application" level="DEBUG" />
+
+	<root level="ERROR">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE1" />
+	</root>
 
 </configuration>

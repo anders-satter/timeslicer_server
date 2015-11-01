@@ -6,7 +6,7 @@ import timeslicer.model.context.UseCaseContextImpl
 import timeslicer.model.framework.Interactor
 import timeslicer.model.user.UserImpl
 import timeslicer.model.user.NoUser
-import timeslicer.model.user.PasswordHashCaclulator
+import timeslicer.model.user.PasswordUtil
 
 /**
  * This interactor returns true if
@@ -19,29 +19,29 @@ import timeslicer.model.user.PasswordHashCaclulator
  */
 class AuthenticationInteractor extends Interactor[AuthenticationRequestModel, AuthenticationResponseModel] {
 
-  override def onExecute(req: AuthenticationRequestModel, useCaseContext:UseCaseContext): Result[AuthenticationResponseModel] = {
+  override def onExecute(req: AuthenticationRequestModel, useCaseContext: UseCaseContext): Result[AuthenticationResponseModel] = {
 
     val result = new Result[AuthenticationResponseModel]
-    /*
-     * get the user from the user list
-     */
-    val users = storage.users()
-    val currentUser = users.getOrElse(Seq(NoUser).toList)
-      .toList
-      .filter(u => u.userName == req.userName.getOrElse("")
-        || req.email.getOrElse("") == u.email)
-      .head
 
-    result.success = AuthenticationResponseModel(currentUser)
+    
+    val users = storage.users().getOrElse(Seq()).toList
+    val currentUserList = for {
+      user <- users
+      if (user.userName == req.userName.getOrElse("") || user.email.getOrElse("") == req.email.getOrElse(""))
+    } yield user
 
-    if (currentUser != NoUser) {
+    val foundUser = if (!currentUserList.isEmpty) currentUserList.head else NoUser
+
+    result.success = AuthenticationResponseModel(foundUser)
+
+    if (foundUser != NoUser) {
       /* 
     	 * hash the password and check it against the stored password hash
     	 */
-      val testHash = PasswordHashCaclulator.createHash(req.password, currentUser.passwordSalt)
+      val testHash = PasswordUtil.createHash(req.password, foundUser.passwordSalt)
 
-      if (testHash == currentUser.passwordHash) {
-        currentUser.isAuthenticated = true
+      if (testHash == foundUser.passwordHash) {
+        foundUser.isAuthenticated = true
       }
     }
     return result
