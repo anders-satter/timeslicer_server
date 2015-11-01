@@ -6,9 +6,15 @@ import org.specs2.runner.JUnitRunner
 import org.specs2.mock.Mockito
 import timeslicer.test.util.TestUtil
 import timeslicer.model.context.UseCaseContext
+import play.api.test.FakeApplication
 
 @RunWith(classOf[JUnitRunner])
 class UseCaseCreateUserAccount extends Specification with Mockito {
+  
+  /*this is used only to activate logging*/
+  FakeApplication(additionalConfiguration = Map(
+    "logger.application" -> "INFO"
+  ))
   /*
    * SETUP
    */

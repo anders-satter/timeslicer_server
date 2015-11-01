@@ -91,7 +91,6 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
       case NonFatal(e) => {
         /*breaking error*/        
         val errorId = StringIdGenerator.errorId        
-        println(errorId)
         errorLogger.error(_errorLogStringBuilder(this,u,e,errorId))
         res.failure = "ERROR|" + errorId
       }
