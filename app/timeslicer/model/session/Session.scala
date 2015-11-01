@@ -6,6 +6,10 @@ trait Session {
   def id: String
   def id_=(id:String):Unit
   
-  def user: Option[User]
+  /**
+   * session must always return a user, 
+   * be it a NoUser
+   */
+  def user: User
   def user_=(user:User):Unit
 }

@@ -6,7 +6,10 @@ import timeslicer.model.user.NoUser
 
 class SessionImpl extends Session {
   private [this] var _user:User = NoUser
-  override def user: Option[User] = Option(_user) 
+  /**
+   * user always returns a user, be it a NoUser
+   */
+  override def user:User = _user 
   override def user_=(user:User):Unit = _user = user
   
   private [this] var _id:String = ""
