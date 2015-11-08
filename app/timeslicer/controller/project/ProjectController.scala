@@ -19,6 +19,7 @@ class ProjectController extends Controller {
     request =>
       {
         val session = RequestUtils.getSessionWithUser(request)
+        println("GETTING THE NEW SESSION:" + session.id)
         if (!session.user.isAuthenticated) {
           /*If the user is not authenticated with return an http 401 and the session id*/
           Unauthorized("User is not authorized\n").withSession("AuthenticationId" -> session.id)
@@ -29,6 +30,8 @@ class ProjectController extends Controller {
           val useCaseContext = new UseCaseContextImpl
 
           useCaseContext.user = session.user
+          useCaseContext.sessionId = session.id
+          
 
           val list: Seq[Project] = interactor
             .execute(reqModel, useCaseContext)

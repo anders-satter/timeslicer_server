@@ -6,7 +6,8 @@ import org.specs2.runner.JUnitRunner
 import play.api.test.WithBrowser
 import java.io.InputStream
 import java.io.ByteArrayInputStream
-
+import java.util.Base64
+import timeslicer.model.util.{DateTime => dt}
 
 /**
  * These are unit tests
@@ -30,4 +31,13 @@ class DateTimeSpec extends Specification {
       1==1
     }
   }  
+  
+  def b64EncodeStr(str: String) = Base64.getEncoder().encodeToString(str.getBytes)
+  
+  "should test java encoding" in {
+    println("Hello")
+	  val dayb64 = b64EncodeStr(dt.Now(dt.now, dt.getDayValueInStr, dt.fullTimePart).day)
+	  println(dt.Now(dt.now, dt.getDayValueInStr, dt.fullTimePart).dayAndTime)
+    pending
+  }
 }

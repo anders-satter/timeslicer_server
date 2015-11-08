@@ -8,4 +8,5 @@ import timeslicer.model.user.User
  */
 trait UseCaseContext {
   def user:User 
+  def sessionId:String
 }

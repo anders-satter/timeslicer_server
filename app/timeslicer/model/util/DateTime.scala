@@ -118,6 +118,7 @@ object DateTime {
   case class Now(timeMs:Long, dayPartConverter:Long => String, timePartConverter:Long=>String){
     def day:String = getDayValueInStr(timeMs)
     def time:String = fullTimePart(timeMs)
+    def dayAndTime = day + "_" + time
   }
   
   

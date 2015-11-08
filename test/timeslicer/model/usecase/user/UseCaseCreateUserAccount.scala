@@ -27,7 +27,7 @@ class UseCaseCreateUserAccount extends Specification with Mockito {
    */
   "CreateUserAccount" should {
     
-    "check user login in" in {
+    "check user login" in {
       interactor
         .execute(CreateUserAccountRequestModel("TestNick",
           "Test",
@@ -37,7 +37,7 @@ class UseCaseCreateUserAccount extends Specification with Mockito {
           useCaseContext)
       pending
     }
-    "check user login 2 in" in {
+    "check user login 2" in {
       interactor
         .execute(CreateUserAccountRequestModel("TestNick",
           "",

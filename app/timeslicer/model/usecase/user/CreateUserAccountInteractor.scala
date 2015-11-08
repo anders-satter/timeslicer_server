@@ -26,9 +26,7 @@ class CreateUserAccountInteractor extends Interactor[CreateUserAccountRequestMod
 //      case Failure(e) => result.error = Failure(e)
 //      case _ =>
 //    }
-
-      
-      
+     
     /**
      * Check the password
      */

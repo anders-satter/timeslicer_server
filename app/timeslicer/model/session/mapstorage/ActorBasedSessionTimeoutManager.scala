@@ -10,7 +10,7 @@ import akka.actor.ActorSystem
 import akka.actor.ActorRef
 import akka.actor.Props
 
-case class AddRemoveMesssage(cache: SessionStorage, key: String, duration: FiniteDuration)
+case class AddRemoveListenerMesssage(cache: SessionStorage, key: String, duration: FiniteDuration)
 case class DeactivateMessage()
 case class DoRemoveMessage(key: String, cache: SessionStorage)
 
@@ -19,7 +19,7 @@ class TimedSessionRemovalActor extends Actor with ActorLogging {
   private[this] var _key = ""
 
   def receive = {
-    case AddRemoveMesssage(cache, key, duration) => {
+    case AddRemoveListenerMesssage(cache, key, duration) => {
       log.info("Received AddRemoveCallMessage for:" + key)
       _key = key
       import context.dispatcher
@@ -38,7 +38,7 @@ class TimedSessionRemovalActor extends Actor with ActorLogging {
     }
 
     case DeactivateMessage() => {
-      /*This this cancels the scheduler and stops this actor*/
+      /*This cancels the scheduler and stops this actor*/
       if (cancellable != null) {
         println("Stopping TimedRemoverHostActor with key:" + _key)
         cancellable.cancel()
@@ -63,11 +63,11 @@ class ActorBasedSessionTimeoutManager extends SessionTimeoutManager {
     if (actorMap.keySet().contains(key)) {
       println("actor found:" + key)
       var currentActor = actorMap.get(key)
-      currentActor ! AddRemoveMesssage(cache, key, duration)
+      currentActor ! AddRemoveListenerMesssage(cache, key, duration)
     } else {
       if (key.length() > 0){
     	  val remover = actorSystem.actorOf(Props(classOf[TimedSessionRemovalActor]), key)
-    	  remover ! AddRemoveMesssage(cache, key, duration)
+    	  remover ! AddRemoveListenerMesssage(cache, key, duration)
     	  actorMap.put(key, remover)
       } 
     }

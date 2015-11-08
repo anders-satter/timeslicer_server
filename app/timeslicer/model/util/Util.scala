@@ -27,6 +27,9 @@ object Util {
       us.id = "0EMPTY0USER0"
       us
     }
+    
+    override def sessionId: String = "0EMPTY0SESSION"
+
   }
   class EmptyResponseModel extends ResponseModel {
     override def toString: String = "Empty"
@@ -54,11 +57,11 @@ object Util {
       .toList
       .map(u => u.userName.trim)
       .contains(user.userName.trim)
-//      def matchesUserName(seq: Seq[User], user: User): Boolean =
-//      seq
-//      .toList
-//      .map(u => u.firstName.trim + u.lastName.trim)
-//      .contains(user.firstName.trim + user.lastName.trim)
+  //      def matchesUserName(seq: Seq[User], user: User): Boolean =
+  //      seq
+  //      .toList
+  //      .map(u => u.firstName.trim + u.lastName.trim)
+  //      .contains(user.firstName.trim + user.lastName.trim)
 
   def round(value: Double, decimals: Int): Double = {
     return BigDecimal(value).setScale(decimals, BigDecimal.RoundingMode.HALF_UP).toDouble

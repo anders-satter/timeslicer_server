@@ -9,7 +9,7 @@ import timeslicer.model.util.StringIdGenerator
 
 object SessionManagerImpl extends SessionManager {
 
-  private[this] val sessionStorage: SessionStorage = SessionStorageImpl()
+  private[this] val sessionStorage: SessionStorage = SessionStorage()
 
   /**
    * This must always return a Session

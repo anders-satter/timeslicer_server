@@ -14,12 +14,22 @@ object InteractionLogStringBuilder {
     dt.Now(dt.now, dt.getDayValueInStr, dt.fullTimePart)
   }
 
-  def logBeforeInteraction(caller: Any, r: timeslicer.model.framework.RequestModel, u: UseCaseContext) = {
+  def logBeforeInteraction(caller: Any, 
+      r: timeslicer.model.framework.RequestModel, 
+      u: UseCaseContext, 
+      interactionId:String) = {
     val buf = new StringBuilder
     val t = time(dt.now)
     buf.append(t.day)
     buf.append(PIPE)
     buf.append(t.time)
+    buf.append(PIPE)
+    buf.append("PRE")    
+    buf.append(PIPE)
+    buf.append(u.sessionId)
+    buf.append(PIPE)
+    buf.append(interactionId)
+    
     buf.append(PIPE)
 
     /*
@@ -30,8 +40,6 @@ object InteractionLogStringBuilder {
     } else {
       buf.append(new EmptyUseCaseContext().user.id)
     }
-    buf.append(PIPE)
-    buf.append("PRE")
     buf.append(PIPE)
     buf.append(caller.getClass.getSimpleName)
     buf.append(PIPE)
@@ -65,12 +73,18 @@ object InteractionLogStringBuilder {
     buf.toString
   }
 
-  def logAfterInteraction[S <: timeslicer.model.framework.ResponseModel](caller: Any, res: Result[S], u: UseCaseContext) = {
+  def logAfterInteraction[S <: timeslicer.model.framework.ResponseModel](caller: Any, res: Result[S], u: UseCaseContext, interactionId:String) = {
     val buf = new StringBuilder
     val t = time(dt.now)
     buf.append(t.day)
     buf.append(PIPE)
     buf.append(t.time)
+    buf.append(PIPE)
+    buf.append("PST")
+    buf.append(PIPE)
+    buf.append(u.sessionId)
+    buf.append(PIPE)
+    buf.append(interactionId)
     buf.append(PIPE)
     /*
      * Ugly, but we don't want logging to fail
@@ -80,8 +94,6 @@ object InteractionLogStringBuilder {
     } else {
       buf.append(new EmptyUseCaseContext().user.id)
     }
-    buf.append(PIPE)
-    buf.append("PST")
     buf.append(PIPE)
     buf.append(caller.getClass.getSimpleName)
 

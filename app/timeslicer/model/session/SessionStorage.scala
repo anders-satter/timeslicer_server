@@ -1,20 +1,25 @@
 package timeslicer.model.session
 
+import timeslicer.model.session.mapstorage.SessionMapStorage
+import timeslicer.model.session.mapstorage.ActorBasedSessionTimeoutManager
+import timeslicer.model.session.impl.SessionListenerServiceImpl
+import timeslicer.model.session.impl.SessionStoragePropertiesImpl
+
 trait SessionStorage {
   
-    /**
-   * Adds user to the user storage with its key
+   /**
+   * Adds session to the session storage with its key
    */
   def add(session: Session, key: String): Boolean
   
   /**
-   * Returns an option to the user stored with the
+   * Returns an option to the session stored with the
    * supplied key
    */
   def get(key: String): Option[Session]
 
   /**
-   * Returns an option to the user stored with the
+   * Returns an option to the session stored with the
    * supplied key
    */  
   def remove(key: String): Boolean
@@ -29,6 +34,21 @@ trait SessionStorage {
   def systemGet(key:String): Option[Session]
   
   def properties:SessionStorageProperties
-
+  
+  def sessionListenerService:SessionListenerService
 }
+
+/**
+ * This is the standard implementation of session storage
+ */
+object SessionStorage {
+    val implementation: SessionStorage = new SessionMapStorage(new ActorBasedSessionTimeoutManager,
+    new SessionListenerServiceImpl,
+    new SessionStoragePropertiesImpl)
+
+  def apply(): SessionStorage = {
+    implementation
+  }
+}
+
 

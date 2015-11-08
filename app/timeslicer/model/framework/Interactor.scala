@@ -20,9 +20,8 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
    * Default implementations for log functions 
    */
   private[this] var _log: String => Unit = (msg: String) => interactionLogger.info(msg)
-
-  private[this] var _beforeLogStringBuilder: (Any, RequestModel, UseCaseContext) => String = InteractionLogStringBuilder.logBeforeInteraction
-  private[this] var _afterLogStringBuilder: (Any, Result[S], UseCaseContext) => String = InteractionLogStringBuilder.logAfterInteraction
+  private[this] var _beforeLogStringBuilder: (Any, RequestModel, UseCaseContext, String) => String = InteractionLogStringBuilder.logBeforeInteraction
+  private[this] var _afterLogStringBuilder: (Any, Result[S], UseCaseContext, String) => String = InteractionLogStringBuilder.logAfterInteraction
   private[this] var _errorLogStringBuilder: (Any, UseCaseContext, Throwable, String) => String = InteractionLogStringBuilder.logAtError
 
   /**
@@ -37,30 +36,33 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   private[this] var _storage: Storage = StorageImpl()
   def storage: Storage = _storage
   def storage_=(s: Storage): Unit = _storage = s
-
+  
+  
+  /**
+   * InteractionIdManager manages the 
+   */  
+  private[this] var _interactionIdManager:InteractionIdManager = InteractionIdManager()
+  def interactionIdManager = _interactionIdManager
+  def interactionIdManager_=(iidm:InteractionIdManager) = _interactionIdManager = iidm
+  
+  
   /*
    * Setters for log functions, for testing and overriding purposes
    */
-
-  /**
-   * the log getter seems to be necessary to make the syntax
-   * interactor.log = ...
-   * working...
-   */
   def log: String => Unit = _log
   def log_=(f: String => Unit): Unit = _log = f
-  def beforeLogStringBuilder_=(f: (Any, RequestModel, UseCaseContext) => String) = _beforeLogStringBuilder = f
-  def afterLogStringBuilder_=(f: (Any, Result[S], UseCaseContext) => String) = _afterLogStringBuilder = f
+  def beforeLogStringBuilder_=(f: (Any, RequestModel, UseCaseContext, String) => String) = _beforeLogStringBuilder = f
+  def afterLogStringBuilder_=(f: (Any, Result[S], UseCaseContext, String) => String) = _afterLogStringBuilder = f
   def errorLogStringBuilder = _errorLogStringBuilder
 
   /*
    * Hook methods running before and after the interaction    
    */
-  def pre(me: Any, r: R, u: UseCaseContext) = _log(_beforeLogStringBuilder(me, r, u))
+  def pre(me: Any, r: R, u: UseCaseContext, interactionId:String) = _log(_beforeLogStringBuilder(me, r, u, interactionId))
   def checkAuthorization(me: Any, r: R, u: UseCaseContext) = {
     //No action yet...  
   }
-  def post(me: Any, res: Result[S], u: UseCaseContext) = _log(_afterLogStringBuilder(me, res, u))
+  def post(me: Any, res: Result[S], u: UseCaseContext, interactionId:String) = _log(_afterLogStringBuilder(me, res, u, interactionId))
 
   /**
    * Will do the actual work, is to be overridden by implementors
@@ -75,8 +77,9 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
    */
   def execute(r: R, u: UseCaseContext): Result[S] = {
     var res = new Result[S]
+    val interactionId = InteractionIdManager().interactionId(u.sessionId)
     try {
-      pre(this, r, u)
+      pre(this, r, u, interactionId)
       checkAuthorization(this, r, u)
       res = onExecute(r, u)
     } catch {
@@ -87,7 +90,7 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
         res.failure = "ERROR|" + errorId
       }
     } finally {
-      post(this, res, u)
+      post(this, res, u, interactionId)
     }
     res
   }

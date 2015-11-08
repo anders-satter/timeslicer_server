@@ -63,7 +63,7 @@ class FrameworkSpec extends Specification with Mockito {
        * overriding logging since the stacktrace is annoying in the spec
        * output
        */
-      def logAfterInteraction[S <: timeslicer.model.framework.ResponseModel](caller: Any, res: Result[S], u: UseCaseContext) = {
+      def logAfterInteraction[S <: timeslicer.model.framework.ResponseModel](caller: Any, res: Result[S], u: UseCaseContext, interactionId:String) = {
         "No logging in spec"
       }
 
