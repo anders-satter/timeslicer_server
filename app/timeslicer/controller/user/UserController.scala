@@ -12,7 +12,7 @@ import timeslicer.model.util.JsonHelper
 class UserController extends Controller {
 
   /**
-   * return the users
+   * returns the users
    */
   def users = Action { request =>
     {

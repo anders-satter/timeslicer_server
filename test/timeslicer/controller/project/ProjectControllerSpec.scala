@@ -66,8 +66,8 @@ class ProjectControllerSpec extends Specification {
         val freq3 = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> session.id)
         val projects3: Future[Result] = route(freq3).get
         contentAsString(projects3).contains("Prj1") must beTrue
-
       }
+
       "return projects2" in new WithApplication {
         val session2 = authManager.session(AuthenticationToken("AuthenticationId", "sessiontest2"))
         println("SESSION2.ID" + session2.id)
@@ -81,7 +81,6 @@ class ProjectControllerSpec extends Specification {
         val freq3 = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> session2.id)
         val projects3: Future[Result] = route(freq3).get
         contentAsString(projects3).contains("Prj1") must beTrue
-
       }
     }
   }
