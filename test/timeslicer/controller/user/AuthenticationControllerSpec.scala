@@ -12,6 +12,7 @@ import play.api.mvc.Result
 import play.api.test.Helpers.route
 import play.api.test.Helpers._
 import play.api.test.WithApplication
+import play.api.http.HeaderNames
 
 @RunWith(classOf[JUnitRunner])
 class AuthenticationControllerSpec extends Specification with Mockito {
@@ -23,24 +24,21 @@ class AuthenticationControllerSpec extends Specification with Mockito {
    * 
    */
 
-  /*Create a session in session manager storage */
-  //val authManager = new AuthenticationManager
-
   /*
    * TEST
    */
 
-  
   "AuthenticationControllerSpec" should {
-
     "authenticate" in {
+      val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
       "return ok" in new WithApplication {
-        val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user", FakeHeaders(), """ {"userName": "Bent", "email":"abc@def.se", "password":"bluepot01" """)
+        val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
+          FakeHeaders(s), """ {"userName": "Bent", "email":"abc@def.se", "password":"bluepot01"} """)
         val result: Future[Result] = route(fakeRequest).get
         contentAsString(result).contains("Hello") must beTrue
-        pending
-      }
 
+        
+      }
     }
   }
 }
