@@ -22,26 +22,24 @@ class AuthenticationInteractor extends Interactor[AuthenticationRequestModel, Au
   override def onExecute(req: AuthenticationRequestModel, useCaseContext: UseCaseContext): Result[AuthenticationResponseModel] = {
 
     val result = new Result[AuthenticationResponseModel]
-
-    
+    result.failure = "User or password incorrect"
     val users = storage.users().getOrElse(Seq()).toList
     val currentUserList = for {
-      user <- users
-      if (user.userName == req.userName.getOrElse("") || user.email.getOrElse("") == req.email.getOrElse(""))
+      user <- users;
+      if(user.userName==req.userName.getOrElse("") || user.email.getOrElse("")==req.email.getOrElse(""))
     } yield user
-
     val foundUser = if (!currentUserList.isEmpty) currentUserList.head else NoUser
-
-    result.success = AuthenticationResponseModel(foundUser)
 
     if (foundUser != NoUser) {
       /* 
     	 * hash the password and check it against the stored password hash
     	 */
       val testHash = PasswordUtil.createHash(req.password, foundUser.passwordSalt)
-
+      
       if (testHash == foundUser.passwordHash) {
         foundUser.isAuthenticated = true
+        result.success = AuthenticationResponseModel(foundUser)
+        result.failure = ""
       }
     }
     return result

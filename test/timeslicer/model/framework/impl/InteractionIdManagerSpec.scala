@@ -19,6 +19,8 @@ class InteractionIdManagerSpec extends Specification with Mockito {
    * TEST
    */  
   
+  
+  
 	"InteractionIdManager" should {
 	  
 		"generate id's" in {

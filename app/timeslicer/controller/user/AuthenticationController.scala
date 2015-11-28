@@ -5,6 +5,15 @@ import play.api.mvc.Action
 import play.api.mvc.Request
 import timeslicer.model.usecase.authentication.AuthenticationRequestModel
 import play.api.libs.json.Json
+import timeslicer.model.usecase.authentication.AuthenticationRequestModel
+import play.api.libs.json.JsValue
+import timeslicer.model.usecase.authentication.AuthenticationInteractor
+import timeslicer.model.util.Util.EmptyUseCaseContext
+import timeslicer.model.usecase.authentication.AuthenticationResponseModel
+import timeslicer.model.util.Util.EmptyUseCaseContext
+import timeslicer.model.framework.Result
+import timeslicer.model.user.NoUser
+import timeslicer.model.user.User
 
 /**
  * Authenticates the user
@@ -17,36 +26,36 @@ class AuthenticationController extends Controller {
     {
       val req = AuthenticationRequestModel
       val json = request.body.asJson.get
-      println(json)
-      val userName = {
-        (json \ "userName")
+
+      val userName = retrieveParameter("userName", request.body.asJson)
+      val email = retrieveParameter("email", request.body.asJson)
+      val password = retrieveParameter("password", request.body.asJson)
+
+      val reqModel = AuthenticationRequestModel(Some(userName), Some(email), password)
+      
+      val interactor = new AuthenticationInteractor
+      val res: Result[AuthenticationResponseModel] = interactor.execute(reqModel, EmptyUseCaseContext())
+      var isAuthenticated = false
+      res.success.map(resp => {
+        isAuthenticated = resp.user.isAuthenticated
+      })
+      if (isAuthenticated) {
+        Ok
+      } else {
+        Unauthorized
       }
-      println(userName.get)
-
-      /**
-       * how can I read the request parameters here?
-       */
-
-      request.body.asJson.map { json =>
-        print("json structure: ")
-        println(json)
-        (json \ "userName").asOpt[String].map { userName =>
-          println("=============")
-          println(userName)
-        }.getOrElse {
-          println("could not find the userName among the parameters")
-        }
-      }
-
-      //This is not the way to do it, is it
-      //println(userName)
-      println("================")
-      //println(request.body)
-      /**
-       * so this is the best way to do it all
-       */
-      Ok(""" {"answer":"Hello"} """)
     }
   }
 
+  def retrieveParameter(parameterName: String, jsonStruct: Option[JsValue]): String = {
+    val defaultResultValue = "Not found"
+    jsonStruct.map { json =>
+      (json \ parameterName).asOpt[String].map { parameterValue =>
+        return parameterValue
+      }.getOrElse {
+        return defaultResultValue
+      }
+    }
+    return defaultResultValue
+  }
 }

@@ -13,6 +13,7 @@ import play.api.test.Helpers.route
 import play.api.test.Helpers._
 import play.api.test.WithApplication
 import play.api.http.HeaderNames
+import timeslicer.model.user.PasswordUtil
 
 @RunWith(classOf[JUnitRunner])
 class AuthenticationControllerSpec extends Specification with Mockito {
@@ -33,12 +34,11 @@ class AuthenticationControllerSpec extends Specification with Mockito {
       val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
       "return ok" in new WithApplication {
         val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
-          FakeHeaders(s), """ {"userName": "Bent", "email":"abc@def.se", "password":"bluepot01"} """)
+          FakeHeaders(s), """ {"userName": "bentson", "email":"abc@def.se", "password":"bluepot01"} """)
         val result: Future[Result] = route(fakeRequest).get
-        contentAsString(result).contains("Hello") must beTrue
-
-        
-      }
+        //contentAsString(result).contains("Hello") must beTrue     
+        status(result) must equalTo(OK)
+      }     
     }
   }
 }

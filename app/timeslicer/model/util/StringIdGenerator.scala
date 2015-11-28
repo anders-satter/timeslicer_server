@@ -1,7 +1,6 @@
 package timeslicer.model.util
 
-import timeslicer.model.util.{ Util => u }
-import timeslicer.model.util.{ DateTime => dt }
+import timeslicer.model.util.{ DateTime => dt,Util => u, Math => m }
 import scala.collection._
 
 object StringIdGenerator {
@@ -17,8 +16,9 @@ object StringIdGenerator {
    * Returns an id based on the current day and a random number
    */
   def errorId: String = {
-    val dayb64 = u.b64EncodeStr(dt.Now(dt.now, dt.getDayValueInStr, dt.fullTimePart).day)
-    dayb64 + "_" + generator(7)()
+    val nowInMillis = String.valueOf(dt.now)
+    val nowInNewBase = m.convertBase(nowInMillis,10,16)
+    nowInNewBase + "_" + generator(7)()    
   }
 
   /**

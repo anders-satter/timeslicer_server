@@ -227,22 +227,29 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
   def users(): Option[Seq[User]] = {
     val fileContent = readFromFileToString(calcUsersFileName(), Settings.propertiesMap("ProjectFileEncoding"))
     val json = Json.parse(fileContent)
+    
+    val userNames = (json \ "users" \\ "userName").asInstanceOf[ListBuffer[JsString]]
     val fnames = (json \ "users" \\ "firstName").asInstanceOf[ListBuffer[JsString]]
     val lnames = (json \ "users" \\ "lastName").asInstanceOf[ListBuffer[JsString]]
     val userids = (json \ "users" \\ "id").asInstanceOf[ListBuffer[JsString]]
     val isauths = (json \ "users" \\ "isAuthenticated").asInstanceOf[ListBuffer[JsBoolean]]
     val isauthoz = (json \ "users" \\ "isAuthorized").asInstanceOf[ListBuffer[JsBoolean]]
     val emails = (json \ "users" \\ "email").asInstanceOf[ListBuffer[JsString]]
+    val passwordSalts = (json \ "users" \\ "passwordSalt").asInstanceOf[ListBuffer[JsString]]
+    val passwordHashes = (json \ "users" \\ "passwordHash").asInstanceOf[ListBuffer[JsString]]
 
     val name = fnames(0).asInstanceOf[JsString].value
     val userImpls = for (i <- List.range(0, fnames.length)) yield {
       val user = new UserImpl
+      user.userName = userNames(i).asInstanceOf[JsString].value
       user.firstName = fnames(i).asInstanceOf[JsString].value
       user.lastName = lnames(i).asInstanceOf[JsString].value
       user.id = userids(i).asInstanceOf[JsString].value
       user.isAuthenticated = java.lang.Boolean.valueOf(isauths(i).value)
-      user.isAuthorized = java.lang.Boolean.valueOf(isauthoz(i).value)
+      user.isAuthorized = java.lang.Boolean.valueOf(isauthoz(i).value)      
       user.email = emails(i).asInstanceOf[JsString].value
+      user.passwordSalt = passwordSalts(i).asInstanceOf[JsString].value
+      user.passwordHash = passwordHashes(i).asInstanceOf[JsString].value
       user
     }
     return Option(userImpls)
