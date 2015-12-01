@@ -1,12 +1,11 @@
 package timeslicer.model.usecase.authentication
 
-import timeslicer.model.framework.Result
 import timeslicer.model.context.UseCaseContext
-import timeslicer.model.context.UseCaseContextImpl
 import timeslicer.model.framework.Interactor
-import timeslicer.model.user.UserImpl
+import timeslicer.model.framework.Result
 import timeslicer.model.user.NoUser
 import timeslicer.model.user.PasswordUtil
+import timeslicer.model.user.User
 
 /**
  * This interactor returns true if
@@ -22,26 +21,36 @@ class AuthenticationInteractor extends Interactor[AuthenticationRequestModel, Au
   override def onExecute(req: AuthenticationRequestModel, useCaseContext: UseCaseContext): Result[AuthenticationResponseModel] = {
 
     val result = new Result[AuthenticationResponseModel]
-    result.failure = "User or password incorrect"
     val users = storage.users().getOrElse(Seq()).toList
     val currentUserList = for {
       user <- users;
-      if(user.userName==req.userName.getOrElse("") || user.email.getOrElse("")==req.email.getOrElse(""))
+      if (user.userName == req.userName.getOrElse("") || user.email.getOrElse("") == req.email.getOrElse(""))
     } yield user
+    
     val foundUser = if (!currentUserList.isEmpty) currentUserList.head else NoUser
 
-    if (foundUser != NoUser) {
-      /* 
-    	 * hash the password and check it against the stored password hash
-    	 */
-      val testHash = PasswordUtil.createHash(req.password, foundUser.passwordSalt)
-      
-      if (testHash == foundUser.passwordHash) {
-        foundUser.isAuthenticated = true
-        result.success = AuthenticationResponseModel(foundUser)
-        result.failure = ""
-      }
+    if (foundUser != NoUser && isPasswordCorrect(req, foundUser)) {
+      useCaseContext.user = foundUser
+      result.success = AuthenticationResponseModel(foundUser)
+    } else {
+      result.failure = "User or password incorrect"
     }
     return result
+  }
+
+  /**
+   * Checks the password against the stored password
+   */
+  def isPasswordCorrect(req: AuthenticationRequestModel, foundUser: User) = { /* 
+    	 * hash the password and check it against the stored password hash
+    	 */
+    val testHash = PasswordUtil.createHash(req.password, foundUser.passwordSalt)
+
+    if (testHash == foundUser.passwordHash) {
+      foundUser.isAuthenticated = true
+      true
+    } else {
+      false
+    }
   }
 }

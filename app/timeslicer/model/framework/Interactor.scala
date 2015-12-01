@@ -36,16 +36,14 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   private[this] var _storage: Storage = StorageImpl()
   def storage: Storage = _storage
   def storage_=(s: Storage): Unit = _storage = s
-  
-  
+
   /**
-   * InteractionIdManager manages the 
-   */  
-  private[this] var _interactionIdManager:InteractionIdManager = InteractionIdManager()
+   * InteractionIdManager manages the
+   */
+  private[this] var _interactionIdManager: InteractionIdManager = InteractionIdManager()
   def interactionIdManager = _interactionIdManager
-  def interactionIdManager_=(iidm:InteractionIdManager) = _interactionIdManager = iidm
-  
-  
+  def interactionIdManager_=(iidm: InteractionIdManager) = _interactionIdManager = iidm
+
   /*
    * Setters for log functions, for testing and overriding purposes
    */
@@ -58,11 +56,11 @@ abstract class Interactor[R <: RequestModel, S <: ResponseModel] {
   /*
    * Hook methods running before and after the interaction    
    */
-  def pre(me: Any, r: R, u: UseCaseContext, interactionId:String) = _log(_beforeLogStringBuilder(me, r, u, interactionId))
+  def pre(me: Any, r: R, u: UseCaseContext, interactionId: String) = _log(_beforeLogStringBuilder(me, r, u, interactionId))
   def checkAuthorization(me: Any, r: R, u: UseCaseContext) = {
     //No action yet...  
   }
-  def post(me: Any, res: Result[S], u: UseCaseContext, interactionId:String) = _log(_afterLogStringBuilder(me, res, u, interactionId))
+  def post(me: Any, res: Result[S], u: UseCaseContext, interactionId: String) = _log(_afterLogStringBuilder(me, res, u, interactionId))
 
   /**
    * Will do the actual work, is to be overridden by implementors
@@ -125,5 +123,13 @@ class Result[S <: timeslicer.model.framework.ResponseModel] {
   def error = _errorContainer.map(x => x)
   def error_=(fail: Failure[Throwable]): Unit = _errorContainer = Option(new ErrorContainer(fail, StringIdGenerator.errorId))
 
+  def isSuccess = _success match {
+    case Some(v) => true
+    case None    => false
+  }
+  def isFailure = _failure match {
+    case Some(v) => true
+    case None    => false
+  }
 }
   

@@ -27,10 +27,16 @@ object Util {
       us.id = "0EMPTY0USER0"
       us
     }
-    
+    override def user_=(user: User): Unit = {}    
     override def sessionId: String = "0EMPTY0SESSION"
-
+    override def sessionId_=(sId: String): Unit  = {}
+    
   }
+  
+
+  
+  
+  
   class EmptyResponseModel extends ResponseModel {
     override def toString: String = "Empty"
   }

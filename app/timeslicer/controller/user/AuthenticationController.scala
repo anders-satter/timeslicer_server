@@ -14,6 +14,7 @@ import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.model.framework.Result
 import timeslicer.model.user.NoUser
 import timeslicer.model.user.User
+import timeslicer.model.context.UseCaseContextImpl
 
 /**
  * Authenticates the user
@@ -34,12 +35,9 @@ class AuthenticationController extends Controller {
       val reqModel = AuthenticationRequestModel(Some(userName), Some(email), password)
       
       val interactor = new AuthenticationInteractor
-      val res: Result[AuthenticationResponseModel] = interactor.execute(reqModel, EmptyUseCaseContext())
-      var isAuthenticated = false
-      res.success.map(resp => {
-        isAuthenticated = resp.user.isAuthenticated
-      })
-      if (isAuthenticated) {
+      val res: Result[AuthenticationResponseModel] = interactor.execute(reqModel, new UseCaseContextImpl)
+
+      if (res.isSuccess) {
         Ok
       } else {
         Unauthorized

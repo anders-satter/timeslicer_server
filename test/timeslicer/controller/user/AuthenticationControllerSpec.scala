@@ -30,7 +30,7 @@ class AuthenticationControllerSpec extends Specification with Mockito {
    */
 
   "AuthenticationControllerSpec" should {
-    "authenticate" in {
+    "return authenticated user" in {
       val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
       "return ok" in new WithApplication {
         val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
@@ -38,7 +38,32 @@ class AuthenticationControllerSpec extends Specification with Mockito {
         val result: Future[Result] = route(fakeRequest).get
         //contentAsString(result).contains("Hello") must beTrue     
         status(result) must equalTo(OK)
-      }     
+
+      }
+    }
+
+    "return failure" in {
+      val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
+      "return ok" in new WithApplication {
+        val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
+          FakeHeaders(s), """ {"userName": "bentson", "email":"abc@def.se", "password":"wrongpassword"} """)
+        val result: Future[Result] = route(fakeRequest).get
+        //contentAsString(result).contains("Hello") must beTrue     
+        status(result) must equalTo(UNAUTHORIZED)
+
+      }
+    }
+
+    "return failure" in {
+      val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
+      "return ok" in new WithApplication {
+        val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
+          FakeHeaders(s), """ {"userName": "nonexistent", "email":"noemail@nowhere.com", "password":"bluepot01"} """)
+        val result: Future[Result] = route(fakeRequest).get
+        //contentAsString(result).contains("Hello") must beTrue     
+        status(result) must equalTo(UNAUTHORIZED)
+
+      }
     }
   }
 }
