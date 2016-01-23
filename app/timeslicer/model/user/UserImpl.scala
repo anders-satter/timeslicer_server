@@ -45,6 +45,9 @@ class UserImpl extends User {
       val messageBuilder = new ErrorMessageBuilder();      
       messageBuilder.append("User name must be between " + userNameMinLength + " and " + userNameMaxLength + " in length.")
       messageBuilder.append("Supplied value was: " + value)
+      messageBuilder.append("firstName: " + _firstName);
+      messageBuilder.append("lastName: " + _lastName);
+      
       throw new IllegalArgumentException(messageBuilder.toString())
     }
   }

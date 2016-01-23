@@ -49,6 +49,10 @@ class UseCaseCreateUserIdSpec extends Specification with Mockito {
           List(left, right) <- sortedIdList.sliding(2)
           if (left == right)
         } yield left).toList
+      
+      /*
+       * This means that we should have no duplicates...
+       */
       duplicates.length < 1 must beTrue
     }
   }

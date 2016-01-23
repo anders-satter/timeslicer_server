@@ -19,6 +19,7 @@ class UseCaseAddUserSpec extends Specification with Mockito{
    * SETUP
    */
   val interactor = new AddUserInteractor
+  
   interactor.log_=(TestUtil.emptyLog) 
   
   val useCaseContext = mock[UseCaseContext]
@@ -36,8 +37,8 @@ class UseCaseAddUserSpec extends Specification with Mockito{
    * TEST
    */
   "AddUser test" should {
-    "fail to add a usr" in {
-        interactor.execute(request, useCaseContext).error.get.failure.get must not beNull     
+    "fail to add a usr" in {      
+        interactor.execute(request, useCaseContext).failure must not beNull
     }
   }
 }

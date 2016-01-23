@@ -3,13 +3,11 @@ package timeslicer.controller.user
 import play.api.mvc.Controller
 import play.api.mvc.Action
 import play.api.mvc.Request
-import timeslicer.model.usecase.authentication.AuthenticationRequestModel
 import play.api.libs.json.Json
 import timeslicer.model.usecase.authentication.AuthenticationRequestModel
-import play.api.libs.json.JsValue
-import timeslicer.model.usecase.authentication.AuthenticationInteractor
-import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.model.usecase.authentication.AuthenticationResponseModel
+import timeslicer.model.usecase.authentication.AuthenticationInteractor
+import play.api.libs.json.JsValue
 import timeslicer.model.util.Util.EmptyUseCaseContext
 import timeslicer.model.framework.Result
 import timeslicer.model.user.NoUser
@@ -27,18 +25,19 @@ class AuthenticationController extends Controller {
     {
       val req = AuthenticationRequestModel
       val json = request.body.asJson.get
-
+      println("json:" + json)
       val userName = retrieveParameter("userName", request.body.asJson)
       val email = retrieveParameter("email", request.body.asJson)
       val password = retrieveParameter("password", request.body.asJson)
-
+      
       val reqModel = AuthenticationRequestModel(Some(userName), Some(email), password)
       
       val interactor = new AuthenticationInteractor
+      println("executing...");
       val res: Result[AuthenticationResponseModel] = interactor.execute(reqModel, new UseCaseContextImpl)
 
       if (res.isSuccess) {
-        Ok
+        Ok 
       } else {
         Unauthorized
       }

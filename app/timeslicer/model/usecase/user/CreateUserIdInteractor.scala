@@ -23,6 +23,7 @@ class CreateUserIdInteractor extends Interactor[CreateUserIdRequestModel, Create
      */        
     val currentUserIdList = storage.users().getOrElse(Seq()).map(u => u.id)
     
+    
     /* Generate the id */
     var generatedValue = ""
     var valueCouldNotBeGenerated = false

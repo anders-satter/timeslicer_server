@@ -24,22 +24,24 @@ class AuthenticationControllerSpec extends Specification with Mockito {
    * password
    * 
    */
-
+   
+  //we need to mock the filestorage
+  
+  
   /*
    * TEST
    */
 
   "AuthenticationControllerSpec" should {
-    "return authenticated user" in {
-      val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
-      "return ok" in new WithApplication {
-        val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
-          FakeHeaders(s), """ {"userName": "bentson", "email":"abc@def.se", "password":"bluepot01"} """)
-        val result: Future[Result] = route(fakeRequest).get
-        //contentAsString(result).contains("Hello") must beTrue     
-        status(result) must equalTo(OK)
 
-      }
+    "return authenticated user" in new WithApplication {
+      val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
+      val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
+        FakeHeaders(s), """ {"userName": "bentson", "email":"abc@def.se", "password":"bluepot01"} """)
+      val result: Future[Result] = route(fakeRequest).get
+      println("this is the value")
+      println(contentAsString(result).toString()) 
+      status(result) must equalTo(OK)
     }
 
     "return failure" in {

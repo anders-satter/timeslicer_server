@@ -29,6 +29,7 @@ class JsonHelperSpec extends Specification {
   val jsonString = """
 			{ 
 			"user": {
+			"userName": "totismyUserName",
 			"name" : "toto",
 			"age" : 25,
 			"email" : "toto@jmail.com",
@@ -116,6 +117,8 @@ class JsonHelperSpec extends Specification {
       "return a json object with users" in {
 
         val user1 = new UserImpl
+        
+        user1.userName = "Test1sdf"
         user1.firstName = "Test1"
         user1.lastName = "Testson1"
         user1.id = "111111111111"
@@ -124,6 +127,7 @@ class JsonHelperSpec extends Specification {
         user1.isAuthorized = true
  
         val user2 = new UserImpl
+        user2.userName = "Test2sdf"
         user2.firstName = "Test2"
         user2.lastName = "Testson2"
         user2.id = "222222222222"
@@ -132,6 +136,7 @@ class JsonHelperSpec extends Specification {
         user2.isAuthorized = true
 
         val user3 = new UserImpl
+        user3.userName = "Test3sdf"
         user3.firstName = "Test3"
         user3.lastName = "Testson3"
         user3.id = "333333333333"
@@ -140,6 +145,7 @@ class JsonHelperSpec extends Specification {
         user3.isAuthorized = true
 
         val user4 = new UserImpl
+        user4.userName = "Test4sdf"
         user4.firstName = "Test4"
         user4.lastName = "Testson4"
         user4.id = "444444444444"

@@ -21,32 +21,27 @@ class UseCaseRemoveActivitySpec extends Specification with Mockito {
   val useCaseContext = mock[UseCaseContext]
   useCaseContext.user returns TestUtil.testUser
   val project = Project("Prj1", None)
-  val activity = Activity("act1")    
+  val activity = Activity("act1")
   val request = RemoveActivityRequestModel(project, activity)
-  
+
   val interactor = new RemoveActivityInteractor
   interactor.storage = storage
   interactor.log = TestUtil.emptyLog
-  
+
   "UseCaseRemoveActivity" should {
 
     "successfully remove an activity" in {
-      storage.removeActivity(request.project,request.activity, useCaseContext) returns Right(new StorageSuccessResult)
+      storage.removeActivity(request.project, request.activity, useCaseContext) returns Right(new StorageSuccessResult)
       interactor.execute(request, useCaseContext)
         .success
-        .getOrElse(RemoveProjectResponseModel(false)) must be equalTo(RemoveActivityResponseModel(true))
+        .getOrElse(RemoveProjectResponseModel(false)) must be equalTo (RemoveActivityResponseModel(true))
     }
-    
+
     "throw an error" in {
       val exception = new Exception("Error")
-
-      storage.removeActivity(request.project,request.activity, useCaseContext) returns
+      storage.removeActivity(request.project, request.activity, useCaseContext) returns
         Left(StorageFailResult("Could not remove activity", Some(exception)))
-      
-      interactor.execute(request, useCaseContext).error.get.failure.get must be equalTo(exception)
+      interactor.execute(request, useCaseContext).error.get.failure.get must be equalTo (exception)
     }
   }
-  
-  
-
 }

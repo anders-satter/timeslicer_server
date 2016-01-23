@@ -226,8 +226,9 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 
   def users(): Option[Seq[User]] = {
     val fileContent = readFromFileToString(calcUsersFileName(), Settings.propertiesMap("ProjectFileEncoding"))
+    //println("fileContent: " + fileContent)
     val json = Json.parse(fileContent)
-    
+
     val userNames = (json \ "users" \\ "userName").asInstanceOf[ListBuffer[JsString]]
     val fnames = (json \ "users" \\ "firstName").asInstanceOf[ListBuffer[JsString]]
     val lnames = (json \ "users" \\ "lastName").asInstanceOf[ListBuffer[JsString]]
@@ -238,15 +239,19 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     val passwordSalts = (json \ "users" \\ "passwordSalt").asInstanceOf[ListBuffer[JsString]]
     val passwordHashes = (json \ "users" \\ "passwordHash").asInstanceOf[ListBuffer[JsString]]
 
-    val name = fnames(0).asInstanceOf[JsString].value
-    val userImpls = for (i <- List.range(0, fnames.length)) yield {
+    //val name = fnames(0).asInstanceOf[JsString].value
+    //println(name)
+    val userImpls = for (i <- List.range(0, userNames.length)) yield {
       val user = new UserImpl
       user.userName = userNames(i).asInstanceOf[JsString].value
+      //println(user.userName)
       user.firstName = fnames(i).asInstanceOf[JsString].value
       user.lastName = lnames(i).asInstanceOf[JsString].value
+      //println("userids:" + userids(i).asInstanceOf[JsString].value)
       user.id = userids(i).asInstanceOf[JsString].value
+      //println(user.id)
       user.isAuthenticated = java.lang.Boolean.valueOf(isauths(i).value)
-      user.isAuthorized = java.lang.Boolean.valueOf(isauthoz(i).value)      
+      user.isAuthorized = java.lang.Boolean.valueOf(isauthoz(i).value)
       user.email = emails(i).asInstanceOf[JsString].value
       user.passwordSalt = passwordSalts(i).asInstanceOf[JsString].value
       user.passwordHash = passwordHashes(i).asInstanceOf[JsString].value
@@ -353,6 +358,11 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
   }
 
   override def addUser(user: User): Either[StorageFailResult, StorageSuccessResult] = {
+    
+    if (user.userName.equals("")){
+      throw new IllegalArgumentException("No userName in " + user.toString())
+    }
+    
     var result: (Boolean, String) = (true, "")
     val currentUsersList = FileStorage().users().getOrElse(Seq())
 
@@ -371,7 +381,12 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
     val updatedUserList = currentUsersList ++ Seq(user)
 
     /*convert seq of User to seq of JsonUser*/
+
     val jsonUserSeq = updatedUserList.map(u => {
+      if (u.userName.equals("") || u.userName==null) {
+        println("USERNAME WAS EMPTY" :+ u.toString())
+      }
+      
       JsonUser(u.userName,
         u.firstName,
         u.lastName,
@@ -381,7 +396,9 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
         (u.email match {
           case Some(email) => email
           case None        => ""
-        }))
+        }),
+        u.passwordSalt,
+        u.passwordHash)
     }).toSeq
     /*put the users in the container*/
     val userContainer = UsersContainer(jsonUserSeq)
@@ -410,6 +427,10 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
 
       /*convert seq of User to seq of JsonUser*/
       val jsonUserSeq = updatedUserList.map(u => {
+        if (u.userName.equals("") || u.userName==null) {
+          println("USERNAME WAS EMPTY" :+ u.toString())
+        }
+
         JsonUser(u.userName,
           u.firstName,
           u.lastName,
@@ -419,7 +440,9 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
           (u.email match {
             case Some(email) => email
             case None        => ""
-          }))
+          }),
+          u.passwordSalt,
+          u.passwordHash)
       }).toSeq
       /*put the users in the container*/
       val userContainer = UsersContainer(jsonUserSeq)
@@ -440,7 +463,6 @@ class FileStorage(baseFilePath: String, projectFileName: String, logFileName: St
       Left(StorageFailResult("couldn't remove user", None))
     }
   }
-
 }
 
 object FileStorage {

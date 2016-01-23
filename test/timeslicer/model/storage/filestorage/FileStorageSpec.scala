@@ -326,8 +326,9 @@ class FileStorageSpec extends Specification with Mockito {
           val json = Json.parse(fileContent)
           val userids = (json \ "users" \\ "id").asInstanceOf[ListBuffer[JsString]]
           userids.length
-        }
+        }        
       }
+      //println(usersInFileCount)
 
       //Representational State Transfer Protocol
       //post request then we need to put the
@@ -412,8 +413,10 @@ class FileStorageSpec extends Specification with Mockito {
     }
 
     val userIdInteractor = new CreateUserIdInteractor
-    userIdInteractor.log_=(TestUtil.emptyLog)
-    val testUserid = userIdInteractor.execute(new CreateUserIdRequestModel, EmptyUseCaseContext()).success.map(u => u.userId).getOrElse("")
+    //userIdInteractor.log_=(TestUtil.emptyLog)
+
+    //val testUserid = userIdInteractor.execute(new CreateUserIdRequestModel, EmptyUseCaseContext()).success.map(u => u.userId).getOrElse("")
+    val testUserid = "testUserId90"
     val testUser = new UserImpl
 
     testUser.userName = "testUserName"
@@ -423,6 +426,8 @@ class FileStorageSpec extends Specification with Mockito {
     testUser.isAuthenticated = false
     testUser.isAuthorized = false
     testUser.email = "abc@vab.com"
+    testUser.passwordHash = "81e02de0f37d7c0306180ddf32ce8f99bad55eaef468bc6ca6f4fd819441cf4e"
+    testUser.passwordSalt = "IdjZD_Sp4kGVIsorZNinwmECOjNx_K6A8VSBqAafSj0="
 
     "add a new user" in {
       val userIdInteractor = new CreateUserIdInteractor
@@ -430,7 +435,7 @@ class FileStorageSpec extends Specification with Mockito {
 
       ok
     }
-      
+
     "remove a user" in {
       //fileStorage.users() map println
 
@@ -442,6 +447,8 @@ class FileStorageSpec extends Specification with Mockito {
       testUser.isAuthenticated = false
       testUser.isAuthorized = false
       testUser.email = "abc@vab.com"
+      testUser.passwordHash = "81e02de0f37d7c0306180ddf32ce8f99bad55eaef468bc6ca6f4fd819441cf4e"
+      testUser.passwordSalt = "IdjZD_Sp4kGVIsorZNinwmECOjNx_K6A8VSBqAafSj0="
 
       println(fileStorage.removeUser(testUser))
       ok
