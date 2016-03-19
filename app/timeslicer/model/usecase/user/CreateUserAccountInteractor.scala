@@ -15,18 +15,14 @@ class CreateUserAccountInteractor extends Interactor[CreateUserAccountRequestMod
   override def onExecute(req: CreateUserAccountRequestModel, useCaseContext: UseCaseContext): Result[CreateUserAccountResponseModel] = {
     val result = new Result[CreateUserAccountResponseModel]
     val user = new UserImpl
-    //Try {
-      user.userName = req.userName
-      user.firstName = req.firstName
-      user.lastName = req.lastName
-      user.email = req.email.getOrElse("")
-      
-      //throw new Exception("hello")
-    //} match {
-//      case Failure(e) => result.error = Failure(e)
-//      case _ =>
-//    }
-     
+    println("XXUserName: " +  req.userName );
+    user.userName = req.userName
+    
+    user.firstName = req.firstName
+    println("XXFirstName: " + req.firstName);
+    user.lastName = req.lastName
+    user.email = req.email.getOrElse("")
+    
     /**
      * Check the password
      */
@@ -38,7 +34,7 @@ class CreateUserAccountInteractor extends Interactor[CreateUserAccountRequestMod
       false
     }
     result.success = CreateUserAccountResponseModel(user, passwordCreated)
-    
+
     result
   }
 }

@@ -20,9 +20,9 @@ class AuthenticationInteractor extends Interactor[AuthenticationRequestModel, Au
 
   override def onExecute(req: AuthenticationRequestModel, useCaseContext: UseCaseContext): Result[AuthenticationResponseModel] = {
 
-    println("Running AuthenticationInteractor")
+    //println("Running AuthenticationInteractor")
     val result = new Result[AuthenticationResponseModel]
-    println("STORAGE:" +storage)
+    //println("STORAGE:" +storage)
      try { 
     	 val u = storage.users();
    } catch {
@@ -30,14 +30,14 @@ class AuthenticationInteractor extends Interactor[AuthenticationRequestModel, Au
    }
     //println("UUUUU" + u)
     val users = storage.users().getOrElse(Seq()).toList
-    println("Users:" + users)
+    //println("Users:" + users)
     val currentUserList = for {
       user <- users;
       if (user.userName == req.userName.getOrElse("") || user.email.getOrElse("") == req.email.getOrElse(""))
     } yield user
     
     val foundUser = if (!currentUserList.isEmpty) currentUserList.head else NoUser
-    println("foundUser:" + foundUser)
+    //println("foundUser:" + foundUser)
 
     if (foundUser != NoUser && isPasswordCorrect(req, foundUser)) {
       useCaseContext.user = foundUser

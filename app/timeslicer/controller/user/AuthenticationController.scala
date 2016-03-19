@@ -15,7 +15,7 @@ import timeslicer.model.user.User
 import timeslicer.model.context.UseCaseContextImpl
 
 /**
- * Authenticates the user
+ * Authenticates the user using the AuthenticationInteractor model
  * If the user already called another rest service there is already a
  * user and a session.
  * If not we will create a session and a user.
@@ -25,7 +25,8 @@ class AuthenticationController extends Controller {
     {
       val req = AuthenticationRequestModel
       val json = request.body.asJson.get
-      println("json:" + json)
+      //println("json:" + json)
+      
       val userName = retrieveParameter("userName", request.body.asJson)
       val email = retrieveParameter("email", request.body.asJson)
       val password = retrieveParameter("password", request.body.asJson)
@@ -33,9 +34,7 @@ class AuthenticationController extends Controller {
       val reqModel = AuthenticationRequestModel(Some(userName), Some(email), password)
       
       val interactor = new AuthenticationInteractor
-      println("executing...");
       val res: Result[AuthenticationResponseModel] = interactor.execute(reqModel, new UseCaseContextImpl)
-
       if (res.isSuccess) {
         Ok 
       } else {
@@ -43,7 +42,7 @@ class AuthenticationController extends Controller {
       }
     }
   }
-
+  
   def retrieveParameter(parameterName: String, jsonStruct: Option[JsValue]): String = {
     val defaultResultValue = "Not found"
     jsonStruct.map { json =>

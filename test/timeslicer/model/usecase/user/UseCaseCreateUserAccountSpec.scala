@@ -9,7 +9,7 @@ import timeslicer.model.context.UseCaseContext
 import play.api.test.FakeApplication
 
 @RunWith(classOf[JUnitRunner])
-class UseCaseCreateUserAccount extends Specification with Mockito {
+class UseCaseCreateUserAccountSpec extends Specification with Mockito {
   
   /*this is used only to activate logging in test*/
   FakeApplication(additionalConfiguration = Map(
@@ -26,11 +26,10 @@ class UseCaseCreateUserAccount extends Specification with Mockito {
    * TEST
    */
   "CreateUserAccount" should {
-    
     "check user login" in {
       interactor
         .execute(CreateUserAccountRequestModel("TestNick",
-          "Test",
+          "Test2",
           "Testsson",
           "PAssword01",
           Some("abc@defg.se")),
@@ -40,12 +39,13 @@ class UseCaseCreateUserAccount extends Specification with Mockito {
     "check user login 2" in {
       interactor
         .execute(CreateUserAccountRequestModel("TestNick",
-          "",
+          "Test2",
           "Testsson",
           "PAssword01",
           Some("abc@defg.se")),
           useCaseContext)
       pending
     }
+    
   }
 }

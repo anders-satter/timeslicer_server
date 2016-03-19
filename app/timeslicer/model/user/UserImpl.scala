@@ -57,7 +57,7 @@ class UserImpl extends User {
 			  value
 		  } else {
 			  val messageBuilder = new ErrorMessageBuilder();      
-			  messageBuilder.append("User name must be between " + userFirstNameMinLength + " and " + userFirstNameMaxLength + " in length.")
+			  messageBuilder.append("User first name must be between " + userFirstNameMinLength + " and " + userFirstNameMaxLength + " in length.")
 			  messageBuilder.append("Supplied value was: " + value)
 			  throw new IllegalArgumentException(messageBuilder.toString())
 		  }
@@ -68,7 +68,7 @@ class UserImpl extends User {
       value
     } else {
       val messageBuilder = new ErrorMessageBuilder();
-      messageBuilder.append("User name must be between " + userLastNameMinLength + " and " + userLastNameMaxLength + " in length.")
+      messageBuilder.append("User last name must be between " + userLastNameMinLength + " and " + userLastNameMaxLength + " in length.")
       messageBuilder.append("Supplied value was: " + value)
       throw new IllegalArgumentException(messageBuilder.toString())
     }

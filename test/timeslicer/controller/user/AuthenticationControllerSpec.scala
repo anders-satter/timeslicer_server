@@ -19,15 +19,8 @@ import timeslicer.model.user.PasswordUtil
 class AuthenticationControllerSpec extends Specification with Mockito {
   /*
    * SETUP
-   * 
-   * The authentication controller needs a user name and a 
-   * password
-   * 
    */
-   
-  //we need to mock the filestorage
-  
-  
+
   /*
    * TEST
    */
@@ -39,12 +32,12 @@ class AuthenticationControllerSpec extends Specification with Mockito {
       val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
         FakeHeaders(s), """ {"userName": "bentson", "email":"abc@def.se", "password":"bluepot01"} """)
       val result: Future[Result] = route(fakeRequest).get
-      println("this is the value")
-      println(contentAsString(result).toString()) 
+      //println("this is the value")
+      //println(contentAsString(result).toString())
       status(result) must equalTo(OK)
     }
 
-    "return failure" in {
+    "return failure for wrong password" in {
       val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
       "return ok" in new WithApplication {
         val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
@@ -54,8 +47,8 @@ class AuthenticationControllerSpec extends Specification with Mockito {
         status(result) must equalTo(UNAUTHORIZED)
       }
     }
-  
-    "return failure" in {
+
+    "return failure for non-existing user name" in {
       val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
       "return ok" in new WithApplication {
         val fakeRequest = FakeRequest(POST, "/timeslicer/authentication/user",
