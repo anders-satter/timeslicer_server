@@ -52,10 +52,9 @@ class AuthenticationControllerSpec extends Specification with Mockito {
         val result: Future[Result] = route(fakeRequest).get
         //contentAsString(result).contains("Hello") must beTrue     
         status(result) must equalTo(UNAUTHORIZED)
-
       }
     }
-
+  
     "return failure" in {
       val s: Seq[(String, String)] = Seq((HeaderNames.CONTENT_TYPE, "application/json"))
       "return ok" in new WithApplication {
