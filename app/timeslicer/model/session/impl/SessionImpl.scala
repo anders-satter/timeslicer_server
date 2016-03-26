@@ -5,6 +5,9 @@ import timeslicer.model.user.User
 import timeslicer.model.user.NoUser
 
 class SessionImpl extends Session {
+  /**
+   * The user is initiated to a NoUser
+   */
   private [this] var _user:User = NoUser
   /**
    * user always returns a user, be it a NoUser

@@ -1,50 +1,50 @@
 package timeslicer.controller.project
 
-import play.api.mvc.Controller
 import play.api.mvc.Action
-import timeslicer.model.usecase.project.GetProjectsRequestModel
-import timeslicer.model.usecase.project.GetProjectsInteractor
+import play.api.mvc.Controller
+import timeslicer.controller.util.RequestUtils
 import timeslicer.model.context.UseCaseContextImpl
-import timeslicer.model.user.UserImpl
-import timeslicer.model.user.User
+import timeslicer.model.frontcontroller.FrontControllerFactory
+import timeslicer.model.project.Project
+import timeslicer.model.usecase.project.GetProjectsInteractor
+import timeslicer.model.usecase.project.GetProjectsRequestModel
 import timeslicer.model.usecase.project.GetProjectsResponseModel
 import timeslicer.model.util.JsonHelper
-import timeslicer.model.project.Project
-import timeslicer.model.autthentication.AuthenticationManager
-import timeslicer.controller.util.RequestUtils
-import timeslicer.model.user.NoUser
 
+/**
+ * What is it that this controller should be doing?
+ * This controller shows all the projects for a user...
+ */
 class ProjectController extends Controller {
   def projects = Action {
     request =>
       {
-        val session = RequestUtils.getSessionWithUser(request)
-        println("GETTING THE NEW SESSION:" + session.id)
-        if (!session.user.isAuthenticated) {
-          /*If the user is not authenticated with return an http 401 and the session id*/
-          Unauthorized("User is not authorized\n").withSession("AuthenticationId" -> session.id)
+
+        val reqModel = GetProjectsRequestModel()
+        val interactor = new GetProjectsInteractor
+        val useCaseContext = new UseCaseContextImpl
+
+
+        def authenticateAction: Function0[Int] = () => {
+          println("running the authenticate action")
+          val result: Int = 24
+          result
+        }
+
+        val frontController = FrontControllerFactory.create(authenticateAction)
+        val authenticationToken =  RequestUtils.getAuthenticationTokenFromRequest(request)
+        
+        
+        val result = frontController.perform(authenticationToken,reqModel, interactor)
+        
+        val list: Seq[Project] = 
+          result.success
+          .getOrElse(GetProjectsResponseModel(Seq()))
+          .projectList
+        if (list.nonEmpty) {
+          Ok(JsonHelper.jsonProjectList(list))
         } else {
-
-          val reqModel = GetProjectsRequestModel()
-          val interactor = new GetProjectsInteractor
-          val useCaseContext = new UseCaseContextImpl
-
-          useCaseContext.user = session.user
-          useCaseContext.sessionId = session.id
-          
-
-          val list: Seq[Project] = interactor
-            .execute(reqModel, useCaseContext)
-            .success
-            .getOrElse(GetProjectsResponseModel(Seq()))
-            .projectList
-
-          if (list.nonEmpty) {
-            Ok(JsonHelper.jsonProjectList(list))
-
-          } else {
-            Ok("{}")
-          }
+          Ok("{}")
         }
       }
   }

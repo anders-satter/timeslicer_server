@@ -1,19 +1,20 @@
 package timeslicer.controller.user
 
-import play.api.mvc.Controller
 import play.api.mvc.Action
+import play.api.mvc.Controller
+import timeslicer.model.context.UseCaseContextImpl
 import timeslicer.model.usecase.user.GetUsersInteractor
 import timeslicer.model.usecase.user.GetUsersRequestModel
 import timeslicer.model.usecase.user.GetUsersResponseModel
-import timeslicer.model.context.UseCaseContextImpl
 import timeslicer.model.user.UserImpl
 import timeslicer.model.util.JsonHelper
 
+/**
+ * Will return the user.
+ */
 class UserController extends Controller {
+  
 
-  /**
-   * returns the users
-   */
   def users = Action { request =>
     {
       val reqModel = GetUsersRequestModel()

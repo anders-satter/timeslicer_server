@@ -22,9 +22,6 @@ class UseCaseGetProjectsSpec extends Specification with Mockito {
   storage.projects(useCaseContext) returns Option(List(Project("Project1", null), Project("Project2", null)))
   val requestModel = GetProjectsRequestModel();
  
-  /*
-   * Problem, how to inject a mock version of the filestorage?
-   */
   val interactor = new GetProjectsInteractor
   interactor.log_=(TestUtil.emptyLog) 
   

@@ -7,6 +7,12 @@ GET     /          	                 			timeslicer.controller.Application.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.versioned(path="/public", file: Asset)
+# Return all the users 
 GET 	/timeslicer/users						timeslicer.controller.user.UserController.users
+# Return all projects, this requires the admin user for the application
 GET		/timeslicer/projects					timeslicer.controller.project.ProjectController.projects
+# Checks if the user is authenticated, expects a payload of the following tyoe:
+# {"userName": "bentson", "email":"abc@def.se", "password":"bluepot01"}
 POST	/timeslicer/authentication/user 		timeslicer.controller.user.AuthenticationController.user
+
+

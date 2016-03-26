@@ -32,6 +32,11 @@ object StringIdGenerator {
   def sessionStorageKey = generator(21)
 
   /**
+   * generates a value for the session storage cookie
+   */
+  //def sessionRequestValue = generator(21)
+  
+  /**
    * Generates a random string of specified length
    */
   private def generator(length: Int): () => String = {
