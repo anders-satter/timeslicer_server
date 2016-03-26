@@ -11,9 +11,15 @@ import timeslicer.model.session.Session
 import timeslicer.model.framework.Result
 
 /**
- * Interface for the FrontController
+ * Interface for the FrontController. The FrontController is part of the model
+ * to make sure that an interaction only is run by an authenticated user
  */
 trait FrontController {
+  /**
+   * Will first retriev a session from the session model using the 
+   * authentication token, if none is found the anAuthenticatedAction
+   * function, supplied in the implementation is run
+   */
   def perform[R <: RequestModel, S <: ResponseModel](userToken: AuthenticationToken,
                                                      requestModel: R,
                                                      interactor: Interactor[R, S]): Result[S]
