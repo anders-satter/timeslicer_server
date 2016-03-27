@@ -41,12 +41,9 @@ class ProjectControllerSpec extends Specification {
     "return projects in json structure" in {
 
       "return projects1" in new WithApplication {
-        println("SESSION.ID" + session.id)
 
         val freq = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> session.id)
         val projects: Future[Result] = route(freq).get
-        println("-0-0-0-0-0-0-0-0-0")
-        println(contentAsString(projects))
         contentAsString(projects).contains("Prj1") must beTrue
         val freq2 = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> session.id)
         val projects2: Future[Result] = route(freq2).get

@@ -7,6 +7,8 @@ import timeslicer.model.framework.RequestModel
 import timeslicer.model.framework.ResponseModel
 import timeslicer.model.framework.Result
 import timeslicer.model.session.Session
+import timeslicer.model.session.SessionManager
+import timeslicer.model.user.User
 
 /**
  * Interface for the FrontController. The FrontController is part of the model
@@ -51,6 +53,11 @@ object FrontController {
     useCaseContext.user = session.user
     useCaseContext
   }
+  /**
+   * creates the UseCaseContext from the authentication token
+   */
+  def createSessionForUser(user:User):String = SessionManager.createSession(user).id    
+ 
 }
 
 /**
