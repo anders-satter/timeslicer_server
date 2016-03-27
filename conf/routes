@@ -14,5 +14,3 @@ GET		/timeslicer/projects					timeslicer.controller.project.ProjectController.pr
 # Checks if the user is authenticated, expects a payload of the following tyoe:
 # {"userName": "bentson", "email":"abc@def.se", "password":"bluepot01"}
 POST	/timeslicer/authentication/user 		timeslicer.controller.user.AuthenticationController.user
-
-

@@ -26,8 +26,6 @@ class ProjectControllerSpec extends Specification {
    */
 
   /*Create a session in session manager storage */
-  val authManager = new AuthenticationManager
-
   val testUser = new UserImpl
   testUser.id = "111111111111"
   testUser.userName = "anders"
@@ -47,6 +45,8 @@ class ProjectControllerSpec extends Specification {
 
         val freq = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> session.id)
         val projects: Future[Result] = route(freq).get
+        println("-0-0-0-0-0-0-0-0-0")
+        println(contentAsString(projects))
         contentAsString(projects).contains("Prj1") must beTrue
         val freq2 = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> session.id)
         val projects2: Future[Result] = route(freq2).get
@@ -70,53 +70,51 @@ class ProjectControllerSpec extends Specification {
         val projects3: Future[Result] = route(freq3).get
         contentAsString(projects3).contains("Prj1") must beTrue
       }
+
+      "run unauthorized action " in {
+        "when authentication id is supplied but wrong" in new WithApplication {
+
+          val freq = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> "xxx")
+          val projects: Future[Result] = route(freq).get
+          import scala.concurrent.ExecutionContext.Implicits.global
+          var resultText = 500
+          projects.onComplete({
+            case Success(res) => {
+              res.header.status == 401 must beTrue
+            }
+            case Failure(exception) => println(exception)
+          })
+        }
+
+        "when AuthenticationId is empty" in new WithApplication {
+
+          val freq = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> "")
+          val projects: Future[Result] = route(freq).get
+
+          import scala.concurrent.ExecutionContext.Implicits.global
+          projects.onComplete({
+            case Success(res) => {
+              res.header.status == 401 must beTrue
+            }
+            case Failure(exception) => println(exception)
+          })
+
+        }
+
+        "when there is no session header" in new WithApplication {
+          val freq = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> "")
+          val projects: Future[Result] = route(freq).get
+          import scala.concurrent.ExecutionContext.Implicits.global
+          var resultText = 500
+          projects.onComplete({
+            case Success(res) => {
+              resultText = res.header.status
+              res.header.status == 401 must beTrue
+            }
+            case Failure(exception) => println(exception)
+          })
+        }
+      }
     }
-
-    "run unauthorized action " in {
-      "when authentication id is supplied but wrong" in new WithApplication {
-
-        val freq = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> "xxx")
-        val projects: Future[Result] = route(freq).get
-        import scala.concurrent.ExecutionContext.Implicits.global
-        var resultText = 500
-        projects.onComplete({
-          case Success(res) => {
-            resultText = res.header.status
-          }
-          case Failure(exception) => println(exception)
-        })
-        resultText equals 200
-      }
-
-      "when AuthenticationId is empty" in new WithApplication {
-
-        val freq = FakeRequest(GET, "/timeslicer/projects").withSession("AuthenticationId" -> "")
-        val projects: Future[Result] = route(freq).get
-        import scala.concurrent.ExecutionContext.Implicits.global
-        var resultText = 500
-        projects.onComplete({
-          case Success(res) => {
-            resultText = res.header.status
-          }
-          case Failure(exception) => println(exception)
-        })
-        resultText equals 200
-      }
-      "when there is no session header" in new WithApplication {
-
-        val freq = FakeRequest(GET, "/timeslicer/projects")
-        val projects: Future[Result] = route(freq).get
-        import scala.concurrent.ExecutionContext.Implicits.global
-        var resultText = 500
-        projects.onComplete({
-          case Success(res) => {
-            resultText = res.header.status
-          }
-          case Failure(exception) => println(exception)
-        })
-        resultText equals 200
-      }
-    }
-
   }
 }

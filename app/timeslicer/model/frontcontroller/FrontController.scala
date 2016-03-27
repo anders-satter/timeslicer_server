@@ -16,7 +16,7 @@ import timeslicer.model.framework.Result
  */
 trait FrontController {
   /**
-   * Will first retriev a session from the session model using the 
+   * Will first retriev a session from the session model using the
    * authentication token, if none is found the anAuthenticatedAction
    * function, supplied in the implementation is run
    */
@@ -28,7 +28,7 @@ trait FrontController {
 /**
  * FrontController implementation
  */
-class FrontControllerImpl(unAuthorizedAction: Function0[Int])
+class FrontControllerImpl
     extends FrontController {
   /**
    * creates the UseCaseContext from the authentication token
@@ -41,22 +41,14 @@ class FrontControllerImpl(unAuthorizedAction: Function0[Int])
   }
 
   /**
-   * Checks authentication and runs the interaction if the user is
-   * authenticated, otherwise it will
+   * Runs the interaction if the user is authenticated
    */
   def perform[R <: RequestModel, S <: ResponseModel](userToken: AuthenticationToken,
                                                      requestModel: R,
                                                      interactor: Interactor[R, S]): Result[S] = {
-
-    if (SessionManager.sessionExists(userToken.value)) {
-      val result: Result[S] =
-        interactor.execute(requestModel, createUserContext(SessionManager.session(userToken.value)))
-      result
-    } else {
-      //run the unAuthorized callback
-      unAuthorizedAction()
-      new Result[S]
-    }
+    val result: Result[S] =
+      interactor.execute(requestModel, createUserContext(SessionManager.session(userToken.value)))
+    result
   }
 }
 
@@ -68,6 +60,6 @@ object FrontControllerFactory {
   /**
    * Creation method for a FronController
    */
-  def create(unAuthorizedFunction: Function0[Int]): FrontController = new FrontControllerImpl(unAuthorizedFunction)
+  def create: FrontController = new FrontControllerImpl
 
 }

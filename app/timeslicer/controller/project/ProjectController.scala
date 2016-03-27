@@ -11,20 +11,20 @@ import timeslicer.model.usecase.project.GetProjectsRequestModel
 import timeslicer.model.usecase.project.GetProjectsResponseModel
 import timeslicer.model.util.JsonHelper
 import timeslicer.controller.TimeslicerController
+import timeslicer.controller.AuthenticatedAction
 
 /**
- * This controller shows all the projects for a user...
+ * This controller handles project related requests
  */
 class ProjectController extends TimeslicerController {
-
-  def projects = Action {
+  
+  def projects = AuthenticatedAction {
     request =>
       {
         val reqModel = GetProjectsRequestModel()
-        val interactor = new GetProjectsInteractor
-        
+        val interactor = new GetProjectsInteractor      
         val result = performInteraction(request, reqModel, interactor)
-        
+
         val list: Seq[Project] =
           result
             .success
@@ -35,6 +35,7 @@ class ProjectController extends TimeslicerController {
         } else {
           Ok("{}")
         }
+        
       }
   }
 }

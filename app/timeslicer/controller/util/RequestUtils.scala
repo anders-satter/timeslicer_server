@@ -23,11 +23,6 @@ object RequestUtils {
    * Returns the AuthenticationToken from a request or else empty string for
    * the authentication token... shouldn't it return an option instead?
    */
-  def getAuthenticationTokenFromRequest(request: Request[AnyContent]): AuthenticationToken = {
-    val value = request.session.get("AuthenticationId").getOrElse("")
-
-    AuthenticationToken("AuthenticationId", value)
-  }
 
   /**
    * Returns a session for a specific user, there is no user for the current
