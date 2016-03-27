@@ -1,40 +1,39 @@
 package timeslicer.controller
 
+import play.api.mvc.AnyContent
 import play.api.mvc.Controller
 import play.api.mvc.Request
+import timeslicer.model.framework.Interactor
 import timeslicer.model.framework.RequestModel
 import timeslicer.model.framework.ResponseModel
-import timeslicer.model.framework.Interactor
 import timeslicer.model.framework.Result
-import play.api.mvc.AnyContent
-import timeslicer.controller.util.RequestUtils
 import timeslicer.model.frontcontroller.FrontControllerFactory
-import timeslicer.model.authentication.AuthenticationToken
-import play.api.mvc.Action
-import timeslicer.model.session.SessionManager
+import timeslicer.model.util.Util.EmptyUseCaseContext
 
 /**
- * Common controller logic, all controllers in the Timeslicer system should inherit from this
- * class
+ * Common controller logic, all controllers in the Timeslicer
+ * system should inherit from this class
  */
 class TimeslicerController extends Controller {
 
   /**
-   * Retrieves the authenticationToken from the request
+   * Performs an authenticated action (UseCaseContext is supplied via the AuthenticatedRequest wrapper)
    */
-  def getAuthenticationTokenFromRequest(request: Request[AnyContent]): AuthenticationToken = {
-    val value = request.session.get("AuthenticationId").getOrElse("")
-    AuthenticationToken("AuthenticationId", value)
+  def performInteraction[R <: RequestModel, S <: ResponseModel](request: AuthenticatedRequest[AnyContent],
+                                                                requestModel: R,
+                                                                interactor: Interactor[R, S]): Result[S] = {
+    val frontController = FrontControllerFactory.create
+    return frontController.perform(request.useCaseContext, requestModel, interactor)
   }
 
-
   /**
-   * This will perform the interaction and return the result
+   * Performs an unauthenticated action (no UseCaseContext is supplied)
    */
-  def performInteraction[R <: RequestModel, S <: ResponseModel](request: Request[AnyContent], requestModel: R, interactor: Interactor[R, S]): Result[S] = {
-    val authenticationToken = getAuthenticationTokenFromRequest(request)
+  def performInteraction[R <: RequestModel, S <: ResponseModel](request: Request[AnyContent],
+                                                                requestModel: R,
+                                                                interactor: Interactor[R, S]): Result[S] = {
     val frontController = FrontControllerFactory.create
-    return frontController.perform(authenticationToken, requestModel, interactor)
+    return frontController.perform(EmptyUseCaseContext(), requestModel, interactor)
   }
 
 }

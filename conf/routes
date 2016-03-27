@@ -4,7 +4,6 @@
 
 # Home page
 GET     /          	                 			timeslicer.controller.Application.index
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.versioned(path="/public", file: Asset)
 # Return all the users 
@@ -14,3 +13,5 @@ GET		/timeslicer/projects					timeslicer.controller.project.ProjectController.pr
 # Checks if the user is authenticated, expects a payload of the following tyoe:
 # {"userName": "bentson", "email":"abc@def.se", "password":"bluepot01"}
 POST	/timeslicer/authentication/user 		timeslicer.controller.user.AuthenticationController.user
+# {"userName": "bentson", "email":"abc@def.se", "password":"bluepot01"}
+POST	/timeslicer/authentication/login 		timeslicer.controller.user.AuthenticationController.login

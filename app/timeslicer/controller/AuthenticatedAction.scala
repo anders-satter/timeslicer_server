@@ -1,27 +1,30 @@
 package timeslicer.controller
 
+import scala.concurrent.Future
+
 import play.api.mvc.ActionBuilder
 import play.api.mvc.Request
-import scala.concurrent.Future
-import play.api.libs.json.JsObject
 import play.api.mvc.Result
-import play.api.libs.json.Json
 import play.api.mvc.Results
-import play.api.mvc.Results.Status
+import play.api.mvc.WrappedRequest
+import timeslicer.model.context.UseCaseContext
+import timeslicer.model.frontcontroller.FrontController
 import timeslicer.model.session.SessionManager
 
-object AuthenticatedAction extends ActionBuilder[Request] {
+class AuthenticatedRequest[A](val useCaseContext: UseCaseContext,
+                              val request: Request[A])
+    extends WrappedRequest[A](request)
+
+object AuthenticatedAction extends ActionBuilder[AuthenticatedRequest] {
   def invokeBlock[A](request: Request[A],
-                     block: (Request[A]) => Future[Result]) = {
-    
+                     block: (AuthenticatedRequest[A]) => Future[Result]) = {
     val authId = request.session.get("AuthenticationId").getOrElse("")
+
     if (!authId.equals("") && SessionManager.sessionExists(authId)) {
-      //println("SESSION EXISTS - RUNNING THE BLOCK")
-      block(request)
-    } else {      
-    	//println("SESSION DOES NOT EXIST - RETURNING FORBIDDEN")
+      val useCaseContext = FrontController.createUserContext(SessionManager.session(authId))
+      block(new AuthenticatedRequest(useCaseContext, request))
+    } else {
       Future.successful(Results.Unauthorized)
     }
-    
   }
 }
